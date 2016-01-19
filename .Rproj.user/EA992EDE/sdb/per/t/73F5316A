@@ -1,0 +1,18 @@
+{
+    "contents" : "# motif discovery\n# 1. extract sequences under peaks\n# 2. select common (non-diff) peaks\n# 3. select condition-specific peaks (differential summit values) \n\n# load libraries\nlibrary(GenomicRanges)\nlibrary(rGADEM)\nlibrary(BSgenome.Cfamiliaris.UCSC.canFam3)\nlibrary(Biostrings)\n\n# go to working directory\nsetwd('~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/')\n\n# load genome\ngenome <- BSgenome.Cfamiliaris.UCSC.canFam3\nseqlevels(genome) <- gsub(\"chr\", \"\", seqlevels(genome))\n\n# load GRanges object of DANPOS2 results\nload(\"gr.danpos2.results.rda\")\nseqlevels(gr.danpos2.results)[grep(\"MT\", seqlevels(gr.danpos2.results))] <- \"M\"\nseqlevels(gr.danpos2.results) <- seqlevels(genome)\ngr.danpos2.results <- sort(gr.danpos2.results)\n\n# we start by looking at promoters of all genes\nload(\"Cfam3.genes.rda\")\nseqlevels(Cfam3.genes)[40] <- \"M\"\n\nCfam3.genes.promoters <- promoters(Cfam3.genes, upstream = 400, downstream = 200)\n# tile the promoters into 3 200bp regions, to approximate nucleosome spacing\nCfam3.genes.promoters <- unlist(tile(Cfam3.genes.promoters, width = 200))\n\nCfam3.genes.tss.up2.nucleosome <- Cfam3.genes.promoters[seq(1, 72669, 3)]\nCfam3.genes.tss.up1.nucleosome <- Cfam3.genes.promoters[seq(2, 72669, 3)]\nCfam3.genes.tss.down1.nucleosome <- Cfam3.genes.promoters[seq(3, 72669, 3)]\n# subset DANPOS2 nucleosome positions\ndp2.subset.up2 <- subsetByOverlaps(gr.danpos2.results, Cfam3.genes.tss.up2.nucleosome)\ndp2.subset.up1 <- subsetByOverlaps(gr.danpos2.results, Cfam3.genes.tss.up1.nucleosome)\ndp2.subset.down1 <- subsetByOverlaps(gr.danpos2.results, Cfam3.genes.tss.down1.nucleosome)\n\n# test run\nds1 <-  DNAStringSet(BSgenomeViews(genome, dp2.subset.up2), use.names = TRUE)\nnames(ds1) <- paste(as.character(seqnames(dp2.subset.up2)), start(dp2.subset.up2), end(dp2.subset.up2), sep = \"_\")\nwriteXStringSet(ds1, \"ds1.fa\")\n\nds2 <-  DNAStringSet(BSgenomeViews(genome, dp2.subset.up1), use.names = TRUE)\nnames(ds2) <- paste(as.character(seqnames(dp2.subset.up1)), start(dp2.subset.up1), end(dp2.subset.up1), sep = \"_\")\nwriteXStringSet(ds2, \"ds2.fa\")\n\nds3 <-  DNAStringSet(BSgenomeViews(genome, dp2.subset.down1), use.names = TRUE)\nnames(ds3) <- paste(as.character(seqnames(dp2.subset.down1)), start(dp2.subset.down1), end(dp2.subset.down1), sep = \"_\")\nwriteXStringSet(ds3, \"ds3.fa\")\n\ngadem <- GADEM(ds1, verbose = 1)\n",
+    "created" : 1449636614391.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1525973286",
+    "id" : "73F5316A",
+    "lastKnownWriteTime" : 1450327384,
+    "path" : "~/OneDrive/Development/JCSMR_Genomics/R/TremethickLab/H2AZ_EMT/deNovo_motif_discovery.R",
+    "project_path" : "deNovo_motif_discovery.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
