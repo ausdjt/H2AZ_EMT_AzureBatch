@@ -32,7 +32,7 @@ dT.methylation <- DataTrack(gr.intersect, type = "p", groups = c("TGFb","WT"), l
 displayPars(dT.methylation) <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white")
 
 # perhaps better to use the published Differentially Methylated Regions [Carmona et al 2014]
-mdck_dmr <- read.csv("MDCK_WGBS_Carmona_et_al_2014/suppTable2.csv", strip.white = TRUE)
+mdck_dmr <- read.csv("~//Data/Tremethick/EMT/MDCK_WGBS_Carmona_et_al_2014/suppTable2.csv", strip.white = TRUE)
 colnames(mdck_dmr) <- c("chrom", "start", "end", "gene_symbol", "ENSEMBL_transcript_id", "No_of_CpG_sites", "average_DNA_methylation_difference")
 #mdck_dmr$chrom <- paste("chr", mdck_dmr$chrom, sep = "")
 gr.mdck_dmr <- GRanges(mdck_dmr$chrom, IRanges(mdck_dmr$start, mdck_dmr$end), strand = "*", mdck_dmr[, c("gene_symbol", "ENSEMBL_transcript_id", "No_of_CpG_sites", "average_DNA_methylation_difference")])

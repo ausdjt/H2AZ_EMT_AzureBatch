@@ -9,11 +9,11 @@ library(BSgenome.Cfamiliaris.UCSC.canFam3)
 
 options(ucscChromosomeNames=FALSE)
 
-setwd('~/Data/Tremethick/EMT/')
+setwd('~/Data/Tremethick/EMT/GenomeWide/')
 
 source("~/Development/GeneralPurpose/R/binnedAverage.R")
 source("~/Development/GeneralPurpose/R/binnedSum.R")
-source("~/Development/JCSMR_Genomics/R/TremethickLab/H2AZ_EMT/calculateCoverage.R")
+source("~/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/R_scripts/calculateCoverage.R")
 
 # define Ensembl IDs prior to lookup at Biomart:
 # # EMT markers
@@ -110,6 +110,8 @@ gr.mesenchymalMarkers.genes <-  GRanges(seqnames = mesenchymalMarkers.genes.tab$
                                                                         "marker")])
 gr.mesenchymalMarkers.genes$hgnc_symbol[2:3] <- paste(gr.mesenchymalMarkers.genes$hgnc_symbol[2:3], "(TGFB-1)", sep = " ")
 
+# top 5 EMT upregulated genes
+load("~/Data/Tremethick/EMT/GenomeWide/gr.top5EMTUp.rda")
 
 #---------------Epithelial Markers---------------------------------------------------
 epithelialMarkers <- c("CDH1" = "ENSCAFG00000020305",
@@ -190,9 +192,11 @@ gr.epithelialMarkers.genes <-  GRanges(seqnames = epithelialMarkers.genes.tab$ch
 #       values = TGFb.Hsap$ensembl_gene_id, human)
 
 #-------------put together GRanges object for reading BAM files---------------
-gr.which <- c(promoters(reduce(gr.mesenchymalMarkers), upstream = 400000, downstream = 400000),
-              promoters(reduce(gr.epithelialMarkers), upstream = 400000, downstream = 400000))
-
+# change this to genes instead of transcripts
+gr.which <- c(promoters(reduce(gr.mesenchymalMarkers.genes), upstream = 400000, downstream = 400000),
+              promoters(reduce(gr.epithelialMarkers.genes), upstream = 400000, downstream = 400000),
+              promoters(reduce(gr.top5EMTUp), upstream = 40000, downstream = 40000))
+reduce(gr.which)
 # setting chromosome info
 seqlevels(gr.which) <- paste("chr", seqlevels(gr.which), sep = "")
 seqinfo(gr.which, force = T) <- seqinfo(BSgenome.Cfamiliaris.UCSC.canFam3)[seqlevels(gr.which)]
@@ -293,12 +297,13 @@ bA.cov.h2az.emt_markers.wt <- calculateCoverage(step = 1, gr.which, cov.h2az.emt
 bA.cov.h2az.emt_markers.tgfb <- calculateCoverage(step = 1, gr.which, cov.h2az.emt_markers.tgfb, func = "mean")
 
 #----------creating DataTrack objects for visualization using Gviz------------------------------
-dT.cov.input.emt_markers.wt <- DataTrack(bA.cov.input.emt_markers.wt, type = "h", col = "darkgreen", name = "Input WT\n[rpm]", strand = "*")
-dT.cov.input.emt_markers.tgfb <- DataTrack(bA.cov.input.emt_markers.tgfb, type = "h", col = "lightgreen", name = "Input TGFb\n[rpm]", strand = "*")
-dT.cov.h2az.emt_markers.wt <- DataTrack(bA.cov.h2az.emt_markers.wt, type = "h", col = "darkred", name = "H2AZ WT\n[rpm]", strand = "*")
-dT.cov.h2az.emt_markers.tgfb <- DataTrack(bA.cov.h2az.emt_markers.tgfb, type = "h", col = "red", name = "H2AZ TGFb\n[rpm]", strand = "*")
+# ['#d7191c','#fdae61','#abd9e9','#2c7bb6']
+dT.cov.input.emt_markers.wt <- DataTrack(bA.cov.input.emt_markers.wt, type = "h", col = "#abd9e9", name = "Input Epithelial\n[rpm]", strand = "*", cex = 2)
+dT.cov.input.emt_markers.tgfb <- DataTrack(bA.cov.input.emt_markers.tgfb, type = "h", col = "#2c7bb6", name = "Input Mesenchymal\n[rpm]", strand = "*", cex = 2)
+dT.cov.h2az.emt_markers.wt <- DataTrack(bA.cov.h2az.emt_markers.wt, type = "h", col = "#fdae61", name = "H2AZ Epithelial\n[rpm]", strand = "*", cex = 2)
+dT.cov.h2az.emt_markers.tgfb <- DataTrack(bA.cov.h2az.emt_markers.tgfb, type = "h", col = "#d7191c", name = "H2AZ Mesenchymal\n[rpm]", strand = "*", cex = 2)
 
-dpList <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white", "cex.title" = 0.4, rotation.title = 270, cex.axis = 0.6)
+dpList <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white", "cex.title" = 0.5, rotation.title = 270, cex.axis = 0.6, lwd.title = 1)
 
 displayPars(dT.cov.input.emt_markers.wt) <- dpList
 displayPars(dT.cov.input.emt_markers.tgfb) <- dpList
@@ -307,37 +312,68 @@ displayPars(dT.cov.h2az.emt_markers.tgfb) <- dpList
 
 save(file = "genomeWide.50kbTSS.DataTracks.rda", list = c("dT.cov.input.emt_markers.wt", "dT.cov.input.emt_markers.tgfb", "dT.cov.h2az.emt_markers.wt", "dT.cov.h2az.emt_markers.tgfb"))
 
-#-----------plotting coverage across epithelial markers------------------------------------------
 
+# load prepared data  -----------------------------------------------------
+
+load(file = "~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/aT.ap1Sites.rda")
+load(file = "~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/aT.nfkbSites.rda")
+load(file = "~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/aT.TSS.rda")
+
+
+#-----------plotting coverage across epithelial markers------------------------------------------
 dT.bgSubTGFb <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT/pooled/TGFb_ChIP.bgsub.Fnor.smooth.bw", stream = T, name = "TGFb - background subtracted", col = "black", type = "l")
 dT.bgSubWT <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT/pooled/WT_ChIP.bgsub.Fnor.smooth.bw", stream = T, name = "WT - background subtracted", col = "grey", type = "l")
 dT.Diff <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT/diff/TGFb_vs_WT.pois_diff.bw", stream = T, name = "Difference - DANPOS2", col = "blue", type = "l")
 
-gr.plot <- promoters(gr.mesenchymalMarkers, up = 1500, down = 20000)
-gr.plot <- promoters(gr.epithelialMarkers.genes, upstream = 20000, downstream = 20000)
+dT.TGFb_deepTools <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/bigwig/H2AZ_TGFb_Input_log2ratio.bw", stream = T, name = "TGFb - log2 ratio", col = "black", type = "h")
+dT.WT_deepTools <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_marked/H2AZ_WT.bw", stream = T, name = "WT - RPKM", col = "grey", type = "h")
 
-biomTrack <- GeneRegionTrack(TxDb.Cfam3.Ensembl, showId = T, geneSymbol = T, showExonId = F, name = "", stacking = "hide")
-displayPars(biomTrack) <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white")
-save(biomTrack, file = "biomTrack.Cfam3.Ensembl.rda")
+bw.H2AZ_TGFb_RPKM <- import("~/Data/Tremethick/EMT/GenomeWide/bigwig/H2AZ_TGFb_10bp_RPKM.bw")
+bw.H2AZ_TGFb_RPKM <- subsetByOverlaps(bw.TGFb_Input_RPKM, gr.plot)
+bw.H2AZ_WT_RPKM <- import("~/Data/Tremethick/EMT/GenomeWide/bigwig/H2AZ_WT_10bp_RPKM.bw")
+bw.H2AZ_WT_RPKM <- subsetByOverlaps(bw.H2AZ_WT_RPKM, gr.plot)
+bw.Input_TGFb_RPKM <- import("~/Data/Tremethick/EMT/GenomeWide/bigwig/Input_TGFb_10bp_RPKM.bw")
+bw.Input_TGFb_RPKM <- subsetByOverlaps(bw.Input_TGFb_RPKM, gr.plot)
+bw.Input_WT_RPKM <- import("~/Data/Tremethick/EMT/GenomeWide/bigwig/Input_WT_10bp_RPKM.bw")
+bw.Input_WT_RPKM <- subsetByOverlaps(bw.Input_WT_RPKM, gr.plot)
 
-pdf("~/OneDrive/Documents/ANU/Tremethick Lab/Lab Meetings/Lab Meeting 2015-10-14/MDCK_ChIP-Seq_EpitheliaMarkers_coverage_plots_1500TSS1500_incl_DMRs_incl_SureSelect.pdf")
+# dT.TGFb_Input_RPKM <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_marked/Input_TGFb.bw", stream = T, name = "Mesenchymal\nInput [RPKM]", col = "black", type = "l")
+# dT.TGFb_H2AZ_RPKM <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_marked/H2AZ_TGFb.bw", stream = T, name = "Mesenchymal\nH2A.Z ChIP [RPKM]", col = "darkgrey", type = "l")
+# dT.WT_Input_RPKM <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_marked/Input_WT.bw", stream = T, name = "Epithelial\nInput [RPKM]", col = "black", type = "l")
+# dT.WT_H2AZ_RPKM <- DataTrack("~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_marked/H2AZ_WT.bw", stream = T, name = "Epithelial\nH2A.Z ChIP [RPKM]", col = "darkgrey", type = "l")
+dT.H2AZ_TGFb_RPKM <- DataTrack(bw.H2AZ_TGFb_RPKM, name = "Mesenchymal\nH2A.Z ChIP [RPKM]", col = "black", type = "h")
+dT.H2AZ_WT_RPKM <- DataTrack(bw.H2AZ_WT_RPKM, name = "Epithelial\nH2A.Z ChIP [RPKM]", col = "darkgrey", type = "h")
+dT.Input_TGFb_RPKM <- DataTrack(bw.Input_TGFb_RPKM, name = "Mesenchymal\nInput [RPKM]", col = "black", type = "h")
+dT.Input_WT_RPKM <- DataTrack(bw.Input_WT_RPKM, name = "Epithelial\nInput [RPKM]", col = "darkgrey", type = "h")
+
+displayPars(dT.H2AZ_TGFb_RPKM) <- dpList
+displayPars(dT.H2AZ_WT_RPKM) <- dpList
+displayPars(dT.Input_TGFb_RPKM) <- dpList
+displayPars(dT.Input_WT_RPKM) <- dpList
+
+biomTrack <- GeneRegionTrack(TxDb.Cfam3.Ensembl, showId = F, geneSymbol = T, showExonId = F, name = "", stacking = "dense")
+displayPars(biomTrack) <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white", "fill" = "black")
+save(biomTrack, file = "biomTrack.Cfam3.Ensembl.genes.rda")
+
+#pdf("~/OneDrive/Documents/ANU/Tremethick Lab/Lab Meetings/Lab Meeting 2015-10-14/MDCK_ChIP-Seq_EpitheliaMarkers_coverage_plots_1500TSS1500_incl_DMRs_incl_SureSelect.pdf")
+axisTrack <- GenomeAxisTrack()
+
+#gr.plot <- promoters(gr.mesenchymalMarkers.genes, up = 20000, down = 20000)
+#gr.plot <- promoters(gr.epithelialMarkers.genes, upstream = 20000, downstream = 20000)
+gr.plot <- promoters(gr.top5EMTUp, upstream = 2000, downstream = 2000)
+
+suffix = "TSS_2kb"
+mainDir = "~/Data/Tremethick/EMT/GenomeWide/Publication_plots/"
+subDir = "Top 5 EMT markers up"
+
+if (file.exists(paste(mainDir, subDir, sep = ""))){
+  setwd(file.path(mainDir, subDir))
+  } else {
+  dir.create(file.path(mainDir, subDir))
+  setwd(file.path(mainDir, subDir))
+}
+
 for (i in 1:length(gr.plot)){
-  displayPars(biomTrack) <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white")
-  
-  # Data from SureSelect capture
-#   chromosome(dT.cov.input.wt) <- seqnames(gr.plot)[i]
-#   chromosome(dT.cov.input.tgfb) <- seqnames(gr.plot)[i]
-#   chromosome(dT.cov.h2az.wt) <- seqnames(gr.plot)[i]
-#   chromosome(dT.cov.h2az.tgfb) <- seqnames(gr.plot)[i]
-#   
-#   chromosome(aT.primers) <- seqnames(gr.plot)[i]
-#   
-#   max.y <- max(max(values(dT.cov.input.wt)), max(values(dT.cov.input.tgfb)), max(values(dT.cov.h2az.wt)), max(values(dT.cov.h2az.tgfb)))
-#   displayPars(dT.cov.input.wt) <- list(ylim = c(0,max.y))
-#   displayPars(dT.cov.input.tgfb) <- list(ylim = c(0,max.y))
-#   displayPars(dT.cov.h2az.wt) <- list(ylim = c(0,max.y))
-#   displayPars(dT.cov.h2az.tgfb) <- list(ylim = c(0,max.y))
-#   
   # Data from whole genome ChIP-Seq
   
   chromosome(dT.cov.input.emt_markers.wt) <- seqnames(gr.plot)[i]
@@ -350,17 +386,32 @@ for (i in 1:length(gr.plot)){
   displayPars(dT.cov.input.emt_markers.tgfb) <- list(ylim = c(0,max.y.tss))
   displayPars(dT.cov.h2az.emt_markers.wt) <- list(ylim = c(0,max.y.tss))
   displayPars(dT.cov.h2az.emt_markers.tgfb) <- list(ylim = c(0,max.y.tss))
-  
+
+  biomTrack.ensembl <- BiomartGeneRegionTrack(genome = "canFam3", 
+                                              gene = gr.plot[i]$ensembl_gene_id,
+                                              mart = dog,
+                                              stacking = "squish",
+                                              "fontcolor.title" = "black", 
+                                              "background.title" = "white", 
+                                              "col.axis" = "black", 
+                                              "col.frame" = "white", 
+                                              "fill" = "black",
+                                              "fontcolor.group" = "black",
+                                              "protein_coding" = "black",
+                                              "utr3" = "black",
+                                              "utr5" = "black",
+                                              "col.line" = "darkgrey",
+                                              name = NULL)
+  #displayPars(biomTrack.ensembl) <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white", "fill" = "black")
+
+  pdf(paste(gr.plot$hgnc_symbol[i], "_", suffix,".pdf", sep = ""))
   plotTracks(list(axisTrack,
-                  biomTrack,
-                  aT.ap1Sites,
-                  aT.nfkbSites,
-                  aT.TSS,
+                  biomTrack.ensembl,
+  #                aT.TSS,
                   dT.cov.input.emt_markers.wt, 
                   dT.cov.h2az.emt_markers.wt,
                   dT.cov.input.emt_markers.tgfb, 
                   dT.cov.h2az.emt_markers.tgfb
-
   ),
   chromosome = as(seqnames(gr.plot), "character")[i],
   from = as.integer(start(gr.plot[i]), "integer"),
@@ -370,11 +421,12 @@ for (i in 1:length(gr.plot)){
   main = paste(gr.plot$hgnc_symbol[i], " (", width(gr.plot[i]), "bp)", sep = ""),
   strand = "*",
   cex.main = 0.5,
-  sizes = c(0.02, 0.06, 0.04, 0.04, 0.04, 0.2, 0.2, 0.2, 0.2),
+  #sizes = c(0.02, 0.06, 0.04, 0.04, 0.04, 0.2, 0.2, 0.2, 0.2),
+  sizes = c(0.02, 0.04, 0.235, 0.235, 0.235, 0.235),
   scale = 0.5)
-
+  dev.off()
 }
-dev.off()
+setwd("~/Data/Tremethick/EMT/GenomeWide/")
 
 # mesenchymal markers
 gr.mesenchymalMarkers.1500TSS1500 <- promoters(gr.mesenchymalMarkers, upstream = 1500, downstream = 1500)

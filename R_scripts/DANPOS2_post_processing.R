@@ -8,18 +8,42 @@ library("Gviz")
 library("GenomicRanges")
 library("rtracklayer")
 library("GenomicFeatures")
+require(org.Cf.eg.db)
 
 setwd("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/")
 
 #------------import external functions------------------
 source("~/Development/GeneralPurpose/R/heatmap.3.R")
 
-#------------create TxDb object of the Canis familiaris 3.1 genome annotation------------
-TxDb.Cfam3.Ensembl <- makeTxDbFromGFF("/Volumes/gduserv/Data/Annotations/CanFam3/Canis_familiaris.CanFam3.1.82.chr.gtf")
+
+# create TxDb object of the Canis familiaris 3.1 genome annotation --------
+# prepare annotation data &
+# create Canis familiaris TXDB object for peak annotation
+chromInfo <- read.table("~/mount/gduserv/Data/RefGenomes/Canis_familiaris/Ensembl/chromInfo.txt", header = F, as.is = T, sep = "\t")
+colnames(chromInfo) <- c("chrom", "length")
+TxDb.Cfam3.Ensembl <- makeTxDbFromGFF("~/Data/Annotations/CanFam3/Ensembl/Canis_familiaris.CanFam3.1.83.chr.gtf.gz", 
+                                      organism = "Canis familiaris", 
+                                      chrominfo = chromInfo)
+# TxDb.Cfam3.RefSeq <- makeTxDbFromGFF("~/Data/Annotations/CanFam3/RefSeq/ref_CanFam3.1_top_level.gff3", 
+#                                       organism = "Canis familiaris", 
+#                                       chrominfo = chromInfo)
+
 Cfam3.genes <- genes(TxDb.Cfam3.Ensembl)
+Cfam3.genes.hgnc <- getBM(c("ensembl_gene_id", "hgnc_symbol"), filters = "ensembl_gene_id", values = Cfam3.genes$gene_id, mart = dog)
+rownames(Cfam3.genes.hgnc) <- Cfam3.genes.hgnc$ensembl_gene_id
+Cfam3.genes$hgnc_symbol <- Cfam3.genes.hgnc[Cfam3.genes$gene_id, ]$hgnc_symbol
 save(Cfam3.genes, file = "Cfam3.genes.rda")
 
-#------------load DANPOS2 results-----------------------
+load("~/Data/Tremethick/EMT/GenomeWide/Cfam3.genes.rda")
+
+
+# load repeat regions to exclude from analysis of nucleosome posit --------
+Cfam3.repeats <- import("~/Data/Annotations/CanFam3/canFam3_repeat_regions.bed")
+seqlevels(Cfam3.repeats) <- gsub("chr", "", seqlevels(Cfam3.repeats))
+seqlevels(Cfam3.repeats, force = T) <- seqlevels(Cfam3.genes)
+seqinfo(Cfam3.repeats, force = T) <- seqinfo(Cfam3.genes)
+
+# load DANPOS2 results ----------------------------------------------------
 # changed 2015-12-14:
 # now using the results from DANPOS2 analysis with default settings
 # (~/Development/JCSMR-Tremethick-Lab/shell_scripts/danpos2_command_lines.sh)
@@ -62,7 +86,7 @@ dT.WT <- DataTrack(subsetByOverlaps(gr.WT_H2AZ_ChIP_bgsub_Fnor, gr1), type = "h"
 dT.TGFb <- DataTrack(subsetByOverlaps(gr.TGFb_H2AZ_ChIP_bgsub_Fnor, gr1), type = "h", col = "grey", name = "TGFb")
 dT.Diff <- DataTrack(subsetByOverlaps(gr.TGFb_vs_WT_diff, gr1), type = "h", col = "blue", name = "Difference [+/- log10p-val]")
 
-biomTrack <- BiomartGeneRegionTrack(genome = "canFam3", 
+biomTrack.ensembl <- BiomartGeneRegionTrack(genome = "canFam3", 
                                     chromosome = as(seqlevels(gr1)[i], "character"),
                                     start = as(start(gr1), "integer"),
                                     end = as(end(gr1), "integer"),
@@ -93,19 +117,19 @@ df1$var <- c(rep("ctrl", length(subsetByOverlaps(gr.danpos2.results, gr1[1]))),
 df1$pos <- rep(c(1:length(subsetByOverlaps(gr.danpos2.results, gr1[1]))), 2)
 p <- ggplot(df1, aes(x = pos, y = df1 , group = var, colour = var))
 
-#------------prepare annotation data------------------
-# create Canis familiaris TXDB object for peak annotation
-chromInfo <- read.table("/Volumes/gduserv/Data/RefGenomes/Canis_familiaris/Ensembl/chromInfo.txt", header = F, as.is = T, sep = "\t")
-colnames(chromInfo) <- c("chrom", "length")
-TxDb.Cfam3.Ensembl <- makeTxDbFromGFF("/Volumes/gduserv/Data/Annotations/CanFam3/Canis_familiaris.CanFam3.1.82.chr.gtf", 
-                                      organism = "Canis familiaris", 
-                                      chrominfo = chromInfo)
-Cfam3.genes <- genes(TxDb.Cfam3.Ensembl)
-
-#------------annotate peaks------------------ 
+# annotate DANPOS2 peaks --------------------------------------------------
 danpos2.anno <- annotatePeakInBatch(gr.danpos2.results, AnnotationData = Cfam3.genes)
 danpos2.anno <- addGeneIDs(annotatedPeak = danpos2.anno, orgAnn = org.Cf.eg.db, feature_id_type = "ensembl_gene_id", IDs2Add = c("symbol", "entrez_id"))
 
+# load pre-computed data
+load("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/danpos2.anno.rda")
+seqlevels(danpos2.anno) <- gsub("chr", "", seqlevels(danpos2.anno))
+seqlevels(danpos2.anno)[grep("M", seqlevels(danpos2.anno))] <- "MT"
+seqlevels(danpos2.anno, force = T) <- seqlevels(Cfam3.genes)
+seqinfo(danpos2.anno, force = T) <- seqinfo(Cfam3.genes)
+
+# filter out peak positions that do overlap with annotated repeats
+danpos2.anno <- danpos2.anno[!overlapsAny(danpos2.anno, Cfam3.repeats)]
 
 # only consider peaks/nucleosome position upstream or on the annotated TSS
 upTSS <- which(mcols(danpos2.anno)$insideFeature %in% c("overlapStart", "upstream"))
@@ -291,7 +315,8 @@ c1 <- as.data.frame(cbind(autok2=cutree(hccol, k = 2),autok3=cutree(hccol, k = 3
 # quick look at qPCR genes
 Cfam3.genes[which(Cfam3.genes$gene_id %in% qPCRGenesTab$ensembl_gene_id)]
 
-gr3 <- subsetByOverlaps(danpos2.anno, promoters(Cfam3.genes[which(Cfam3.genes$gene_id %in% qPCRGenesTab$ensembl_gene_id)], upstream = 500, downstream = 0))
+# changed region to TSS +/-1Kb 
+gr3 <- subsetByOverlaps(danpos2.anno, promoters(Cfam3.genes[which(Cfam3.genes$gene_id %in% qPCRGenesTab$ensembl_gene_id)], upstream = 1000, downstream = 1000))
 gr3 <- gr3[which(mcols(gr3)$smt_diff_FDR <= 0.01)]
 # create a histogram of the data (here log2 transformed)
 df3 <- as(log2(mcols(gr3)[, c("control_smt_val")] + 1), "matrix")
@@ -306,9 +331,14 @@ pdf("Boxplot_H2AZ_nucleosome_500TSS0_aPCR_genes_FDR0.01.pdf", height = 10, width
 histo3 + geom_boxplot(position = "identity", aes(y = df3, x= var)) + labs(title = "qPCR genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", x = "Sample", y = "Summit occupation (BG-subtracted) [log2]") + scale_y_continuous(limits=c(4, 16))
 dev.off()
 
-df3 <- as(mcols(gr3)[,c("control_smt_val", "treat_smt_val")], "data.frame")
+df3 <- as(mcols(gr3)[,c("control_smt_val", "treat_smt_val", "symbol")], "data.frame")
 pdf("Heatmap_H2AZ_nucleosome_500TSS0_qPCR_genes_FDR0.01.pdf", height = 10, width = 10)
-heatmap2 <- heatmap.3(as.matrix(log2(df3 + 1)), trace = "none", cexCol = 0.6, main = "qPCR genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", hclustfun=function(x) hclust(x,method="ward.D"))
+heatmap2 <- heatmap.3(as.matrix(log2(df3[,c(1,2)] + 1)), 
+                      trace = "none", 
+                      cexCol = 0.6, 
+                      main = "qPCR genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", 
+                      hclustfun=function(x) hclust(x,method="ward.D"),
+                      labRow = df3[,3])
 dev.off()
 
 #---------------plotting coverage maps based on DANPOS2 normalized data------------
@@ -334,4 +364,27 @@ plotTracks(list(aT1, dT.WT, dT.TGFb))
 gr1 <- subsetByOverlaps(danpos2.anno, promoters(gr.MSigDB.EMT_associated.cfam, upstream = 500, downstream = 0))
 gr1[which(gr1$treat_smt_val > 5 & gr1$control_smt_val <= 1)]
 
+# nucleosomes -1000/500+ TSS -----------------------------------------------
+gr1 <- subsetByOverlaps(danpos2.anno, promoters(Cfam3.genes, upstream = 1500, downstream = 500))
+# Volcanon plot
+plot(gr1$smt_log2FC, -log(gr1$smt_diff_FDR))
+#gr1 <- gr1[gr1$smt_diff_FDR <= 0.001]
+
+df <- as(mcols(gr1)[,c("control_smt_val", "treat_smt_val")], "data.frame")
+hm <- heatmap.3(as.matrix(log2(df + 1)), 
+                trace = "none", 
+                cexCol = 0.6,
+                col = redgreen(19),
+                symkey = F,
+                main = "All Genes [-1000/500+ bp TSS]\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.001", 
+                hclustfun=function(x) hclust(x,method="ward.D"))
+
+df <- as(mcols(gr1)[,c("control_fuzziness_score", "treat_fuzziness_score")], "data.frame")
+hm <- heatmap.3(as.matrix(df), 
+                trace = "none", 
+                cexCol = 0.6,
+                col = redgreen(19),
+                symkey = F,
+                main = "All Genes [-1000/500+ bp TSS]\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.001", 
+                hclustfun=function(x) hclust(x,method="ward.D"))
 
