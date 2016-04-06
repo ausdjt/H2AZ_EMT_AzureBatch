@@ -1,6 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
-.sh.o*
-.sh.e*
-.sh.po*
+*.sh.o*
+*.sh.e*
+*.sh.po*
+*.log
