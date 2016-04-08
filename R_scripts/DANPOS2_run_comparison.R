@@ -30,7 +30,7 @@ h2 <- hist(danpos2.anno$smt_log2FC)
 h3 <- hist(gr.danpos2.rerun.results$smt_diff_FDR)
 h4 <- hist(danpos2.anno$smt_diff_FDR)
 
-pdf("DANPOS2_run_comparison_WG.pdf", )
+pdf("DANPOS2_run_comparison_WG.pdf")
 par(mfrow = c(2,2))
 plot(h1, main = "DANPOS2 re-run\n whole genome [log2 FC]")
 plot(h2, main = "DANPOS2 original TGFb1\n whole genome [log2 FC]")

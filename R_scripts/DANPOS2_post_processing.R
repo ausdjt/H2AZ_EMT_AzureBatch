@@ -48,56 +48,20 @@ seqinfo(Cfam3.repeats, force = T) <- seqinfo(Cfam3.genes)
 # now using the results from DANPOS2 analysis with default settings
 # (~/Development/JCSMR-Tremethick-Lab/shell_scripts/danpos2_command_lines.sh)
 # previous run seemed to create too large sliding windows, i.e. twice nucleosome size
-danpos2.results <- read.table("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT_147bp/result/TGFb_H2AZ-WT_H2AZ.positions.integrative.xls",
+# changed 2016-04-08:
+# using results of DANPOS2 re-run, increased pheight cut off to 10
+danpos2.results <- read.table("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT_rerun/result/TGFb_H2AZ-WT_H2AZ.positions.integrative.xls",
                               header = T, 
                               as.is = T,
                               sep = "\t")
 gr.danpos2.results <- GRanges(danpos2.results$chr, IRanges(danpos2.results$start, danpos2.results$end), strand = "*", danpos2.results[, c(4:23)])
-
-# Using Gviz for visualization of some of the data
-i <- 2
-gr1 <- promoters(gr.mesenchymalMarkers.genes[i], upstream = 10000, downstream = 10000)
-dT.WT <- DataTrack(subsetByOverlaps(gr.WT_H2AZ_ChIP_bgsub_Fnor, gr1), type = "h", col = "black", name = "Control")
-dT.TGFb <- DataTrack(subsetByOverlaps(gr.TGFb_H2AZ_ChIP_bgsub_Fnor, gr1), type = "h", col = "grey", name = "TGFb")
-dT.Diff <- DataTrack(subsetByOverlaps(gr.TGFb_vs_WT_diff, gr1), type = "h", col = "blue", name = "Difference [+/- log10p-val]")
-
-biomTrack.ensembl <- BiomartGeneRegionTrack(genome = "canFam3", 
-                                    chromosome = as(seqlevels(gr1)[i], "character"),
-                                    start = as(start(gr1), "integer"),
-                                    end = as(end(gr1), "integer"),
-                                    name = paste(mcols(gr1)$hgnc_symbol),
-                                    mart = dog)
-gat <- GenomeAxisTrack()
-plotTracks(list(gat, biomTrack, dT.WT, dT.TGFb, dT.Diff))
-
-
-# trying to directly visualize the DANPOS2 resuls from the integrative presentation of data
-DT1 <- DataTrack(subsetByOverlaps(gr.danpos2.results, gr1), data = mcols(subsetByOverlaps(gr.danpos2.results, gr1))$control_smt_val, type = "l")
-DT2 <- DataTrack(subsetByOverlaps(gr.danpos2.results, gr1), data = mcols(subsetByOverlaps(gr.danpos2.results, gr1))$treat_smt_val, type = "l")
-DT3 <- DataTrack(subsetByOverlaps(gr.danpos2.results, gr1), data = mcols(subsetByOverlaps(gr.danpos2.results, gr1))$smt_log2FC,type = "l")
-DT4 <- DataTrack(subsetByOverlaps(gr.danpos2.results, gr1), data = -1 * log10(mcols(subsetByOverlaps(gr.danpos2.results, gr1))$smt_diff_FDR), type = c("p", "g"))
-
-max.y <- max(max(values(DT1)), max(values(DT2)))
-displayPars(DT1) <- list(ylim = c(0,max.y))
-displayPars(DT2) <- list(ylim = c(0,max.y))
-
-  
-plotTracks(list(gat, biomTrack, DT1, DT2, DT3, DT4), from = start(gr1), to = end(gr1))
-
-df1 <- as(mcols(subsetByOverlaps(gr.danpos2.results, gr1[1]))$control_smt_val, "matrix")
-df1 <- rbind(df1, as(mcols(subsetByOverlaps(gr.danpos2.results, gr1[1]))$treat_smt_val, "matrix"))
-df1 <- data.frame(df1)
-df1$var <- c(rep("ctrl", length(subsetByOverlaps(gr.danpos2.results, gr1[1]))), 
-             rep("treat", length(subsetByOverlaps(gr.danpos2.results, gr1[1]))))
-df1$pos <- rep(c(1:length(subsetByOverlaps(gr.danpos2.results, gr1[1]))), 2)
-p <- ggplot(df1, aes(x = pos, y = df1 , group = var, colour = var))
 
 # annotate DANPOS2 peaks --------------------------------------------------
 danpos2.anno <- annotatePeakInBatch(gr.danpos2.results, AnnotationData = Cfam3.genes)
 danpos2.anno <- addGeneIDs(annotatedPeak = danpos2.anno, orgAnn = org.Cf.eg.db, feature_id_type = "ensembl_gene_id", IDs2Add = c("symbol", "entrez_id"))
 
 # load pre-computed data
-load("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/danpos2.anno.rda")
+# load("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/danpos2.anno.rda")
 seqlevels(danpos2.anno) <- gsub("chr", "", seqlevels(danpos2.anno))
 seqlevels(danpos2.anno)[grep("M", seqlevels(danpos2.anno))] <- "MT"
 seqlevels(danpos2.anno, force = T) <- seqlevels(Cfam3.genes)
@@ -227,70 +191,66 @@ reactome.danpos2.anno_treat_enriched.pathLevel$FDR <- p.adjust(reactome.danpos2.
 
 #------------MSigDB analysis------------------
 seqlevels(danpos2.anno) <- gsub("chr", "", seqlevels(danpos2.anno))
-gr1 <- subsetByOverlaps(danpos2.anno, promoters(gr.MSigDB.EMT_associated.cfam, upstream = 500, downstream = 0))
+gr1 <- subsetByOverlaps(danpos2.anno, promoters(gr.MSigDB.EMT_associated.cfam, upstream = 1000, downstream = 1000))
 gr1 <- gr1[which(mcols(gr1)$smt_diff_FDR <= 0.01)]
-gr1.ctrl <- gr1[which(mcols(gr1)$smt_log2FC < 0)]
-gr1.treat <- gr1[which(mcols(gr1)$smt_log2FC > 0)]
 
 # create a histogram of the data (here log2 transformed)
-df1 <- as(log2(mcols(gr1.ctrl)[, c("control_smt_val")] + 1), "matrix")
-df1 <- rbind(df1, as(log2(mcols(gr1.treat)[, c("treat_smt_val")] + 1), "matrix"))
+df1 <- as(log2(mcols(gr1)[, c("control_smt_val")] + 1), "matrix")
+df1 <- rbind(df1, as(log2(mcols(gr1)[, c("treat_smt_val")] + 1), "matrix"))
 df1 <- data.frame(df1)
-df1$var <- c(rep(paste("MDCK - Untreated [N = ", length(gr1.ctrl), "]", sep = ""), length(gr1.ctrl)), rep(paste("MDCK - TGFb-treated [N = ", length(gr1.treat), "]", sep = ""), length(gr1.treat)))
+df1$var <- c(rep(paste("Epithelial [N = ", length(gr1), "]", sep = ""), length(gr1)), rep(paste("Mesenchymal [N = ", length(gr1), "]", sep = ""), length(gr1)))
 histo1 <- ggplot(df1,aes(x=df1, group=var))
 pdf("Histogram_H2AZ_nucleosome_500TSS0_EMT_associated_genes_FDR0.01.pdf", height = 8, width = 8)
 histo1 + geom_histogram(alpha = 0.6, position = "identity", aes(y = ..density..)) + geom_density(alpha = 0.4, position = "identity", aes(color = var))
 dev.off()
-pdf("Boxplot_H2AZ_nucleosome_500TSS0_EMT_associated_genes_FDR0.01.pdf", height = 8, width = 8)
+pdf("Boxplot_H2AZ_nucleosome_1000TSS1000_EMT_associated_genes_FDR0.01.pdf", height = 8, width = 8)
 histo1 + geom_boxplot(position = "identity", aes(y = df1, x= var)) + labs(title = "EMT-associated genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", x = "Sample", y = "Summit occupation (BG-subtracted) [log2]") + scale_y_continuous(limits=c(4, 16))
 dev.off()
 
 # display data in heatmap
 df1 <- as(mcols(gr1)[,c("control_smt_val", "treat_smt_val")], "data.frame")
-pdf("Heatmap_H2AZ_nucleosome_500TSS0_EMT_associated_genes_FDR0.01.pdf", height = 8, width = 8)
-heatmap1 <- heatmap.3(as.matrix(log2(df1 + 1)), trace = "none", cexCol = 0.6, main = "EMT-associated genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", hclustfun=function(x) hclust(x,method="ward.D"))
+colnames(df1) <- c("Epithelial", "Mesenchymal")
+pdf("Heatmap_H2AZ_nucleosome_1000TSS1000_EMT_associated_genes_FDR0.01.pdf", height = 8, width = 8)
+heatmap1 <- heatmap.3(as.matrix(log2(df1 + 1)), 
+                      trace = "none", 
+                      cexCol = 0.6, 
+                      main = "EMT-associated genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", 
+                      hclustfun=function(x) hclust(x,method="ward.D"),
+                      col = brewer.pal(9, "YlOrRd"))
 dev.off()
 
-
 # as a "background" data set we look at the totallity of genes
-gr2 <- subsetByOverlaps(danpos2.anno, promoters(Cfam3.genes, upstream = 250, downstream = 0))
+gr2 <- subsetByOverlaps(danpos2.anno, promoters(Cfam3.genes, upstream = 1000, downstream = 1000))
 gr2 <- gr2[which(mcols(gr2)$smt_diff_FDR <= 0.01)]
-gr2.ctrl <- gr2[which(mcols(gr2)$smt_log2FC < 0)]
-gr2.treat <- gr2[which(mcols(gr2)$smt_log2FC > 0)]
+# gr2.ctrl <- gr2[which(mcols(gr2)$smt_log2FC < 0)]
+# gr2.treat <- gr2[which(mcols(gr2)$smt_log2FC > 0)]
 # create a histogram of the data (here log2 transformed)
-df2 <- as(log2(mcols(gr2.ctrl)[, c("control_smt_val")] + 1), "matrix")
-df2 <- rbind(df2, as(log2(mcols(gr2.treat)[, c("treat_smt_val")] + 1), "matrix"))
+df2 <- as(log2(mcols(gr2)[, c("control_smt_val")] + 1), "matrix")
+df2 <- rbind(df2, as(log2(mcols(gr2)[, c("treat_smt_val")] + 1), "matrix"))
 df2 <- data.frame(df2)
-df2$var <- c(rep(paste("MDCK - Untreated [N = ", length(gr2.ctrl), "]", sep = ""), length(gr2.ctrl)), rep(paste("MDCK - TGFb-treated [N = ", length(gr2.treat), "]", sep = ""), length(gr2.treat)))
+df2$var <- c(rep(paste("Epithelial [N = ", length(gr2), "]", sep = ""), length(gr2)), rep(paste("Mesenchymal [N = ", length(gr2), "]", sep = ""), length(gr2)))
 histo2 <- ggplot(df2,aes(x=df2, group=var))
 pdf("Histogram_H2AZ_nucleosome_500TSS0_all_genes_FDR0.01.pdf", height = 10, width = 10)
 histo2 + geom_histogram(alpha = 0.6, position = "identity", aes(y = ..density..)) + geom_density(alpha = 0.4, position = "identity", aes(color = var))
 dev.off()
-pdf("Boxplot_H2AZ_nucleosome_500TSS0_all_genes_FDR0.01.pdf", height = 10, width = 10)
+pdf("Boxplot_H2AZ_nucleosome_1000TSS10000_all_genes_FDR0.01.pdf", height = 10, width = 10)
 histo2 + geom_boxplot(position = "identity", aes(y = df2, x= var)) + labs(title = "All genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", x = "Sample", y = "Summit occupation (BG-subtracted) [log2]") + scale_y_continuous(limits=c(4, 16))
 dev.off()
 
-df2 <- as(mcols(gr2)[,c("control_smt_val", "treat_smt_val")], "data.frame")
-pdf("Heatmap_H2AZ_nucleosome_500TSS0_all_genes_FDR0.01.pdf", height = 10, width = 10)
-heatmap2 <- heatmap.3(as.matrix(log2(df2 + 1)), trace = "none", cexCol = 0.6, main = "All genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", hclustfun=function(x) hclust(x,method="ward.D"))
+df2 <- as(mcols(gr2)[,c("control_smt_val", "treat_smt_val", "smt_log2FC")], "data.frame")
+colnames(df2)[1:2] <- c("Epithelial", "Mesenchymal")
+df2 <- df2[which(abs(df2$smt_log2FC)>2),]
+pdf("Heatmap_H2AZ_nucleosome_1000TSS1000_all_genes_FDR0.01.pdf", height = 10, width = 10)
+heatmap2 <- heatmap.3(as.matrix(log2(df2[,c(1,2)] + 1)), 
+                      trace = "none", 
+                      cexCol = 0.6, 
+                      main = "All genes, +/-1kb TSS,\nsummit values [log2], FDR <= 0.01", 
+                      hclustfun=function(x) hclust(x,method="ward.D"),
+                      col = brewer.pal(9, "YlOrRd"))
 dev.off()
 
-# trying to determine the different clusters, so that we can identify genes with strong differential H2A.Z occupation
-hcrow2 <- as.hclust(heatmap2$rowDendrogram)
-silhouette2 <- list()
-for(i in 1:9){
-  silhouette2[[i]] <- silhouette(cutree(hcrow2, k = i+1), daisy(as.matrix(log2(df2 + 1))))
-}
 
-pdf("shilhouetteHeatAutosome.pdf",pointsize=10, height=8,width=8)
-par(mfrow=c(3,3))
-for(i in 1:9)
-  plot(silhouette2[[i]])
-dev.off()
-
-c1 <- as.data.frame(cbind(autok2=cutree(hccol, k = 2),autok3=cutree(hccol, k = 3),autok4=cutree(hccol, k = 4)))
-
-# quick look at qPCR genes
+# qPCR genes
 Cfam3.genes[which(Cfam3.genes$gene_id %in% qPCRGenesTab$ensembl_gene_id)]
 
 # changed region to TSS +/-1Kb 
@@ -300,47 +260,26 @@ gr3 <- gr3[which(mcols(gr3)$smt_diff_FDR <= 0.01)]
 df3 <- as(log2(mcols(gr3)[, c("control_smt_val")] + 1), "matrix")
 df3 <- rbind(df3, as(log2(mcols(gr3)[, c("treat_smt_val")] + 1), "matrix"))
 df3 <- data.frame(df3)
-df3$var <- c(rep(paste("MDCK - Untreated [N = ", length(gr3), "]", sep = ""), length(gr3)), rep(paste("MDCK - TGFb-treated [N = ", length(gr3), "]", sep = ""), length(gr3)))
+df3$var <- c(rep(paste("Epithelial [N = ", length(gr3), "]", sep = ""), length(gr3)), rep(paste("Mesenchymal [N = ", length(gr3), "]", sep = ""), length(gr3)))
 histo3 <- ggplot(df3,aes(x=df3, group=var))
 pdf("Histogram_H2AZ_nucleosome_500TSS0_all_genes_FDR0.01.pdf", height = 10, width = 10)
 histo3 + geom_histogram(alpha = 0.6, position = "identity", aes(y = ..density..)) + geom_density(alpha = 0.4, position = "identity", aes(color = var))
 dev.off()
-pdf("Boxplot_H2AZ_nucleosome_500TSS0_aPCR_genes_FDR0.01.pdf", height = 10, width = 10)
+pdf("Boxplot_H2AZ_nucleosome_1000TSS1000_aPCR_genes_FDR0.01.pdf", height = 10, width = 10)
 histo3 + geom_boxplot(position = "identity", aes(y = df3, x= var)) + labs(title = "qPCR genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", x = "Sample", y = "Summit occupation (BG-subtracted) [log2]") + scale_y_continuous(limits=c(4, 16))
 dev.off()
 
 df3 <- as(mcols(gr3)[,c("control_smt_val", "treat_smt_val", "symbol")], "data.frame")
-pdf("Heatmap_H2AZ_nucleosome_500TSS0_qPCR_genes_FDR0.01.pdf", height = 10, width = 10)
+colnames(df3)[1:2] <-  c("Epithelial", "Mesenchymal")
+pdf("Heatmap_H2AZ_nucleosome_1000TSS1000_qPCR_genes_FDR0.01.pdf", height = 10, width = 10)
 heatmap2 <- heatmap.3(as.matrix(log2(df3[,c(1,2)] + 1)), 
                       trace = "none", 
                       cexCol = 0.6, 
                       main = "qPCR genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", 
                       hclustfun=function(x) hclust(x,method="ward.D"),
-                      labRow = df3[,3])
+                      labRow = df3[,3],
+                      col = brewer.pal(9, "YlOrRd"))
 dev.off()
-
-#---------------plotting coverage maps based on DANPOS2 normalized data------------
-gr.TGFb <- subsetByOverlaps(gr.TGFb_H2AZ_ChIP_bgsub_Fnor, gr.which)
-gr.WT <- subsetByOverlaps(gr.WT_H2AZ_ChIP_bgsub_Fnor, gr.which)
-
-dT.TGFb <- DataTrack(subsetByOverlaps(gr.TGFb_H2AZ_ChIP_bgsub_Fnor, gr.which), type = "histogram")
-dT.WT <- DataTrack(subsetByOverlaps(gr.WT_H2AZ_ChIP_bgsub_Fnor, gr.which), type = "histogram")
-i <- 2
-biomTrack <- BiomartGeneRegionTrack(genome = "canFam3", 
-                                    chromosome = as(seqnames(gr.mesenchymalMarkers), "character")[i],
-                                    start = as.integer(start(gr.mesenchymalMarkers[i]), "integer"),
-                                    end = as.integer(end(gr.mesenchymalMarkers[i]), "integer"),
-                                    name = paste(mcols(gr.mesenchymalMarkers[i])$hgnc_symbol, "transcript",  mcols(gr.mesenchymalMarkers[i])$ensembl_transcript_id, sep = " "),
-                                    mart = dog)
-
-aT1 <- AnnotationTrack(gr.mesenchymalMarkers[i])
-
-plotTracks(list(aT1, dT.WT, dT.TGFb))
-
-
-#-----------extracting regions of EMT-associated genes (FDR <= 0.01), treatment > control------------
-gr1 <- subsetByOverlaps(danpos2.anno, promoters(gr.MSigDB.EMT_associated.cfam, upstream = 500, downstream = 0))
-gr1[which(gr1$treat_smt_val > 5 & gr1$control_smt_val <= 1)]
 
 # nucleosomes -1000/500+ TSS -----------------------------------------------
 gr1 <- subsetByOverlaps(danpos2.anno, promoters(Cfam3.genes, upstream = 1500, downstream = 500))
@@ -394,3 +333,34 @@ gr.which <- promoters(Cfam3.genes, upstream = 40000, downstream = 40000)
 gr.which <- trim(gr.which)
 at.danpos2 <- AnnotationTrack(subsetByOverlaps(gr.danpos2.results, gr.which), shape = "box")
 
+#---------------plotting coverage maps based on DANPOS2 normalized data------------
+gr.TGFb <- subsetByOverlaps(gr.TGFb_H2AZ_ChIP_bgsub_Fnor, gr.which)
+gr.WT <- subsetByOverlaps(gr.WT_H2AZ_ChIP_bgsub_Fnor, gr.which)
+
+dT.TGFb <- DataTrack(subsetByOverlaps(gr.TGFb_H2AZ_ChIP_bgsub_Fnor, gr.which), type = "histogram")
+dT.WT <- DataTrack(subsetByOverlaps(gr.WT_H2AZ_ChIP_bgsub_Fnor, gr.which), type = "histogram")
+i <- 2
+biomTrack <- BiomartGeneRegionTrack(genome = "canFam3", 
+                                    chromosome = as(seqnames(gr.mesenchymalMarkers), "character")[i],
+                                    start = as.integer(start(gr.mesenchymalMarkers[i]), "integer"),
+                                    end = as.integer(end(gr.mesenchymalMarkers[i]), "integer"),
+                                    name = paste(mcols(gr.mesenchymalMarkers[i])$hgnc_symbol, "transcript",  mcols(gr.mesenchymalMarkers[i])$ensembl_transcript_id, sep = " "),
+                                    mart = dog)
+
+aT1 <- AnnotationTrack(gr.mesenchymalMarkers[i])
+
+plotTracks(list(aT1, dT.WT, dT.TGFb))
+# # trying to determine the different clusters, so that we can identify genes with strong differential H2A.Z occupation
+# hcrow2 <- as.hclust(heatmap2$rowDendrogram)
+# silhouette2 <- list()
+# for(i in 1:9){
+#   silhouette2[[i]] <- silhouette(cutree(hcrow2, k = i+1), daisy(as.matrix(log2(df2 + 1))))
+# }
+# 
+# pdf("shilhouetteHeatAutosome.pdf",pointsize=10, height=8,width=8)
+# par(mfrow=c(3,3))
+# for(i in 1:9)
+#   plot(silhouette2[[i]])
+# dev.off()
+# 
+# c1 <- as.data.frame(cbind(autok2=cutree(hccol, k = 2),autok3=cutree(hccol, k = 3),autok4=cutree(hccol, k = 4)))
