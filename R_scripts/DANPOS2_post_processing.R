@@ -52,32 +52,7 @@ danpos2.results <- read.table("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/
                               header = T, 
                               as.is = T,
                               sep = "\t")
-
 gr.danpos2.results <- GRanges(danpos2.results$chr, IRanges(danpos2.results$start, danpos2.results$end), strand = "*", danpos2.results[, c(4:23)])
-# TODO:
-# convert .wig files to .bw and import
-#gr.TGFb_H2AZ_ChIP_bgsub_Fnor <- import("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT_147bp/result/pooled//pooled/TGFb_ChIP.bgsub.Fnor.smooth.bw") 
-#gr.WT_H2AZ_ChIP_bgsub_Fnor <- import("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT/pooled/WT_ChIP.bgsub.Fnor.smooth.bw")
-#gr.TGFb_vs_WT_diff <- import("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT/diff/TGFb_vs_WT.pois_diff.bw")
-
-heatmap.3(mcols(subsetByOverlaps(gr.danpos2.results, gr.MSigDB.EMT_associated.cfam.tss1500))[,c("control_smt_val", "treat_smt_val")])
-
-# create a histogram of the complete data (here log2 transformed)
- df1 <- as(log2(danpos2.results[, c("control_smt_val")] + 0.0001), "matrix")
-#df1 <- as((danpos2.results[, c("control_smt_val")]), "matrix")
-df1 <- rbind(df1, as(log2(danpos2.results[, c("treat_smt_val")] + 0.0001), "matrix"))
-# df1 <- rbind(df1, as((danpos2.results[, c("treat_smt_val")]), "matrix"))
-
-df1 <- data.frame(df1)
-df1$var <- c(rep("ctrl", nrow(danpos2.results)), rep("treat", nrow(danpos2.results)))
-hm1 <- ggplot(df1,aes(x=df1, group=var))
-hm1 + geom_histogram(alpha = 0.6, position = "identity", aes(y = ..density..)) + geom_density(alpha = 0.4, position = "identity", aes(color = var))
-
-# histogram of summit counts of nucleosomes located in TSS+/-1500 of TGFb-induced EMT genes
-df2 <- as(mcols(subsetByOverlaps(gr.danpos2.results, gr.MSigDB.TGFb_induced_EMT.cfam.tss1500))[,c("control_smt_val", "treat_smt_val")], "data.frame")
-rownames(df2) <- mcols(subsetByOverlaps(gr.danpos2.results, gr.MSigDB.TGFb_induced_EMT.cfam.tss1500))$row_id
-heatmap.3(as.matrix(log2(df2 + 1)), trace = "none")
-
 
 # Using Gviz for visualization of some of the data
 i <- 2
@@ -130,6 +105,9 @@ seqinfo(danpos2.anno, force = T) <- seqinfo(Cfam3.genes)
 
 # filter out peak positions that do overlap with annotated repeats
 danpos2.anno <- danpos2.anno[!overlapsAny(danpos2.anno, Cfam3.repeats)]
+
+# filter out nucleosomes with low coverage
+danpos2.anno.minCov <- danpos2.anno[which(danpos2.anno$control_smt_val > 10 & danpos2.anno$treat_smt_val > 10)]
 
 # only consider peaks/nucleosome position upstream or on the annotated TSS
 upTSS <- which(mcols(danpos2.anno)$insideFeature %in% c("overlapStart", "upstream"))
@@ -387,4 +365,32 @@ hm <- heatmap.3(as.matrix(df),
                 symkey = F,
                 main = "All Genes [-1000/500+ bp TSS]\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.001", 
                 hclustfun=function(x) hclust(x,method="ward.D"))
+
+# TODO:
+# convert .wig files to .bw and import
+#gr.TGFb_H2AZ_ChIP_bgsub_Fnor <- import("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT_147bp/result/pooled//pooled/TGFb_ChIP.bgsub.Fnor.smooth.bw") 
+#gr.WT_H2AZ_ChIP_bgsub_Fnor <- import("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT/pooled/WT_ChIP.bgsub.Fnor.smooth.bw")
+#gr.TGFb_vs_WT_diff <- import("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/TGFb_vs_WT/diff/TGFb_vs_WT.pois_diff.bw")
+
+heatmap.3(mcols(subsetByOverlaps(gr.danpos2.results, gr.MSigDB.EMT_associated.cfam.tss1500))[,c("control_smt_val", "treat_smt_val")])
+
+# create a histogram of the complete data (here log2 transformed)
+df1 <- as(log2(danpos2.results[, c("control_smt_val")] + 0.0001), "matrix")
+#df1 <- as((danpos2.results[, c("control_smt_val")]), "matrix")
+df1 <- rbind(df1, as(log2(danpos2.results[, c("treat_smt_val")] + 0.0001), "matrix"))
+# df1 <- rbind(df1, as((danpos2.results[, c("treat_smt_val")]), "matrix"))
+
+df1 <- data.frame(df1)
+df1$var <- c(rep("ctrl", nrow(danpos2.results)), rep("treat", nrow(danpos2.results)))
+hm1 <- ggplot(df1,aes(x=df1, group=var))
+hm1 + geom_histogram(alpha = 0.6, position = "identity", aes(y = ..density..)) + geom_density(alpha = 0.4, position = "identity", aes(color = var))
+
+# histogram of summit counts of nucleosomes located in TSS+/-1500 of TGFb-induced EMT genes
+df2 <- as(mcols(subsetByOverlaps(gr.danpos2.results, gr.MSigDB.TGFb_induced_EMT.cfam.tss1500))[,c("control_smt_val", "treat_smt_val")], "data.frame")
+rownames(df2) <- mcols(subsetByOverlaps(gr.danpos2.results, gr.MSigDB.TGFb_induced_EMT.cfam.tss1500))$row_id
+heatmap.3(as.matrix(log2(df2 + 1)), trace = "none")
+
+gr.which <- promoters(Cfam3.genes, upstream = 40000, downstream = 40000)
+gr.which <- trim(gr.which)
+at.danpos2 <- AnnotationTrack(subsetByOverlaps(gr.danpos2.results, gr.which), shape = "box")
 

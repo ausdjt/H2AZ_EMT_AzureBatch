@@ -39,6 +39,13 @@ filters <- listFilters(dog)
 att <- listAttributes(dog)
 human.attributes <- listAttributes(human)
 
+
+# create TxDB object from GTF ---------------------------------------------
+TxDb.Cfam3.Ensembl <- makeTxDbFromGFF("~/Data/Annotations/CanFam3/Ensembl/Canis_familiaris.CanFam3.1.83.chr.gtf.gz", 
+                                      organism = "Canis familiaris", 
+                                      chrominfo = chromInfo)
+
+
 #---------------Mesenchymal Markers---------------------------------------------------
 mesenchymalMarkers<- c("FN1" = "ENSCAFG00000014345", 
                        "ZEB1" = "ENSCAFG00000004023", 
@@ -112,6 +119,7 @@ gr.mesenchymalMarkers.genes$hgnc_symbol[2:3] <- paste(gr.mesenchymalMarkers.gene
 
 # top 5 EMT upregulated genes
 load("~/Data/Tremethick/EMT/GenomeWide/gr.top5EMTUp.rda")
+load("~/Data/Tremethick/EMT/GenomeWide/gr.top5EMTDown.rda")
 
 #---------------Epithelial Markers---------------------------------------------------
 epithelialMarkers <- c("CDH1" = "ENSCAFG00000020305",
@@ -193,10 +201,13 @@ gr.epithelialMarkers.genes <-  GRanges(seqnames = epithelialMarkers.genes.tab$ch
 
 #-------------put together GRanges object for reading BAM files---------------
 # change this to genes instead of transcripts
+load("~/Data/Tremethick/EMT/GenomeWide/gr.top5EMTUp.rda")
+load("~/Data/Tremethick/EMT/GenomeWide/gr.top5EMTDown.rda")
 gr.which <- c(promoters(reduce(gr.mesenchymalMarkers.genes), upstream = 400000, downstream = 400000),
               promoters(reduce(gr.epithelialMarkers.genes), upstream = 400000, downstream = 400000),
-              promoters(reduce(gr.top5EMTUp), upstream = 40000, downstream = 40000))
-reduce(gr.which)
+              promoters(reduce(gr.top5EMTUp), upstream = 40000, downstream = 40000),
+              promoters(reduce(gr.top5EMTDown), upstream = 40000, downstream = 40000))
+gr.which <- reduce(gr.which)
 # setting chromosome info
 seqlevels(gr.which) <- paste("chr", seqlevels(gr.which), sep = "")
 seqinfo(gr.which, force = T) <- seqinfo(BSgenome.Cfamiliaris.UCSC.canFam3)[seqlevels(gr.which)]
@@ -216,23 +227,20 @@ seqlevels(gr.which) <- gsub("chr", "", seqlevels(gr.which))
 # on GDU cluster
 #path = "/Volumes/MHS/researchdata/JCSMR/TremethickLab/Illumina_Sequencing/MDCK_ChIPSeq/"
 
-#path.input = "/Volumes/gduserv/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_marked/"
-path.input = "~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_marked/"
-#path.h2az = "/Volumes/gduserv/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_marked/"
-path.h2az = "~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_marked/"
+# changed it to use BAM files without duplicates
+path.input = "~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/"
+path.h2az = "~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/"
 
-suffix = ".Q10.sorted.MkDup.bam"
+suffix = ".Q10.sorted.DeDup.bam"
 
 files.input = c("Input_TGFb_rep1_S7", "Input_TGFb_rep2_S8", "Input_WT_rep1_S5", "Input_WT_rep2_S6")
 files.h2az = c("H2AZ_TGFb_rep1_S3", "H2AZ_TGFb_rep2_S4", "H2AZ_WT_rep1_S1", "H2AZ_WT_rep2_S2")
-#files.input <- c("Input_TGFb", "Input_WT")
-#files.h2az <- c("H2AZ_TGFb", "H2AZ_WT")
 
 # parameters for reading in BAM files
 # flag <- scanBamFlag(isProperPair = T, isPaired = T, isDuplicate = F, isSecondaryAlignment = F)#, isFirstMateRead = T, isSecondMateRead = F)
 flag <- scanBamFlag(isProperPair = T, isDuplicate = F)
 SBParam.all <- ScanBamParam(flag = flag, simpleCigar = T, what = c("rname", "strand", "pos", "qwidth")) #
-SBParam <- ScanBamParam(flag = flag, simpleCigar = T, what = c("rname", "strand", "pos", "qwidth")) #, which = gr.which)
+SBParam <- ScanBamParam(flag = flag, simpleCigar = T, what = c("rname", "strand", "pos", "qwidth"), which = gr.which)
 
 counts.input <- lapply(files.input, function(x){
   fn <- paste(path.input, x, suffix, sep = "")
@@ -310,7 +318,7 @@ displayPars(dT.cov.input.emt_markers.tgfb) <- dpList
 displayPars(dT.cov.h2az.emt_markers.wt) <- dpList
 displayPars(dT.cov.h2az.emt_markers.tgfb) <- dpList
 
-save(file = "genomeWide.50kbTSS.DataTracks.rda", list = c("dT.cov.input.emt_markers.wt", "dT.cov.input.emt_markers.tgfb", "dT.cov.h2az.emt_markers.wt", "dT.cov.h2az.emt_markers.tgfb"))
+save(file = "/Users/u1001407/Data/Tremethick/EMT/genomeWide.50kbTSS.DataTracks.rda", list = c("dT.cov.input.emt_markers.wt", "dT.cov.input.emt_markers.tgfb", "dT.cov.h2az.emt_markers.wt", "dT.cov.h2az.emt_markers.tgfb"))
 
 
 # load prepared data  -----------------------------------------------------
@@ -359,12 +367,13 @@ save(biomTrack, file = "biomTrack.Cfam3.Ensembl.genes.rda")
 axisTrack <- GenomeAxisTrack()
 
 #gr.plot <- promoters(gr.mesenchymalMarkers.genes, up = 20000, down = 20000)
-#gr.plot <- promoters(gr.epithelialMarkers.genes, upstream = 20000, downstream = 20000)
-gr.plot <- promoters(gr.top5EMTUp, upstream = 2000, downstream = 2000)
+#gr.plot <- promoters(gr.epithelialMarkers.genes, upstream = 2000, downstream = 2000)
+#gr.plot <- promoters(gr.top5EMTUp, upstream = 2000, downstream = 2000)
+gr.plot <- promoters(gr.top5EMTDown, upstream = 2000, downstream = 2000)
 
 suffix = "TSS_2kb"
 mainDir = "~/Data/Tremethick/EMT/GenomeWide/Publication_plots/"
-subDir = "Top 5 EMT markers up"
+subDir = "Top 5 EMT markers down DeDup"
 
 if (file.exists(paste(mainDir, subDir, sep = ""))){
   setwd(file.path(mainDir, subDir))
@@ -407,7 +416,7 @@ for (i in 1:length(gr.plot)){
   pdf(paste(gr.plot$hgnc_symbol[i], "_", suffix,".pdf", sep = ""))
   plotTracks(list(axisTrack,
                   biomTrack.ensembl,
-  #                aT.TSS,
+                  #at.danpos2,
                   dT.cov.input.emt_markers.wt, 
                   dT.cov.h2az.emt_markers.wt,
                   dT.cov.input.emt_markers.tgfb, 

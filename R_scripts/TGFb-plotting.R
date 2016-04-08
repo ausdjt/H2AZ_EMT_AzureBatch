@@ -7,12 +7,21 @@ load("/Users/u1001407/Data/Tremethick/EMT/genomeWide.50kbTSS.DataTracks.rda")
 
 # TGFb-1 plotting
 axisTrack <- GenomeAxisTrack()
-TxDb.Cfam3.Ensembl <- makeTxDbFromGFF("/Volumes/gduserv/Data/Annotations/CanFam3/TGFB1.gtf")
+TxDb.Cfam3.Ensembl <- makeTxDbFromGFF("~/mount/gduserv/Data/Annotations/CanFam3/TGFB1.gtf")
 biomTrack <- GeneRegionTrack(TxDb.Cfam3.Ensembl, showId = T, geneSymbol = T, showExonId = F, name = "", stacking = "hide")
-displayPars(biomTrack) <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white")
+displayPars(biomTrack) <- list("fontcolor.title" = "black", 
+                               "background.title" = "white", 
+                               "col.axis" = "black", 
+                               "col.frame" = "white", 
+                               "fill" = "black",
+                               "fontcolor.group" = "black",
+                               "protein_coding" = "black",
+                               "utr3" = "black",
+                               "utr5" = "black",
+                               "col.line" = "darkgrey",
+                               "cex.group" = 0.5)
 
-
-dpList <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white", "cex.title" = 0.6, rotation.title = 270, cex.axis = 0.6)
+dpList <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white", "cex.title" = 0.5, rotation.title = 270, cex.axis = 0.6, lwd.title = 1)
 
 displayPars(dT.cov.input.emt_markers.wt) <- dpList
 displayPars(dT.cov.input.emt_markers.tgfb) <- dpList
@@ -21,7 +30,7 @@ displayPars(dT.cov.h2az.emt_markers.tgfb) <- dpList
 displayPars(aT.danpos2) <- dpList
 
 # actual plotting
-pdf("H2AZ_occupancy_TGFb-1 - Version 2015-12-09.pdf", width = 8.5, height = 12)
+pdf("H2AZ_occupancy_TGFb-1 - Version 2016-04-07.pdf", width = 8.5, height = 12)
 grid.newpage()
 vp <- viewport(width = 1, height = 1)
 pushViewport(vp)
@@ -52,7 +61,7 @@ displayPars(dT.cov.h2az.emt_markers.tgfb) <- list(ylim = c(0,max.y.tss))
 
 plotTracks(list(axisTrack,
                 biomTrack,
-                aT.TSS,
+                aT.ap1Sites,
                 dT.cov.input.emt_markers.wt, 
                 dT.cov.h2az.emt_markers.wt,
                 dT.cov.input.emt_markers.tgfb, 
@@ -85,7 +94,7 @@ displayPars(dT.cov.h2az.emt_markers.tgfb) <- list(ylim = c(0,max.y.tss))
 displayPars(biomTrack) <- list(stacking = "dense")
 
 plotTracks(list(biomTrack,
-#               aT.danpos2,
+                aT.ap1Sites,
                 dT.cov.input.emt_markers.wt, 
                 dT.cov.h2az.emt_markers.wt,
                 dT.cov.input.emt_markers.tgfb, 
@@ -100,7 +109,7 @@ extend.left = 0,
 main = "",
 strand = "*",
 cex.main = 0.5,
-sizes = c(0.04, 0.24, 0.24, 0.24, 0.24),
+sizes = c(0.02, 0.02, 0.24, 0.24, 0.24, 0.24),
 scale = 0.5,
 add = TRUE)
 upViewport()
@@ -117,7 +126,7 @@ displayPars(dT.cov.h2az.emt_markers.wt) <- list(ylim = c(0,5))
 displayPars(dT.cov.h2az.emt_markers.tgfb) <- list(ylim = c(0,5))
 displayPars(biomTrack) <- list(stacking = "dense")
 plotTracks(list(biomTrack,
-#                axisTrack,
+                aT.ap1Sites,
                 dT.cov.input.emt_markers.wt, 
                 dT.cov.h2az.emt_markers.wt,
                 dT.cov.input.emt_markers.tgfb, 
@@ -132,7 +141,7 @@ extend.left = 0,
 main = "",
 strand = "*",
 cex.main = 0.5,
-sizes = c(0.04, 0.24, 0.24, 0.24, 0.24),
+sizes = c(0.02, 0.02, 0.24, 0.24, 0.24, 0.24),
 scale = 0.5,
 add = TRUE)
 
