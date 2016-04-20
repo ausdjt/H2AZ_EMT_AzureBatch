@@ -6,6 +6,8 @@ library("biomaRt")
 library("GenomicRanges")
 library("GenomicAlignments")
 library(BSgenome.Cfamiliaris.UCSC.canFam3)
+require(grid)
+require(gridBase)
 
 options(ucscChromosomeNames=FALSE)
 
@@ -171,29 +173,41 @@ for (i in 1:length(gr.plot)){
                                               "utr5" = "black",
                                               "col.line" = "darkgrey",
                                               name = NULL)
-  #displayPars(biomTrack.ensembl) <- list("fontcolor.title" = "black", "background.title" = "white", "col.axis" = "black", "col.frame" = "white", "fill" = "black")
-  
-  pdf(paste(gr.plot$hgnc_symbol[i], "_", suffix,".pdf", sep = ""))
-  plotTracks(list(axisTrack,
-                  biomTrack.ensembl,
-                  dT.cov.input.wt, 
-                  dT.cov.h2az.wt,
-                  dT.cov.input.tgfb, 
-                  dT.cov.h2az.tgfb
-  ),
-  chromosome = as(seqnames(gr.plot), "character")[i],
-  from = as.integer(start(gr.plot[i]), "integer"),
-  to = as.integer(end(gr.plot[i]), "integer"),
-  extend.right = 1000,
-  extend.left = 1000,
-  main = paste(gr.plot$hgnc_symbol[i], " (", width(gr.plot[i]), "bp)", sep = ""),
-  strand = "*",
-  cex.main = 0.5,
-  #sizes = c(0.02, 0.06, 0.04, 0.04, 0.04, 0.2, 0.2, 0.2, 0.2),
-  sizes = c(0.02, 0.04, 0.235, 0.235, 0.235, 0.235),
-  scale = 0.5)
-  dev.off()
+ 
+  #
+  if (! gr.plot[i]$hgnc_symbol == ""){
+    m3 <- melt(m2[gr.plot[i]$hgnc_symbol,])
+    m3$Type <- c(rep("Epithelial", 4), rep("Mesenchymal", 4))
+    p <- ggplot(m3, aes(factor(Type), value)) + geom_boxplot()
+    pdf(paste(gr.plot$hgnc_symbol[i], "_", suffix,".pdf", sep = ""))
+    grid.newpage()
+    pushViewport(viewport(layout = Layout))
+    pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 1))
+    plotTracks(list(axisTrack,
+                    biomTrack.ensembl,
+                    dT.cov.input.wt, 
+                    dT.cov.h2az.wt,
+                    dT.cov.input.tgfb, 
+                    dT.cov.h2az.tgfb
+    ),
+    chromosome = as(seqnames(gr.plot), "character")[i],
+    from = as.integer(start(gr.plot[i]), "integer"),
+    to = as.integer(end(gr.plot[i]), "integer"),
+    extend.right = 1000,
+    extend.left = 1000,
+    main = paste(gr.plot$hgnc_symbol[i], " (", width(gr.plot[i]), "bp)", sep = ""),
+    strand = "*",
+    cex.main = 0.5,
+    sizes = c(0.02, 0.04, 0.235, 0.235, 0.235, 0.235),
+    scale = 0.5,
+    add = TRUE)
+    upViewport()
+    pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
+    print(p, newpage = F)
+    dev.off()
+  }
 }
+
 setwd('~/Data/Tremethick/EMT/GenomeWide/')
 
 
