@@ -95,10 +95,10 @@ mesenchymalMarkers.Hsap.homologs.EntrezIDs$marker <- "mesenchymal"
 
 gr.mesenchymalMarkers <- GRanges(seqnames = mesenchymalMarkers.transcripts.tab$chromosome_name, 
                                 IRanges(mesenchymalMarkers.transcripts.tab$start_position, 
-                                        mesenchymalMarkers.transcripts.tab$end_position), 
+                                        mesenchymalMarkers.transcripts.tab$end_position,
+                                        names = mesenchymalMarkers.transcripts.tab$ensembl_transcript_id), 
                                 strand = c("-", "+")[match(mesenchymalMarkers.transcripts.tab$strand, c("-1", "1"))],
                                 mesenchymalMarkers.transcripts.tab[,c("ensembl_gene_id", 
-                                                                      "ensembl_transcript_id", 
                                                                       "hgnc_symbol", 
                                                                       "transcript_start", 
                                                                       "external_transcript_name", 
@@ -108,10 +108,10 @@ gr.mesenchymalMarkers$hgnc_symbol[3:5] <- paste(gr.mesenchymalMarkers$hgnc_symbo
 
 gr.mesenchymalMarkers.genes <-  GRanges(seqnames = mesenchymalMarkers.genes.tab$chromosome_name, 
                                         IRanges(mesenchymalMarkers.genes.tab$start_position, 
-                                                mesenchymalMarkers.genes.tab$end_position), 
+                                                mesenchymalMarkers.genes.tab$end_position,
+                                                names = mesenchymalMarkers.genes.tab$ensembl_gene_id), 
                                         strand = c("-", "+")[match(mesenchymalMarkers.genes.tab$strand, c("-1", "1"))],
-                                        mesenchymalMarkers.genes.tab[,c("ensembl_gene_id", 
-                                                                        "entrezgene", 
+                                        mesenchymalMarkers.genes.tab[,c("entrezgene", 
                                                                         "hgnc_symbol", 
                                                                         "description", 
                                                                         "marker")])
@@ -167,10 +167,10 @@ epithelialMarkers.Hsap.homologs.EntrezIDs$marker <- "epithelial"
 
 gr.epithelialMarkers <- GRanges(seqnames = epithelialMarkers.transcripts.tab$chromosome_name, 
                                 IRanges(epithelialMarkers.transcripts.tab$start_position, 
-                                        epithelialMarkers.transcripts.tab$end_position), 
+                                        epithelialMarkers.transcripts.tab$end_position,
+                                        names = epithelialMarkers.transcripts.tab$ensembl_transcript_id), 
                                 strand = c("-", "+")[match(epithelialMarkers.transcripts.tab$strand, c("-1", "1"))],
                                 epithelialMarkers.transcripts.tab[,c("ensembl_gene_id", 
-                                                                     "ensembl_transcript_id", 
                                                                      "hgnc_symbol", 
                                                                      "transcript_start", 
                                                                      "marker",
@@ -178,10 +178,10 @@ gr.epithelialMarkers <- GRanges(seqnames = epithelialMarkers.transcripts.tab$chr
 
 gr.epithelialMarkers.genes <-  GRanges(seqnames = epithelialMarkers.genes.tab$chromosome_name, 
                                         IRanges(epithelialMarkers.genes.tab$start_position, 
-                                                epithelialMarkers.genes.tab$end_position), 
+                                                epithelialMarkers.genes.tab$end_position,
+                                                names = epithelialMarkers.genes.tab$ensembl_gene_id), 
                                         strand = c("-", "+")[match(epithelialMarkers.genes.tab$strand, c("-1", "1"))],
-                                        epithelialMarkers.genes.tab[,c("ensembl_gene_id", 
-                                                                       "entrezgene",
+                                        epithelialMarkers.genes.tab[,c("entrezgene",
                                                                        "hgnc_symbol", 
                                                                        "marker")])
 
@@ -291,7 +291,7 @@ coverage.h2az <- lapply(files.h2az, function(x){
 })
 names(coverage.h2az) <- files.h2az
 
-# calculate coverage from replicates, applying scaling factor (RPM)
+# calculate coverage from replicates
 cov.input.emt_markers.wt <- (coverage.input[["Input_WT_rep1_S5"]] + coverage.input[["Input_WT_rep2_S6"]]) /2
 cov.input.emt_markers.tgfb <- (coverage.input[["Input_TGFb_rep1_S7"]] + coverage.input[["Input_TGFb_rep2_S8"]]) /2
 cov.h2az.emt_markers.wt <- (coverage.h2az[["H2AZ_WT_rep1_S1"]] + coverage.h2az[["H2AZ_WT_rep2_S2"]]) / 2
@@ -303,6 +303,13 @@ bA.cov.input.emt_markers.wt <- calculateCoverage(step = 1, gr.which, cov.input.e
 bA.cov.input.emt_markers.tgfb <- calculateCoverage(step = 1, gr.which, cov.input.emt_markers.tgfb, func = "mean")
 bA.cov.h2az.emt_markers.wt <- calculateCoverage(step = 1, gr.which, cov.h2az.emt_markers.wt, func = "mean")
 bA.cov.h2az.emt_markers.tgfb <- calculateCoverage(step = 1, gr.which, cov.h2az.emt_markers.tgfb, func = "mean")
+
+# per samples coverage
+bA.cov.h2az.emt_markers.tgfb1 <- calculateCoverage(step = 1, gr.which, coverage.h2az[["H2AZ_WT_rep1_S1"]], func = "mean")
+bA.cov.h2az.emt_markers.tgfb2 <- calculateCoverage(step = 1, gr.which, coverage.h2az[["H2AZ_WT_rep2_S2"]], func = "mean")
+bA.cov.h2az.emt_markers.wt1 <- calculateCoverage(step = 1, gr.which, coverage.h2az[["H2AZ_TGFb_rep1_S3"]], func = "mean")
+bA.cov.h2az.emt_markers.wt2 <- calculateCoverage(step = 1, gr.which, coverage.h2az[["H2AZ_TGFb_rep2_S4"]], func = "mean")
+
 
 #----------creating DataTrack objects for visualization using Gviz------------------------------
 # ['#d7191c','#fdae61','#abd9e9','#2c7bb6']
