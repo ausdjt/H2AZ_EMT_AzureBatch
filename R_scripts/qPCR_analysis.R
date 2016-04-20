@@ -140,9 +140,10 @@ qDE.limma.fit <- limmaCtDataMod(dCT.norm2, design = design, contrasts = contrast
 qDE.limma.tab <- qDE.limma.fit$`topTable`
 qDE.limma.tab$genes <- rownames(qDE.limma.tab)
 
-write.csv(qDE.limma.tab, "qDE.limma.tab.TGFb_treated.csv")
-write.csv(qDE.limma.tab[which(qDE.limma.tab$logFC >= 0), ], file = "qDE.limma.tab.up.TGFb_treated.csv")
-write.csv(qDE.limma.tab[which(qDE.limma.tab$logFC < 0), ], file = "qDE.limma.tab.down.TGFb_treated.csv")
+save(qDE.limma.tab, file = "~/Data/Tremethick/EMT/MDCK qPCR data/qDE.limma.tab.rda")
+write.csv(qDE.limma.tab, "~/Data/Tremethick/EMT/MDCK qPCR data/qDE.limma.tab.TGFb_treated.csv")
+write.csv(qDE.limma.tab[which(qDE.limma.tab$logFC >= 0), ], file = "~/Data/Tremethick/EMT/MDCK qPCR data/qDE.limma.tab.up.TGFb_treated.csv")
+write.csv(qDE.limma.tab[which(qDE.limma.tab$logFC < 0), ], file = "~/Data/Tremethick/EMT/MDCK qPCR data/qDE.limma.tab.down.TGFb_treated.csv")
 
 
 gr.top5EMTUp <- gr.qPCRGenesPositions[which(gr.qPCRGenesPositions$hgnc_symbol %in% qDE.limma.tab[order(qDE.limma.tab$logFC, decreasing = T),]$genes[1:5])]
