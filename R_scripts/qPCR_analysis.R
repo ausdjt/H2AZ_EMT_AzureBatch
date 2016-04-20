@@ -46,10 +46,9 @@ qPCRGenesTab[qPCRGenes.control,]$type <- "CONTROL"
 qPCRGenesPositions <- getBM(attributes = c("ensembl_gene_id", "chromosome_name", "start_position", "end_position", "strand", "hgnc_symbol"), filters = "ensembl_gene_id", values = qPCRGenesTab$ensembl_gene_id, dog)
 rownames(qPCRGenesPositions) <- qPCRGenesPositions$ensembl_gene_id
 gr.qPCRGenesPositions <- GRanges(seqnames = qPCRGenesPositions$chromosome_name, 
-                                 IRanges(qPCRGenesPositions$start_position, qPCRGenesPositions$end_position),
+                                 IRanges(qPCRGenesPositions$start_position, qPCRGenesPositions$end_position, names = qPCRGenesPositions$ensembl_gene_id),
                                  strand = c("+", "-")[match(qPCRGenesPositions$strand, c(1, -1))],
-                                 hgnc_symbol = qPCRGenesPositions$hgnc_symbol,
-                                 ensembl_gene_id = qPCRGenesPositions$ensembl_gene_id)
+                                 hgnc_symbol = qPCRGenesPositions$hgnc_symbol)
 
 
 # Analysis of TGFb-treatment experiment -----------------------------------
@@ -87,7 +86,7 @@ qPCRdata.raw <- readCtData(files$Files,
 pData(qPCRdata.raw) <- data.frame(Sample = c("Control", "Control", "Control", "Control", "TGFb-treated", "TGFb-treated", "TGFb-treated", "TGFb-treated"), Replicate = rep(1:4,2 ))
 
 g <- featureNames(qPCRdata.raw)[1:10]
-g <- c("TGFB1", "MMP9", "CDH1")
+g <- c("TGFB1", "MMP9", "CDH1", "TGFB2", "TGFB3")
 plotCtOverview(qPCRdata.raw, calibrator = "Control", genes = g, conf.int = T, ylim = c(0, 2), groups = c("Control", "Control", "Control", "Control", "TGFb-treated", "TGFb-treated", "TGFb-treated", "TGFb-treated"))
 
 sr.norm <- normalizeCtData(qPCRdata.raw, norm = "scale.rank")
@@ -111,9 +110,12 @@ plotCtPairs(sr.norm, col = "type", diag = TRUE)
 plotCtPairs(dCT.norm, col = "type", diag = TRUE)
 
 plotCVBoxes(qPCRdata.raw, stratify = "type")
+plotCVBoxes(sr.norm, stratify = "type")
+plotCVBoxes(dCT.norm, stratify = "type")
 
 plotCtHeatmap(qPCRdata.raw, gene.names = "", dist = "euclidean")
-plotCtHeatmap(dCT.norm, gene.names = "", dist = "euclidean")
+plotCtHeatmap(dCT.norm, dist = "euclidean")
+
 clusterCt(dCT.norm, type = "samples")
 clusterCt(dCT.norm, type = "genes")
 cluster.list <- clusterCt(dCT.norm, type = "genes", n.cluster = 4, cex = 0.2)
@@ -124,8 +126,9 @@ groups <- as.factor(c("Control", "Control", "Control", "Control", "TGFb-treated"
 qDE.ttest <- ttestCtData(dCT.norm, groups = groups)
 qDE.ttest$genes <- as(qDE.ttest$genes, "character")
 qDE.ttest$ensembl_gene_id <- qPCRGenesTab[qDE.ttest$genes, "ensembl_gene_id"]
-qDE.ttest <- qDE.ttest[- which(is.na(qDE.ttest$ensembl_gene_id)), ]
+#qDE.ttest <- qDE.ttest[- which(is.na(qDE.ttest$ensembl_gene_id)), ]
 rownames(qDE.ttest) <- qDE.ttest$ensembl_gene_id
+rownames(qDE.ttest) <- qDE.ttest$genes
 
 design <- model.matrix(~0 + files$Treatment)
 colnames(design) <- c("Control","Treatment")
@@ -141,12 +144,6 @@ write.csv(qDE.limma.tab, "qDE.limma.tab.TGFb_treated.csv")
 write.csv(qDE.limma.tab[which(qDE.limma.tab$logFC >= 0), ], file = "qDE.limma.tab.up.TGFb_treated.csv")
 write.csv(qDE.limma.tab[which(qDE.limma.tab$logFC < 0), ], file = "qDE.limma.tab.down.TGFb_treated.csv")
 
-# plot log2 FC of mesenchymal/epithelial markers
-ptab <- qDE.limma.tab[c("FN1", "ZEB1", "TGFB1", "TGFB2", "TGFB3", "SPARC", "TWIST1", "CDH1", "SPP1", "FGFBP1", "MMP9"), c("genes", "logFC", "CI.L", "CI.R")]
-ptab$marker <- c(rep("mesenchymal", 7), rep("epithelial", 4))
-ptab$marker <- factor(ptab$marker)
-ptab$geneOrd <- reorder(ptab$gene, ptab$logFC)
-colnames(ptab)[c(3,4)] <- c("CI_L", "CI_R")
 
 gr.top5EMTUp <- gr.qPCRGenesPositions[which(gr.qPCRGenesPositions$hgnc_symbol %in% qDE.limma.tab[order(qDE.limma.tab$logFC, decreasing = T),]$genes[1:5])]
 save(gr.top5EMTUp, file = "~/Data/Tremethick/EMT/GenomeWide/gr.top5EMTUp.rda")
@@ -154,17 +151,22 @@ save(gr.top5EMTUp, file = "~/Data/Tremethick/EMT/GenomeWide/gr.top5EMTUp.rda")
 gr.top5EMTDown <- gr.qPCRGenesPositions[which(gr.qPCRGenesPositions$hgnc_symbol %in% qDE.limma.tab[order(qDE.limma.tab$logFC, decreasing = F),]$genes[1:5])]
 save(gr.top5EMTDown, file = "~/Data/Tremethick/EMT/GenomeWide/gr.top5EMTDown.rda")
 
+# plot log2 FC of mesenchymal/epithelial markers
+ptab <- qDE.limma.tab[c("FN1", "ZEB1", "TGFB1", "TGFB2", "TGFB3", "SPARC", "TWIST1", "CDH1", "SPP1", "FGFBP1", "MMP9"), c("genes", "logFC", "CI.L", "CI.R")]
+ptab$marker <- c(rep("mesenchymal", 7), rep("epithelial", 4))
+ptab$marker <- factor(ptab$marker)
+ptab$geneOrd <- reorder(ptab$gene, ptab$logFC)
+colnames(ptab)[c(3,4)] <- c("CI_L", "CI_R")
+
 marker <- factor(levels(ptab$marker), levels = levels(ptab$marker))
 limits <- aes(ymax = logFC + CI_R, ymin = logFC - CI_L)
 p1 <- ggplot(data = ptab, aes(y = logFC, fill = marker, group = marker, x = geneOrd)) 
 pdf("Barplot_EMT_markers_TGFb_treated.pdf")
-p1 + geom_bar(stat = "identity") + ggtitle("TGFb-treated vs Control MDCK cells") + scale_y_continuous(limits = c(-5, 8))
-#      geom_errorbar(aes(ymin = logFC-CI_L, ymax = logFC+CI_R), 
-#                  width = 0.2, 
-#                  position = position_dodge(0.9))
+p1 + geom_bar(stat = "identity") + ggtitle("TGFb-treated vs Control MDCK cells") + scale_y_continuous(limits = c(-5, 8))  
+#geom_errorbar(aes(ymin = logFC-CI_L, ymax = logFC+CI_R), width = 0.2, position = position_dodge(0.9))
 dev.off()
 
-#------------Volcano plot of qPCR data-------------
+# Volcano plot of limma processed qPCR data -------------------------------
 pdf("Volcano_plot.pdf", height = 4, width = 4)
 plot(qDE.limma.tab$logFC, -log10(qDE.limma.tab$adj.P.Val), axes = F, xlab = "", ylab = "", frame = F, xlim = c(-10,10), cex = 0.3, pch = 16)
 points(qDE.limma.tab[which(-log10(qDE.limma.tab$adj.P.Val) >= 1), "logFC"], -log10(qDE.limma.tab[which(-log10(qDE.limma.tab$adj.P.Val) >= 1), "adj.P.Val"]), col = "red", pch = 16, cex = 1.2)
@@ -312,5 +314,18 @@ dev.off()
 #load("danpos2.anno.rda")
 danpos2.anno[which(danpos2.anno$feature %in% qPCRGenesTab$ensembl_gene_id)]
 
+
+# scratchpad --------------------------------------------------------------
+# Volcano plot of ttest data
+plot(log2(qDE.ttest$FC), -log10(qDE.ttest$adj.p.value), axes = F, xlab = "", ylab = "", frame = F, xlim = c(-10,10), cex = 0.3, pch = 16)
+points(log2(qDE.ttest[which(-log10(qDE.ttest$adj.p.value) >= 1), "FC"]), 
+       -log10(qDE.ttest[which(-log10(qDE.ttest$adj.p.value) >= 1), "adj.p.value"]), col = "red", pch = 16, cex = 1.2)
+axis(2, pos = 0, lwd = 3, at = c(seq(0,8,2)), labels = c("", seq(2,8,2)))
+axis(1, pos = 0, lwd = 3)
+mtext("-log10(adjusted p-value)", side = 2)
+mtext("log2(FC)", side = 1, line = 2)
+abline(h = 1, col = "red", lty = 2, lwd = 2)
+
+plot(qDE.limma.tab$logFC, log2(qDE.ttest$FC))
 
 
