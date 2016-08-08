@@ -13,7 +13,7 @@ def getAllFASTQ(wildcards):
 
 rule dummy:
     input:
-        expand("{rdir}", rdir = config["reports_dir"])
+        expand("{rdir}", rdir = config["reports_dir"], assayID = "RNA-Seq")
 
 rule fastqc:
     version:
