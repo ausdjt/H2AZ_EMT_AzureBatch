@@ -8,12 +8,12 @@ import os
 def getAllFASTQ(wildcards):
     fn = []
     for i in config[wildcards.assayID]:
-            fn.append("./fastq/" + i)
+            fn.append("RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/fastq/" + i)
     return(fn)
 
 rule dummy:
     input:
-        expand("{rdir}", rdir = config["reports_dir"], assayID = "RNA-Seq")
+        "RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/reports"
 
 rule fastqc:
     version:
@@ -27,6 +27,6 @@ rule fastqc:
     input:
         getAllFASTQ
     output:
-        "reports"
+        "{assayID}/{runID}/{processed_dir}/{reports_dir}"
     shell:
         "/usr/local/bin/fastqc {input} --noextract --outdir  {output}"
