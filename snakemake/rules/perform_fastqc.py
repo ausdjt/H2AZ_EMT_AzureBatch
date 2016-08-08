@@ -21,7 +21,7 @@ rule fastqc:
         rdir = config["reports_dir"],
         data_dir = config["raw_dir"]
     input:
-        getAllFASTQ("RNA-Seq")
+        getAllFASTQ(assayID = "RNA-Seq")
     output:
         "reports"
     shell:
