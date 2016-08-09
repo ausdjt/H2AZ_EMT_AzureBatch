@@ -17,5 +17,11 @@ rule kallisto_quant:
         ki = lambda wildcards: config["references"]["kallisto"][wildcards.reference_version]
     output:
         protected("./{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}")
-    wrapper:
-        "file://" + wrapper_dir + "/kallisto/quant/wrapper.py"
+    shell:
+        """
+            kallisto quant --index={input.ki} \
+                           --output-dir={output} \
+                           --threads=4 \
+                           --bootstrap-samples={params.bootstraps} \
+                           {input[0]} {input[1]}
+        """
