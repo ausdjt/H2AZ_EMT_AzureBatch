@@ -65,6 +65,7 @@
   "raw_dir" : "fastq",
   "cutadapt_dir" : "/home/skurscheid/miniconda2/envs/snakemake/bin",
   "deepTools_dir" : "/home/skurscheid/miniconda2/envs/deepTools/bin",
-  "ctaGenes" : "/home/skurscheid/Data/Tremethick/Hodgkins-Lymphoma/cta_genes.bed",
-  "allGenes" : "/home/skurscheid/Data/Annotations/hg19/Ensembl/all_genes.bed"
+  "HTSeq_dir" : "/home/skurscheid/miniconda2/envs/HTSeq/bin",
+  "cutadapt_dir" : "/home/skurscheid/miniconda2/envs/snakemake/bin",
+  "DEXSeq_dir" : "/home/skurscheid/R/x86_64-unknown-linux-gnu-library/DEXSeq/python_scripts/"
 }
