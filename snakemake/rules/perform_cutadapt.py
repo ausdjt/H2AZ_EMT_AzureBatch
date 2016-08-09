@@ -12,6 +12,11 @@ Rules for trimming reads with cutadapt
 
 For usage, include this in your workflow.
 """
+def getFASTQ(wildcards):
+    fn = []
+    for i in config["units"][wildcards.unit]:
+        fn.append("./fastq/" + wildcards.unit + "/" + i)
+    return(fn)
 
 rule cutadapt_pe:
     """Trims given paired-end reads with given parameters"""
@@ -21,7 +26,7 @@ rule cutadapt_pe:
         raw_data = config["raw_dir"],
         cutadapt_dir = config["cutadapt_dir"]
     input:
-
+        getFASTQ
     output:
         "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R1_001.QT.CA.fastq.gz",
         "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R2_001.QT.CA.fastq.gz"
