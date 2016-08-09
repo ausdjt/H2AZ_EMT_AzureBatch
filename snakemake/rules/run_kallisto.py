@@ -13,8 +13,8 @@ rule kallisto_quant:
         bootstraps = config["kallisto"]["bootstraps"],
         threads = 4
     input:
-        "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R1_001.QT.CA.fastq.gz",
-        "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R2_001.QT.CA.fastq.gz",
+        "./{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
+        "./{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
         ki = lambda wildcards: config["references"]["kallisto"][wildcards.reference_version]
     output:
         protected("./{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}")
