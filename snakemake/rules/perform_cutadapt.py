@@ -14,10 +14,11 @@ For usage, include this in your workflow.
 """
 def getFASTQ(wildcards):
     fn = []
-    for i in config["units"][wildcards.unit]:
-        fn.append("./fastq/" + wildcards.unit + "/" + i)
-    return(fn)
-
+    for i in config[wildcards.assayID]:
+        for j in config[wildcards.assayID][i]:
+                fn.append("RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/fastq/" + j)
+        return(fn)
+        
 rule cutadapt_pe:
     """Trims given paired-end reads with given parameters"""
     params:
