@@ -23,8 +23,8 @@ rule cutadapt_pe:
     input:
 
     output:
-        "./RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
-        "./RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz"
+        "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R1_001.QT.CA.fastq.gz",
+        "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R2_001.QT.CA.fastq.gz"
     shell:
         """
             {params.cutadapt_dir}/cutadapt {params.trim_params} \

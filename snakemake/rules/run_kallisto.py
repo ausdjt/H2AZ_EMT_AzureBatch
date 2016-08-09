@@ -16,6 +16,6 @@ rule kallisto_quant:
         rules.cutadapt_pe.output,
         ki = lambda wildcards: config["references"]["kallisto"]["index"][wildcards.reference_version]
     output:
-        protected("{outdir}/{reference_version}/kallisto/{unit}")
+        protected("./{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}")
     wrapper:
         "file://" + wrapper_dir + "/kallisto/quant/wrapper.py"
