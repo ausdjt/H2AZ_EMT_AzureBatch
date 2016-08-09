@@ -14,7 +14,7 @@ rule kallisto_quant:
         threads = 4
     input:
         rules.cutadapt_pe.output,
-        ki = lambda wildcards: config["references"]["kallisto"]["index"][wildcards.reference_version]
+        ki = lambda wildcards: config["references"]["kallisto"][wildcards.reference_version]
     output:
         protected("./{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}")
     wrapper:
