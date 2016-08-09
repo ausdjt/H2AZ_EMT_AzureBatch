@@ -66,68 +66,68 @@ rule run_htseq_count:
                                            > {output}
         """
 
-rule run_dexseq_count:
-    version:
-        0.1
-    params:
-        dexseq_dir = config["DEXSeq_dir"],
-        dex_gtf = config["references"]["DEX_GTF"]
-    input:
-        bam = "{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam",
-        index = "{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai"
-    output:
-        "{outdir}/{reference_version}/DEXSeq/count/{unit}.txt"
-    shell:
-        """
-            python {params.dexseq_dir}/dexseq_count.py --format=bam \
-                                                       --paired=yes \
-                                                       --order=pos \
-                                                       --stranded=reverse \
-                                                       {params.dex_gtf} \
-                                                       {input.bam} \
-                                                       {output}
-        """
-
-
-rule collect_insert_size_metrics:
-    version:
-        0.1
-    params:
-        sampling = config["Picard"]["sampling"]
-    input:
-        rules.star_align_full.output
-    output:
-        txt = "{outdir}/{reference_version}/PICARD/insert_size_metrics/{unit}.insert_size_metrics.txt",
-        pdf = "{outdir}/{reference_version}/PICARD/insert_size_metrics/{unit}.insert_size_metrics.pdf"
-    shell:
-        """
-            java -Djava.io.tmpdir=/home/skurscheid/tmp \
-            -Xmx36G \
-            -jar /home/skurscheid/Bioinformatics/picard-tools-1.131/picard.jar CollectInsertSizeMetrics \
-            I={input} \
-            O={output.txt} \
-            H={output.pdf} \
-            M=0.2
-        """
-
-rule run_rMats:
-    version:
-        0.1
-    params:
-        gtf = config["references"]["GTF"],
-        bin = "/home/skurscheid/Bioinformatics/rMATS.3.2.2.beta/RNASeq-MATS.py"
-    input:
-        getGroups
-    output:
-        "{outdir}/{reference_version}/rMATS/{tissue}/{condition}"
-    shell:
-        """
-            python {params.bin} -b1 {input[0]} \
-                                -b2 {input[1]} \
-                                -gtf {params.gtf} \
-                                -t paired \
-                                -len 76 \
-                                -analysis U \
-                                -libType fr-firststrand \
-                                -o {output}
-        """
+# rule run_dexseq_count:
+#     version:
+#         0.1
+#     params:
+#         dexseq_dir = config["DEXSeq_dir"],
+#         dex_gtf = config["references"]["DEX_GTF"]
+#     input:
+#         bam = "{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam",
+#         index = "{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai"
+#     output:
+#         "{outdir}/{reference_version}/DEXSeq/count/{unit}.txt"
+#     shell:
+#         """
+#             python {params.dexseq_dir}/dexseq_count.py --format=bam \
+#                                                        --paired=yes \
+#                                                        --order=pos \
+#                                                        --stranded=reverse \
+#                                                        {params.dex_gtf} \
+#                                                        {input.bam} \
+#                                                        {output}
+#         """
+#
+#
+# rule collect_insert_size_metrics:
+#     version:
+#         0.1
+#     params:
+#         sampling = config["Picard"]["sampling"]
+#     input:
+#         rules.star_align_full.output
+#     output:
+#         txt = "{outdir}/{reference_version}/PICARD/insert_size_metrics/{unit}.insert_size_metrics.txt",
+#         pdf = "{outdir}/{reference_version}/PICARD/insert_size_metrics/{unit}.insert_size_metrics.pdf"
+#     shell:
+#         """
+#             java -Djava.io.tmpdir=/home/skurscheid/tmp \
+#             -Xmx36G \
+#             -jar /home/skurscheid/Bioinformatics/picard-tools-1.131/picard.jar CollectInsertSizeMetrics \
+#             I={input} \
+#             O={output.txt} \
+#             H={output.pdf} \
+#             M=0.2
+#         """
+#
+# rule run_rMats:
+#     version:
+#         0.1
+#     params:
+#         gtf = config["references"]["GTF"],
+#         bin = "/home/skurscheid/Bioinformatics/rMATS.3.2.2.beta/RNASeq-MATS.py"
+#     input:
+#         getGroups
+#     output:
+#         "{outdir}/{reference_version}/rMATS/{tissue}/{condition}"
+#     shell:
+#         """
+#             python {params.bin} -b1 {input[0]} \
+#                                 -b2 {input[1]} \
+#                                 -gtf {params.gtf} \
+#                                 -t paired \
+#                                 -len 76 \
+#                                 -analysis U \
+#                                 -libType fr-firststrand \
+#                                 -o {output}
+#         """
