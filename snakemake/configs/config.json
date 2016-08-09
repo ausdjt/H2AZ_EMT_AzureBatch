@@ -1,16 +1,16 @@
 {
     "references" :
     {
-      "version" : "CanFam3.1_ensembl84_ERC",
+      "version" : "CanFam3.1_ensembl84_ERCC",
       "genome" : "/home/skurscheid/Data/References/Genomes/Canis_familiaris/Ensembl/Canis_familiaris.CanFam3.1.dna.toplevel.fa",
       "GTF" : "/home/skurscheid/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",
       "kallisto" :
       {
-          "CanFam3.1_ensembl84_ERC" : "/home/skurscheid/Data/References/Transcriptomes/Homo_sapiens/GRCh38_ensembl84/GRCh38_ensembl84_ERCC.ki",
+          "CanFam3.1_ensembl84_ERCC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki",
       },
       "STAR" :
       {
-        "CanFam3.1_ensembl84_ERC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index",
+        "CanFam3.1_ensembl84_ERCC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index",
       },
     },
     "kallisto" :
