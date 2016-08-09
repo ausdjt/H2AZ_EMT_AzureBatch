@@ -12,7 +12,8 @@ rule star_align_full:
     params:
         runThreadN = config["STAR"]["runThreadN"]
     input:
-        rules.cutadapt_pe.output,
+        "./{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
+        "./{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
         index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
     output:
         "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam"
