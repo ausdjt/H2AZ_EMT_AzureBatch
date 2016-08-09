@@ -8,7 +8,8 @@ import os
 def getAllFASTQ(wildcards):
     fn = []
     for i in config[wildcards.assayID]:
-            fn.append("RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/fastq/" + i)
+        for j in config[wildcards.assayID][i]:
+                fn.append("RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/fastq/" + j)
     return(fn)
 
 rule dummy:
