@@ -7,7 +7,7 @@ from snakemake.exceptions import MissingInputException
 wrapper_dir = "/home/skurscheid/Development/snakemake-wrappers/bio"
 
 localrules:
-    run_kallisto_uncompressed
+    run_kallisto_uncompressed, run_kallisto_quant
 
 rule run_kallisto_uncompressed:
     input:
@@ -17,6 +17,15 @@ rule run_kallisto_uncompressed:
                outdir = config["processed_dir"],
                reference_version = config["references"]["version"],
                unit = config["RNA-Seq"])
+
+rule run_kallisto_quant:
+        input:
+            expand("./{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
+                   runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
+                   assayID = "RNA-Seq",
+                   outdir = config["processed_dir"],
+                   reference_version = config["references"]["version"],
+                   unit = config["RNA-Seq"])
 
 rule kallisto_quant:
     message:
@@ -57,5 +66,5 @@ rule kallisto_quant_from_uncompressed:
                            --output-dir={output} \
                            --threads=4 \
                            --bootstrap-samples={params.bootstraps} \
-                           {input.read1} {input.read2}
+                          {input.read1} {input.read2 }
         """
