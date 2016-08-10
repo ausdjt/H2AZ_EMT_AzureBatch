@@ -13,7 +13,7 @@ rule star_align_full_untrimmed_fastq:
         runThreadN = config["STAR"]["runThreadN"]
     input:
         lambda wildcards: config[wildcards.assayID][wildcards.unit][0],
-        lambda wildcards: config[wildcards.assayID][wildcards.unit][1]
+        lambda wildcards: config[wildcards.assayID][wildcards.unit][1],
         index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
     output:
         bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
