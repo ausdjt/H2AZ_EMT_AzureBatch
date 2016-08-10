@@ -8,7 +8,7 @@ rule:
     version: 0.3
 
 localrules:
-    all, run_kallisto, run_STAR, run_htseq_count, run_cutadapt
+    all, run_kallisto, run_STAR, run_htseq, run_cutadapt
 
 include_prefix="/home/skurscheid/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
 
@@ -37,7 +37,7 @@ rule run_STAR:
                reference_version = config["references"]["version"],
                unit = config["RNA-Seq"])
 
-rule run_htseq_count:
+rule run_htseq:
     input:
         expand("./{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
                assayID = "RNA-Seq",
