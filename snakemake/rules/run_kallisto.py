@@ -6,6 +6,9 @@ from snakemake.exceptions import MissingInputException
 
 wrapper_dir = "/home/skurscheid/Development/snakemake-wrappers/bio"
 
+localrules:
+    run_kallisto_uncompressed
+
 rule run_kallisto_uncompressed:
     input:
         expand("./{assayID}/{runID}/{outdir}/{reference_version}/uncompressed/kallisto/{unit}",
