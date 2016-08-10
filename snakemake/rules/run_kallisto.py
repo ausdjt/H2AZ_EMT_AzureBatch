@@ -17,7 +17,7 @@ rule kallisto_quant:
         "./{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
         ki = lambda wildcards: config["references"]["kallisto"][wildcards.reference_version]
     output:
-        protected("./{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}")
+        "./{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}"
     shell:
         """
             kallisto quant --index={input.ki} \
