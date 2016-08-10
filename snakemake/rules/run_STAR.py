@@ -8,7 +8,7 @@ wrapper_dir = "/home/skurscheid/Development/snakemake-wrappers/bio"
 
 rule dummy_run_STAR_untrimmed:
     input:
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
+        expand("./{assayID}/{runID}/{outdir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
                assayID = "RNA-Seq",
                runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
                outdir = config["processed_dir"],
@@ -26,7 +26,7 @@ rule star_align_full_untrimmed_fastq:
         lambda wildcards: config[wildcards.assayID][wildcards.unit][1],
         index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
     output:
-        bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
+        bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
         tmp = temp("./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
     shell:
         """
