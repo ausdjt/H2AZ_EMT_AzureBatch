@@ -17,7 +17,7 @@ rule star_align_full:
         index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
     output:
         bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
-        tmp = temp("/home/skurscheid/tmp/STAR/{unit}")
+        tmp = temp("./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
     shell:
         """
             STAR --runMode alignReads \
