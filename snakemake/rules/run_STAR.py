@@ -6,6 +6,41 @@ from snakemake.exceptions import MissingInputException
 
 wrapper_dir = "/home/skurscheid/Development/snakemake-wrappers/bio"
 
+def getFASTQ(wildcards):
+    fn = []
+    for i in config[wildcards.assayID]:
+        for j in config[wildcards.assayID][wildcards.unit]:
+                fn.append("RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/fastq/" + j)
+            return(fn)
+
+rule star_align_full_untrimmed_fastq:
+    version:
+        0.4
+    params:
+        runThreadN = config["STAR"]["runThreadN"]
+    input:
+        lambda wildcards: config[wildcards.assayID][wildcards.unit][0],
+        lambda wildcards: config[wildcards.assayID][wildcards.unit][1]
+        index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
+    output:
+        bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
+        tmp = temp("./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
+    shell:
+        """
+            STAR --runMode alignReads \
+                 --runThreadN {params.runThreadN} \
+                 --genomeDir {input.index} \
+                 --readFilesIn {input[0]} {input[1]} \
+                 --readFilesCommand gzip -c \
+                 --outTmpDir {output.tmp} \
+                 --outSAMmode Full \
+                 --outSAMattributes Standard \
+                 --outSAMtype BAM SortedByCoordinate \
+                 --outStd BAM_SortedByCoordinate \
+                 --alignEndsType EndToEnd\
+                 > {output.bam}
+        """
+
 rule star_align_full:
     version:
         0.4

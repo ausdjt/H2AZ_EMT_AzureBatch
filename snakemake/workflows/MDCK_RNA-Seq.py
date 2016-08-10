@@ -37,6 +37,14 @@ rule run_STAR:
                reference_version = config["references"]["version"],
                unit = config["RNA-Seq"])
 
+rule run_STAR_untrimmed:
+    input:
+        expand("./{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
+               assayID = "RNA-Seq",
+               outdir = config["processed_dir"],
+               reference_version = config["references"]["version"],
+               unit = config["RNA-Seq"])
+
 rule run_htseq:
     input:
         expand("./{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
