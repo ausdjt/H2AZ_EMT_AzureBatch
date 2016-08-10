@@ -12,13 +12,15 @@ Rules for trimming reads with cutadapt
 
 For usage, include this in your workflow.
 """
-def getFASTQ(wildcards):
-    fn = []
-    for i in config[wildcards.assayID]:
-        for j in config[wildcards.assayID][i]:
-                fn.append("RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/fastq/" + j)
-        return(fn)
-        
+localrules:
+    dummy_cutadapt
+
+rule dummy_cutadapt:
+     """Trim all reads with all supplied trimming parameters"""
+     input:
+         expand("./{trim_data}/{unit}_R1_001.QT.CA.fastq.gz", unit = config["RNA-Seq"], trim_data = config["trim_dir"]),
+         expand("./{trim_data}/{unit}_R2_001.QT.CA.fastq.gz", unit = config["RNA-Seq"], trim_data = config["trim_dir"])
+
 rule cutadapt_pe:
     """Trims given paired-end reads with given parameters"""
     params:
@@ -27,21 +29,16 @@ rule cutadapt_pe:
         raw_data = config["raw_dir"],
         cutadapt_dir = config["cutadapt_dir"]
     input:
-        getFASTQ
+        read1 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
+        read2 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1]
     output:
-        "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R1_001.QT.CA.fastq.gz",
-        "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R2_001.QT.CA.fastq.gz"
+        trimmed_read1 = "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R1_001.QT.CA.fastq.gz",
+        trimmed_read2 = "./{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R2_001.QT.CA.fastq.gz"
     shell:
         """
             {params.cutadapt_dir}/cutadapt {params.trim_params} \
-                                            -o {output[0]} \
-                                            -p {output[1]} \
-                                            {input[0]} \
-                                            {input[1]}
+                                            -o {output.trimmed_read1} \
+                                            -p {output.trimmed_read2} \
+                                            {input.read1} \
+                                            {input.read2}
         """
-
-rule dummy_cutadapt:
-     """Trim all reads with all supplied trimming parameters"""
-     input:
-         expand("./{trim_data}/{unit}_R1_001.QT.CA.fastq.gz", unit = config["RNA-Seq"], trim_data = config["trim_dir"]),
-         expand("./{trim_data}/{unit}_R2_001.QT.CA.fastq.gz", unit = config["RNA-Seq"], trim_data = config["trim_dir"])
