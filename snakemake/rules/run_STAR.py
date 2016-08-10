@@ -6,6 +6,16 @@ from snakemake.exceptions import MissingInputException
 
 wrapper_dir = "/home/skurscheid/Development/snakemake-wrappers/bio"
 
+rule dummy_run_STAR_untrimmed:
+    input:
+        expand("./{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
+               assayID = "RNA-Seq",
+               runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
+               outdir = config["processed_dir"],
+               reference_version = config["references"]["version"],
+               unit = config["RNA-Seq"])
+
+
 rule star_align_full_untrimmed_fastq:
     version:
         0.4
