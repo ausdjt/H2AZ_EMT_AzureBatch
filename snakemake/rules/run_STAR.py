@@ -16,7 +16,8 @@ rule star_align_full:
         "./{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
         index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
     output:
-        "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam"
+        bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
+        tmp = temp("/home/skurscheid/tmp/STAR/{unit}")
     shell:
         """
             STAR --runMode alignReads \
@@ -24,13 +25,13 @@ rule star_align_full:
                  --genomeDir {input.index} \
                  --readFilesIn {input[0]} {input[1]} \
                  --readFilesCommand zcat \
-                 --outTmpDir /home/skurscheid/tmp/{wildcards.unit} \
+                 --outTmpDir {output.tmp} \
                  --outSAMmode Full \
                  --outSAMattributes Standard \
                  --outSAMtype BAM SortedByCoordinate \
                  --outStd BAM_SortedByCoordinate \
                  --alignEndsType EndToEnd\
-                 > {output}
+                 > {output.bam}
         """
 
 rule bam_index_STAR_output:
