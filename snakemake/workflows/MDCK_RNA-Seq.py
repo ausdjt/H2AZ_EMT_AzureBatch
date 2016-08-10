@@ -39,8 +39,9 @@ rule run_STAR:
 
 rule run_STAR_untrimmed:
     input:
-        expand("./{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
+        expand("./{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
                assayID = "RNA-Seq",
+               runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["version"],
                unit = config["RNA-Seq"])
