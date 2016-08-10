@@ -21,6 +21,14 @@ include:
 include:
     include_prefix + "run_STAR.py"
 
+rule run_kallisto:
+    input:
+        expand("./{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{reference_version}/kallisto/{unit}",
+               assayID = "RNA-Seq",
+               outdir = config["processed_dir"],
+               reference_version = config["references"]["version"],
+               unit = config["RNA-Seq"])
+
 rule all:
     input:
         "./RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/reports/",
