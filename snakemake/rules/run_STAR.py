@@ -20,11 +20,10 @@ rule star_align_full_untrimmed_fastq:
     version:
         0.4
     params:
-        runThreadN = config["STAR"]["runThreadN"],
-        fastq_path = "./" + wildcards.assayID + "/" + wildcards.runID + "/" + config.raw_dir + "/"
+        runThreadN = config["STAR"]["runThreadN"]
     input:
-        lambda wildcards: config[wildcards.assayID][wildcards.unit][0],
-        lambda wildcards: config[wildcards.assayID][wildcards.unit][1],
+        lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
+        lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1],
         index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
     output:
         bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
@@ -34,7 +33,7 @@ rule star_align_full_untrimmed_fastq:
             STAR --runMode alignReads \
                  --runThreadN {params.runThreadN} \
                  --genomeDir {input.index} \
-                 --readFilesIn {params.fastq_path}{input[0]} {params.fastq_path}{input[1]} \
+                 --readFilesIn {input[0]} {input[1]} \
                  --readFilesCommand zcat \
                  --outTmpDir {output.tmp} \
                  --outSAMmode Full \
