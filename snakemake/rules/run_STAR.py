@@ -31,7 +31,7 @@ rule star_align_full_untrimmed_fastq:
                  --runThreadN {params.runThreadN} \
                  --genomeDir {input.index} \
                  --readFilesIn {input[0]} {input[1]} \
-                 --readFilesCommand gzip -c \
+                 --readFilesCommand zcat \
                  --outTmpDir {output.tmp} \
                  --outSAMmode Full \
                  --outSAMattributes Standard \
