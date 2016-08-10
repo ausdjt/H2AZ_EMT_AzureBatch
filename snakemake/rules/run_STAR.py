@@ -22,8 +22,8 @@ rule star_align_full_untrimmed_fastq:
     params:
         runThreadN = config["STAR"]["runThreadN"]
     input:
-        lambda wildcards: config[wildcards.assayID][wildcards.unit][0],
-        lambda wildcards: config[wildcards.assayID][wildcards.unit][1],
+        "./{assayID}/{runID}/{processed_dir}/" + lambda wildcards: config[wildcards.assayID][wildcards.unit][0],
+        "./{assayID}/{runID}/{processed_dir}/" + lambda wildcards: config[wildcards.assayID][wildcards.unit][1],
         index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
     output:
         bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
