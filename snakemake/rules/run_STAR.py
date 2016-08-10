@@ -6,13 +6,6 @@ from snakemake.exceptions import MissingInputException
 
 wrapper_dir = "/home/skurscheid/Development/snakemake-wrappers/bio"
 
-def getFASTQ(wildcards):
-    fn = []
-    for i in config[wildcards.assayID]:
-        for j in config[wildcards.assayID][wildcards.unit]:
-                fn.append("RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/fastq/" + j)
-            return(fn)
-
 rule star_align_full_untrimmed_fastq:
     version:
         0.4
