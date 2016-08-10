@@ -40,7 +40,7 @@ rule kallisto_quant_from_uncompressed:
     message:
         "Running kallisto quant with uncompressed FASTQ as input..."
     params:
-        bootstraps = config["kallisto"]["bootstraps"],
+        bootstraps = 1,
         threads = 4
     input:
         read1 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0].replace(".gz", ""),
