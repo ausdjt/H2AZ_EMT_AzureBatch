@@ -57,5 +57,5 @@ rule kallisto_quant_from_uncompressed:
                            --output-dir={output} \
                            --threads=4 \
                            --bootstrap-samples={params.bootstraps} \
-                           {input[0]} {input[1]}
+                           {input.read1} {input.read2}
         """
