@@ -38,7 +38,7 @@
       "MDCK_wt_rep1" : ["Renae9_S9_R1_001.fastq.gz", "Renae9_S9_R2_001.fastq.gz"],
       "MDCK_wt_rep2": ["Renae10_S10_R1_001.fastq.gz", "Renae10_S10_R2_001.fastq.gz"],
       "MDCK_shZ_rep1" : ["Renae8_S8_R1_001.fastq.gz", "Renae8_S8_R2_001.fastq.gz"],
-      "MDCK_shZ_rep2" : ["Renae7_S7_R1_001.fastq.gz", "Renae7_S7_R1_001.fastq.gz"],
+      "MDCK_shZ_rep2" : ["Renae7_S7_R1_001.fastq.gz", "Renae7_S7_R2_001.fastq.gz"],
       "MDCK_TGFb_rep1" : ["Renae11_S11_R1_001.fastq.gz", "Renae11_S11_R2_001.fastq.gz"],
       "MDCK_TGFb_rep2" : ["Renae12_S12_R1_001.fastq.gz", "Renae12_S12_R2_001.fastq.gz"]
     },
