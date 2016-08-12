@@ -6,20 +6,20 @@
       "GTF" : "/home/skurscheid/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",
       "kallisto" :
       {
-          "CanFam3.1_ensembl84_ERCC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki",
+          "CanFam3.1_ensembl84_ERCC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki"
       },
       "STAR" :
       {
-        "CanFam3.1_ensembl84_ERCC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index",
-      },
+        "CanFam3.1_ensembl84_ERCC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index"
+      }
     },
     "kallisto" :
     {
-      "bootstraps" : "100",
+      "bootstraps" : "100"
     },
     "STAR" :
     {
-      "runThreadN" : "4",
+      "runThreadN" : "4"
     },
     "bt2_params" :
     {
