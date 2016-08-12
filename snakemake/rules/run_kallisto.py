@@ -46,7 +46,7 @@ rule kallisto_quant:
                            --output-dir={output} \
                            --threads=4 \
                            --bootstrap-samples={params.bootstraps} \
-                           {input.read1} {input.read2]}
+                           {input.read1} {input.read2}
         """
 
 rule kallisto_quant_from_uncompressed:
