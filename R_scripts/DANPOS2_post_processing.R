@@ -85,7 +85,7 @@ df3 <- rbind(df3, as(log2(mcols(gr.danpos2.upTSS)$"treat_smt_val" + 1), "matrix"
 df3 <- data.frame(df3)
 df3$var <- c(rep("ctrl", length(gr.danpos2.upTSS)), rep("treat", length(gr.danpos2.upTSS)))
 hm2 <- ggplot(df3,aes(x=df3, group=var))
-hm2 + geom_histogram(alpha = 0.6, position = "identity", group= var)
+
 hm2 + geom_histogram(alpha = 0.6, position = "identity", aes(y = ..density..)) + geom_density(alpha = 0.4, position = "identity", aes(color = var))
 
 df3.1 <- mcols(gr.danpos2.upTSS)[c("treat_smt_val", "control_smt_val")]
@@ -234,7 +234,7 @@ pdf("Histogram_H2AZ_nucleosome_500TSS0_all_genes_FDR0.01.pdf", height = 10, widt
 histo2 + geom_histogram(alpha = 0.6, position = "identity", aes(y = ..density..)) + geom_density(alpha = 0.4, position = "identity", aes(color = var))
 dev.off()
 pdf("Boxplot_H2AZ_nucleosome_1000TSS10000_all_genes_FDR0.01.pdf", height = 10, width = 10)
-histo2 + geom_boxplot(position = "identity", aes(y = df2, x= var)) + labs(title = "All genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", x = "Sample", y = "Summit occupation (BG-subtracted) [log2]") + scale_y_continuous(limits=c(4, 16))
+a <- histo2 + geom_boxplot(position = "identity", aes(y = df2, x= var)) + labs(title = "All genes\nH2A.Z containing nucleosomes,\nsummit value [log2], FDR <= 0.01", x = "Sample", y = "Summit occupation (BG-subtracted) [log2]") + scale_y_continuous(limits=c(4, 16))
 dev.off()
 
 df2 <- as(mcols(gr2)[,c("control_smt_val", "treat_smt_val", "smt_log2FC")], "data.frame")

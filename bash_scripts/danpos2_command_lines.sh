@@ -29,6 +29,32 @@ ln -s ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_marked/H2A
 # WT
 
 
+# use de-duplicated data
+# Input - pooled input experiments
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/Input_WT_rep1_S5.Q10.sorted.DeDup.bam ./WT_Input/Input_WT_rep1.bam
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/Input_WT_rep1_S5.Q10.sorted.DeDup.bam.bai ./WT_Input/Input_WT_rep1.bam.bai
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/Input_WT_rep2_S6.Q10.sorted.DeDup.bam ./WT_Input/Input_WT_rep2.bam
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/Input_WT_rep2_S6.Q10.sorted.DeDup.bam.bai ./WT_Input/Input_WT_rep2.bam.bai
+
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/Input_TGFb_rep1_S7.Q10.sorted.DeDup.bam ./TGFb_Input/Input_TGFb_rep1.bam
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/Input_TGFb_rep1_S7.Q10.sorted.DeDup.bam.bai ./TGFb_Input/Input_TGFb_rep1.bam.bai
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/Input_TGFb_rep2_S8.Q10.sorted.DeDup.bam ./TGFb_Input/Input_TGFb_rep2.bam
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed/Input_TGFb_rep2_S8.Q10.sorted.DeDup.bam.bai ./TGFb_Input/Input_TGFb_rep2.bam.bai
+
+# H2A.Z
+# TGFb-treated
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/H2AZ_TGFb_rep1_S3.Q10.sorted.DeDup.bam ./TGFb_H2AZ/H2AZ_TGFb_rep1.bam
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/H2AZ_TGFb_rep1_S3.Q10.sorted.DeDup.bam.bai ./TGFb_H2AZ/H2AZ_TGFb_rep1.bam.bai
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/H2AZ_TGFb_rep2_S4.Q10.sorted.DeDup.bam ./TGFb_H2AZ/H2AZ_TGFb_rep2.bam
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/H2AZ_TGFb_rep2_S4.Q10.sorted.DeDup.bam.bai ./TGFb_H2AZ/H2AZ_TGFb_rep2.bam.bai
+
+# H2A.Z
+# WT
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/H2AZ_WT_rep1_S1.Q10.sorted.DeDup.bam ./WT_H2AZ/H2AZ_WT_rep1.bam
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/H2AZ_WT_rep1_S1.Q10.sorted.DeDup.bam.bai ./WT_H2AZ/H2AZ_WT_rep1.bam.bai
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/H2AZ_WT_rep2_S2.Q10.sorted.DeDup.bam ./WT_H2AZ/H2AZ_WT_rep2.bam
+ln -fs ~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed/H2AZ_WT_rep2_S2.Q10.sorted.DeDup.bam.bai ./WT_H2AZ/H2AZ_WT_rep2.bam.bai
+
 # danpos2 requires Python 2.7.x
 source activate py27
 
@@ -39,3 +65,7 @@ python ~/Bioinformatics/danpos-2.2.2/danpos.py dpos TGFb_H2AZ/:WT_H2AZ/ \
                                                     --paired 1
 
 # modified run
+python ~/Bioinformatics/danpos-2.2.2/danpos.py dpos TGFb_H2AZ/:WT_H2AZ/ \
+                                                    --bg TGFb_H2AZ/:TGFb_Input/,WT_H2AZ/:WT_Input/ \
+                                                    --paired 1 \
+                                                    --height 10 \
