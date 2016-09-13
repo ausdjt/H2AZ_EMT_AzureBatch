@@ -4,13 +4,16 @@ library(deepToolsUtils)
 library(rtracklayer)
 require(biovizBase)
 
-setwd("~/Data/Tremethick/EMT/GenomeWide/danpos_analysis/")
-qPCRGeneList <- readLines("../../MDCK qPCR data/genelist.txt")
+setwd(lDir(pathPrefix, "Data/Tremethick/EMT/ChIP-Seq/GenomeWide/danpos_analysis/"))
+qPCRGeneList <- readLines(lDir(pathPrefix, "Data/Tremethick/EMT/ChIP-Seq/MDCK qPCR data/genelist.txt"))
+ensemblHost <- "mar2016.archive.ensembl.org"
+dataset <- "hsapiens_gene_ensembl"
+biomart <- "ensembl"
 
-mart <- human <- useEnsembl(biomart = "ensembl", host = "ensembl.org")
+mart <- human <- useEnsembl(biomart = biomart, host = ensemblHost, dataset = dataset)
 human <- useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", host = "www.ensembl.org")
 listDatasets(mart)
-hsap.qPCRGenesTab <- getBM(attributes = c("ensembl_gene_id", "hgnc_symbol"), filters = "hgnc_symbol", values = qPCRGeneList, mart = human)
+hsap.qPCRGenesTab <- getBM(attributes = c("ensembl_gene_id", "hgnc_symbol"), filters = "hgnc_symbol", values = qPCRGeneList, mart = mart)
 
 hsap.qPCRGenesPositions <- getBM(attributes = c("ensembl_gene_id", "chromosome_name", "start_position", "end_position", "strand", "hgnc_symbol"), 
                                  filters = "ensembl_gene_id", 
