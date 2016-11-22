@@ -10,10 +10,6 @@ rule fastqc:
         0.2
     message:
         "Performing FastQC..."
-    params:
-        assayID = "RNA-Seq",
-        rdir = config["reports_dir"],
-        data_dir = config["raw_dir"]
     input:
         lambda wildcards: config["samples"][wildcards.assayID][wildcards.runID][wildcards.sample]
     output:
