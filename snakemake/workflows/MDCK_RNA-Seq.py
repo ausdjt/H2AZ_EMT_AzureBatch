@@ -76,7 +76,7 @@ rule all:
                assayID = "RNA-Seq",
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
-               reports_dir = config["reports"],
+               reports_dir = config["reports_dir"],
                sample = config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]
         ),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
