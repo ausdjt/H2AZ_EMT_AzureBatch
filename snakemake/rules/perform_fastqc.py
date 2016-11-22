@@ -5,17 +5,6 @@ __date__ = "2016-08-08"
 from snakemake.exceptions import MissingInputException
 import os
 
-def getAllFASTQ(wildcards):
-    fn = []
-    for i in config[wildcards.assayID]:
-        for j in config[wildcards.assayID][i]:
-                fn.append("RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/fastq/" + j)
-    return(fn)
-
-rule dummy:
-    input:
-        "RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/reports/"
-
 rule fastqc:
     version:
         0.2
@@ -26,8 +15,8 @@ rule fastqc:
         rdir = config["reports_dir"],
         data_dir = config["raw_dir"]
     input:
-        getAllFASTQ
+        lambda wildcards: config["samples"][wildcards.assayID][wildcards.runID][wildcards.sample]
     output:
-        "{assayID}/{runID}/{processed_dir}/{reports_dir}/"
+        "{assayID}/{runID}/{processed_dir}/{reports_dir}/{sample}"
     shell:
-        "/usr/local/bin/fastqc {input} --noextract --outdir  {output}"
+        "/usr/local/bin/fastqc {input} --noextract --outdir {output}"
