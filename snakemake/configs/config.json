@@ -25,6 +25,7 @@
     "samples" :
     {
       "RNA-Seq" :
+      {
         "NB501086_0067_RDomaschenz_JCSMR_RNASeq" :
         {
           "MDCK_wt_rep1" : ["Renae9_S9_R1_001.fastq.gz", "Renae9_S9_R2_001.fastq.gz"],
@@ -46,6 +47,7 @@
           "MDCKTGFbD6_2" : ["MDCKTGFbD6_2_S5_R1_001.fastq.gz", "MDCKTGFbD6_2_S5_R2_001.fastq.gz"],
           "MDCKTGFbD6_3" : ["MDCKTGFbD6_3_S6_R1_001.fastq.gz","MDCKTGFbD6_3_S6_R2_001.fastq.gz"]
         }
+      }
     },
     "program_parameters" :
     {
