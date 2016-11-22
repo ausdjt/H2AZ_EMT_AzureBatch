@@ -2,30 +2,9 @@ __author__ = "Sebastian Kurscheid (sebastian.kurscheid@anu.edu.au)"
 __license__ = "MIT"
 __date__ = "2016-04-10"
 
+# this set of rules is meant to be imported by the master workflow document
+
 from snakemake.exceptions import MissingInputException
-
-wrapper_dir = "/home/skurscheid/Development/snakemake-wrappers/bio"
-
-localrules:
-    run_kallisto_uncompressed, run_kallisto_quant
-
-rule run_kallisto_uncompressed:
-    input:
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/uncompressed/kallisto/{unit}",
-               runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
-               assayID = "RNA-Seq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
-               unit = config["RNA-Seq"])
-
-rule run_kallisto_quant:
-        input:
-            expand("./{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
-                   runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
-                   assayID = "RNA-Seq",
-                   outdir = config["processed_dir"],
-                   reference_version = config["references"]["version"],
-                   unit = config["RNA-Seq"])
 
 rule kallisto_quant:
     message:
@@ -35,11 +14,11 @@ rule kallisto_quant:
         threads = 4,
         trim_dir = config["trim_dir"]
     input:
-        read1 = "./{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
-        read2 = "./{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R2_001.QT.CA.fastq.gz",
-        ki = lambda wildcards: config["references"]["kallisto"][wildcards.reference_version]
+        read1 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
+        read2 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R2_001.QT.CA.fastq.gz",
+        ki = lambda wildcards: home + config["references"]["kallisto"][wildcards.reference_version]
     output:
-        "./{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}"
+        "{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}"
     shell:
         """
             kallisto quant --index={input.ki} \
@@ -58,9 +37,9 @@ rule kallisto_quant_from_uncompressed:
     input:
         read1 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0].replace(".gz", ""),
         read2 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1].replace(".gz", ""),
-        ki = lambda wildcards: config["references"]["kallisto"][wildcards.reference_version]
+        ki = lambda wildcards: home + config["references"]["kallisto"][wildcards.reference_version]
     output:
-        "./{assayID}/{runID}/{processed_dir}/{reference_version}/uncompressed/kallisto/{unit}"
+        "{assayID}/{runID}/{processed_dir}/{reference_version}/uncompressed/kallisto/{unit}"
     shell:
         """
             kallisto quant --index={input.ki} \

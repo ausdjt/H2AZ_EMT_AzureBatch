@@ -3,6 +3,7 @@ __license__ = "MIT"
 __date__ = "2015-04-22"
 
 from snakemake.exceptions import MissingInputException
+import os
 
 rule:
     version: 0.3
@@ -10,7 +11,11 @@ rule:
 localrules:
     all, run_kallisto, run_STAR, run_htseq, run_cutadapt
 
-include_prefix="/home/skurscheid/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
+home = os.environ['HOME']
+
+wrapper_dir = home + "/Development/snakemake-wrappers/bio"
+
+include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
 
 include:
      include_prefix + "perform_fastqc.py"
@@ -23,7 +28,7 @@ include:
 
 rule run_kallisto:
     input:
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
                assayID = "RNA-Seq",
                runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
                outdir = config["processed_dir"],
@@ -32,7 +37,7 @@ rule run_kallisto:
 
 rule run_STAR:
     input:
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam",
                assayID = "RNA-Seq",
                runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
                outdir = config["processed_dir"],
@@ -41,7 +46,7 @@ rule run_STAR:
 
 rule run_STAR_untrimmed:
     input:
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/untrimmed/{unit}.aligned.bam",
                assayID = "RNA-Seq",
                runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
                outdir = config["processed_dir"],
@@ -50,7 +55,7 @@ rule run_STAR_untrimmed:
 
 rule run_htseq:
     input:
-        expand("./{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
+        expand("{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
                assayID = "RNA-Seq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["version"],
@@ -58,7 +63,7 @@ rule run_htseq:
 
 rule run_cutadapt:
     input:
-        expand("./{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{trim_data}/{unit}_{suffix}.QT.CA.fastq.gz",
+        expand("{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{trim_data}/{unit}_{suffix}.QT.CA.fastq.gz",
                assayID = "RNA-Seq",
                outdir = config["processed_dir"],
                unit = config["RNA-Seq"],
@@ -67,20 +72,20 @@ rule run_cutadapt:
 
 rule all:
     input:
-        "./RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/reports/",
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
+        "RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/reports/",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
                assayID = "RNA-Seq",
                runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["version"],
                unit = config["RNA-Seq"]),
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam",
                assayID = "RNA-Seq",
                runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["version"],
                unit = config["RNA-Seq"]),
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
                assayID = "RNA-Seq",
                runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
                outdir = config["processed_dir"],

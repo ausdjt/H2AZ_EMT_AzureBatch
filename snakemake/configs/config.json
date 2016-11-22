@@ -3,16 +3,22 @@
     {
       "CanFam3.1" :
       {
-        "version" : "CanFam3.1_ensembl84_ERCC",
+        "version" : ["CanFam3.1_ensembl84_ERCC", "CanFam3.1_ensembl84"]
         "genome" : "/home/skurscheid/Data/References/Genomes/Canis_familiaris/Ensembl/Canis_familiaris.CanFam3.1.dna.toplevel.fa",
-        "GTF" : "/home/skurscheid/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",
+        "GTF" :
+        {
+          "CanFam3.1_ensembl84_ERCC" : "Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",
+          "CanFam3.1_ensembl84" : "Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84.gtf"
+        },
         "kallisto" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki"
+          "CanFam3.1_ensembl84_ERCC" : "Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all_ERCC.ki",
+          "CanFam3.1_ensembl84" : "Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki"
         },
         "STAR" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "/home/skurscheid/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index"
+          "CanFam3.1_ensembl84_ERCC" : "Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index_ERCC",
+          "CanFam3.1_ensembl84" : "Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index"
         }
       }
     },
@@ -63,7 +69,7 @@
             "minimum_perc" : "0.1"
         }
       },
-      "trim_params": "-q 10 -a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30",
+      "trim_params": "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30",
       "trim_dir" : "trimmed_data",
       "processed_dir" : "processed_data",
       "aligned_dir" : "aligned_data",

@@ -2,19 +2,9 @@
 __license__ = "MIT"
 __date__ = "2016-04-22"
 
+# this set of rules is meant to be imported by the master workflow document
+
 from snakemake.exceptions import MissingInputException
-
-wrapper_dir = "/home/skurscheid/Development/snakemake-wrappers/bio"
-
-rule dummy_run_STAR_untrimmed:
-    input:
-        expand("./{assayID}/{runID}/{outdir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
-               assayID = "RNA-Seq",
-               runID = "NB501086_0067_RDomaschenz_JCSMR_RNASeq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
-               unit = config["RNA-Seq"])
-
 
 rule star_align_full_untrimmed_fastq:
     version:
@@ -22,12 +12,12 @@ rule star_align_full_untrimmed_fastq:
     params:
         runThreadN = config["STAR"]["runThreadN"]
     input:
-        read1 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
-        read2 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1],
-        index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
+        read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
+        read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1],
+        index = lambda wildcards: home + config["references"]["STAR"][wildcards.reference_version]
     output:
-        bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
-        tmp = temp("./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
+        bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
+        tmp = temp("{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
     shell:
         """
             STAR --runMode alignReads \
@@ -51,12 +41,12 @@ rule star_align_full:
         runThreadN = config["STAR"]["runThreadN"],
         trim_dir = config["trim_dir"]
     input:
-        read1 = "./{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
-        read2 = "./{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R2_001.QT.CA.fastq.gz",
-        index = lambda wildcards: config["references"]["STAR"][wildcards.reference_version]
+        read1 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
+        read2 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R2_001.QT.CA.fastq.gz",
+        index = lambda wildcards: home + config["references"]["STAR"][wildcards.reference_version]
     output:
-        bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
-        tmp = temp("./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
+        bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
+        tmp = temp("{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
     shell:
         """
             STAR --runMode alignReads \
@@ -77,9 +67,9 @@ rule bam_index_STAR_output:
     version:
         0.2
     input:
-        "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam"
+        "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam"
     output:
-        "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai"
+        "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai"
     wrapper:
         "file://" + wrapper_dir + "/samtools/index/wrapper.py"
 
@@ -87,13 +77,13 @@ rule run_htseq_count:
     version:
         0.3
     params:
-        htseq_dir = config["HTSeq_dir"],
-        gtf = config["references"]["GTF"]
+        htseq_dir = config["HTSeq_dir"]
     input:
-        bam = "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
-        index = "./{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai"
+        bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
+        index = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai",
+        gtf = home + config["references"]["GTF"]
     output:
-        "./{assayID}/{runID}/{processed_dir}/{reference_version}/HTSeq/count/{unit}.txt"
+        "{assayID}/{runID}/{processed_dir}/{reference_version}/HTSeq/count/{unit}.txt"
     shell:
         """
             {params.htseq_dir}/htseq-count --format=bam \
@@ -103,72 +93,6 @@ rule run_htseq_count:
                                            --idattr=gene_id \
                                            --order=pos \
                                            {input.bam} \
-                                           {params.gtf} \
+                                           {input.gtf} \
                                            > {output}
         """
-
-# rule run_dexseq_count:
-#     version:
-#         0.1
-#     params:
-#         dexseq_dir = config["DEXSeq_dir"],
-#         dex_gtf = config["references"]["DEX_GTF"]
-#     input:
-#         bam = "{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam",
-#         index = "{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai"
-#     output:
-#         "{outdir}/{reference_version}/DEXSeq/count/{unit}.txt"
-#     shell:
-#         """
-#             python {params.dexseq_dir}/dexseq_count.py --format=bam \
-#                                                        --paired=yes \
-#                                                        --order=pos \
-#                                                        --stranded=reverse \
-#                                                        {params.dex_gtf} \
-#                                                        {input.bam} \
-#                                                        {output}
-#         """
-#
-#
-# rule collect_insert_size_metrics:
-#     version:
-#         0.1
-#     params:
-#         sampling = config["Picard"]["sampling"]
-#     input:
-#         rules.star_align_full.output
-#     output:
-#         txt = "{outdir}/{reference_version}/PICARD/insert_size_metrics/{unit}.insert_size_metrics.txt",
-#         pdf = "{outdir}/{reference_version}/PICARD/insert_size_metrics/{unit}.insert_size_metrics.pdf"
-#     shell:
-#         """
-#             java -Djava.io.tmpdir=/home/skurscheid/tmp \
-#             -Xmx36G \
-#             -jar /home/skurscheid/Bioinformatics/picard-tools-1.131/picard.jar CollectInsertSizeMetrics \
-#             I={input} \
-#             O={output.txt} \
-#             H={output.pdf} \
-#             M=0.2
-#         """
-#
-# rule run_rMats:
-#     version:
-#         0.1
-#     params:
-#         gtf = config["references"]["GTF"],
-#         bin = "/home/skurscheid/Bioinformatics/rMATS.3.2.2.beta/RNASeq-MATS.py"
-#     input:
-#         getGroups
-#     output:
-#         "{outdir}/{reference_version}/rMATS/{tissue}/{condition}"
-#     shell:
-#         """
-#             python {params.bin} -b1 {input[0]} \
-#                                 -b2 {input[1]} \
-#                                 -gtf {params.gtf} \
-#                                 -t paired \
-#                                 -len 76 \
-#                                 -analysis U \
-#                                 -libType fr-firststrand \
-#                                 -o {output}
-#         """

@@ -14,7 +14,7 @@ def getAllFASTQ(wildcards):
 
 rule dummy:
     input:
-        "./RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/reports/"
+        "RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/reports/"
 
 rule fastqc:
     version:
@@ -28,6 +28,6 @@ rule fastqc:
     input:
         getAllFASTQ
     output:
-        "./{assayID}/{runID}/{processed_dir}/{reports_dir}/"
+        "{assayID}/{runID}/{processed_dir}/{reports_dir}/"
     shell:
         "/usr/local/bin/fastqc {input} --noextract --outdir  {output}"
