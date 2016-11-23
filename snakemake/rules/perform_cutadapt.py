@@ -24,8 +24,8 @@ rule cutadapt_pe:
         raw_data = config["raw_dir"],
         cutadapt_dir = config["cutadapt_dir"]
     input:
-        read1 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
-        read2 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R2_001.QT.CA.fastq.gz"
+        read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
+        read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1]
     output:
         trimmed_read1 = "{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R1_001.QT.CA.fastq.gz",
         trimmed_read2 = "{assayID}/{runID}/{processed_dir}/{trim_data}/{unit}_R2_001.QT.CA.fastq.gz"
