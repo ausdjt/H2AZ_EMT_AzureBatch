@@ -66,7 +66,7 @@ rule run_cutadapt:
         expand("{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{trim_data}/{unit}_{suffix}.QT.CA.fastq.gz",
                assayID = "RNA-Seq",
                outdir = config["processed_dir"],
-               unit = config["RNA-Seq"],
+               unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]],
                trim_data = config["trim_dir"],
                suffix = ["R1_001", "R2_001"]),
 
