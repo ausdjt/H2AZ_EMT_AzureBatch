@@ -17,8 +17,8 @@ wrapper_dir = home + "/Development/snakemake-wrappers/bio"
 
 include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
 
-include:
-     include_prefix + "perform_fastqc.py"
+# include:
+#      include_prefix + "perform_fastqc.py"
 include:
     include_prefix + "perform_cutadapt.py"
 include:
