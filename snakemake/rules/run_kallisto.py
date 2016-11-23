@@ -35,8 +35,8 @@ rule kallisto_quant_from_uncompressed:
         bootstraps = 1,
         threads = 4
     input:
-        read1 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.unit][0].replace(".gz", ""),
-        read2 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.unit][1].replace(".gz", ""),
+        read1 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.runID][wildcards.unit][0].replace(".gz", ""),
+        read2 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.runID][wildcards.unit][1].replace(".gz", ""),
         ki = lambda wildcards: home + config["references"]["CanFam3.1"]["kallisto"][wildcards.reference_version]
     output:
         "{assayID}/{runID}/{processed_dir}/{reference_version}/uncompressed/kallisto/{unit}"
