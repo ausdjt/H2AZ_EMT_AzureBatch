@@ -14,7 +14,7 @@ rule star_align_full_untrimmed_fastq:
     input:
         read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
         read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1],
-        index = lambda wildcards: home + config["references"]["STAR"][wildcards.reference_version]
+        index = lambda wildcards: home + config["references"]["CanFam3.1"]["STAR"][wildcards.reference_version]
     output:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
         tmp = temp("{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
@@ -41,9 +41,9 @@ rule star_align_full:
         runThreadN = config["program_parameters"]["STAR"]["runThreadN"],
         trim_dir = config["trim_dir"]
     input:
-        read1 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
-        read2 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R2_001.QT.CA.fastq.gz",
-        index = lambda wildcards: home + config["references"]["STAR"][wildcards.reference_version]
+        read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
+        read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1],
+        index = lambda wildcards: home + config["references"]["CanFam3.1"]["STAR"][wildcards.reference_version]
     output:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
         tmp = temp("{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
@@ -81,7 +81,7 @@ rule run_htseq_count:
     input:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
         index = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai",
-        gtf = home + config["references"]["GTF"]["reference_version"]
+        gtf = lambda wildcards: home + config["references"]["CanFam3.1"]["GTF"][wildcards.reference_version]
     output:
         "{assayID}/{runID}/{processed_dir}/{reference_version}/HTSeq/count/{unit}.txt"
     shell:

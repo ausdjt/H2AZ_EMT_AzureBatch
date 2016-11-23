@@ -32,7 +32,7 @@ rule run_kallisto:
                assayID = "RNA-Seq",
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
+               reference_version = config["references"]["CanFam3.1"]["version"],
                unit = config["RNA-Seq"])
 
 rule run_STAR:
@@ -41,7 +41,7 @@ rule run_STAR:
                assayID = "RNA-Seq",
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
+               reference_version = config["references"]["CanFam3.1"]["version"],
                unit = config["RNA-Seq"])
 
 rule run_STAR_untrimmed:
@@ -50,7 +50,7 @@ rule run_STAR_untrimmed:
                assayID = "RNA-Seq",
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
+               reference_version = config["references"]["CanFam3.1"]["version"],
                unit = config["RNA-Seq"])
 
 rule run_htseq:
@@ -58,7 +58,7 @@ rule run_htseq:
         expand("{assayID}/NB501086_0067_RDomaschenz_JCSMR_RNASeq/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
                assayID = "RNA-Seq",
                outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
+               reference_version = config["references"]["CanFam3.1"]["version"],
                unit = config["RNA-Seq"])
 
 rule run_cutadapt:
@@ -89,17 +89,17 @@ rule all:
                assayID = "RNA-Seq",
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
+               reference_version = config["references"]["CanFam3.1"]["version"],
                unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/STAR/full/{unit}.aligned.bam",
                assayID = "RNA-Seq",
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
+               reference_version = config["references"]["CanFam3.1"]["version"],
                unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
                assayID = "RNA-Seq",
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
-               reference_version = config["references"]["version"],
+               reference_version = config["references"]["CanFam3.1"]["version"],
                unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]])
