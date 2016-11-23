@@ -20,7 +20,6 @@ rule cutadapt_pe:
     """Trims given paired-end reads with given parameters"""
     params:
         trim_params = config["program_parameters"]["cutadapt"]["trim_params"],
-        trim_data = config["trim_dir"],
         raw_data = config["raw_dir"],
         cutadapt_dir = config["cutadapt_dir"]
     input:
