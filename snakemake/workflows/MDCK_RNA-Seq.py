@@ -79,7 +79,7 @@ rule all:
                trim_data = config["trim_dir"],
                unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]],
                suffix = ["R1_001", "R2_001"]),
-        expand("{assayID}/{runID}/{processed_dir}/{reports_dir}/{sample}",
+        expand("{assayID}/{runID}/{outdir}/{reports_dir}/{sample}",
                assayID = "RNA-Seq",
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
