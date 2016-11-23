@@ -81,7 +81,7 @@ rule run_htseq_count:
     input:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
         index = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai",
-        gtf = home + config["references"]["GTF"]
+        gtf = home + config["references"]["GTF"]["reference_version"]
     output:
         "{assayID}/{runID}/{processed_dir}/{reference_version}/HTSeq/count/{unit}.txt"
     shell:
