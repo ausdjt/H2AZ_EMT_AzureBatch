@@ -10,7 +10,7 @@ rule kallisto_quant:
     message:
         "Running kallisto quant..."
     params:
-        bootstraps = config["kallisto"]["bootstraps"],
+        bootstraps = config["program_parameters"]["kallisto"]["bootstraps"],
         threads = 4,
         trim_dir = config["trim_dir"]
     input:

@@ -134,7 +134,7 @@ ade4::s.arrow(pca1$li, clabel = 0.7)
 dev.off()
 
 cor(txi$abundance)
-pairs(txi$abundance)
+pairs(txi$abundance, )
 sd1 <- apply(txi$abundance, 1, sd)
 pdf("Exploratory_Analysis_Heatmap.pdf")
 heatmap.3(log2(txi$abundance[sd1 > 15,] + 1),

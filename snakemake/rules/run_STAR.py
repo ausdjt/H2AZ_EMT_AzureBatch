@@ -10,7 +10,7 @@ rule star_align_full_untrimmed_fastq:
     version:
         0.4
     params:
-        runThreadN = config["STAR"]["runThreadN"]
+        runThreadN = config["program_parameters"]["STAR"]["runThreadN"]
     input:
         read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
         read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1],
@@ -38,7 +38,7 @@ rule star_align_full:
     version:
         0.4
     params:
-        runThreadN = config["STAR"]["runThreadN"],
+        runThreadN = config["program_parameters"]["STAR"]["runThreadN"],
         trim_dir = config["trim_dir"]
     input:
         read1 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
