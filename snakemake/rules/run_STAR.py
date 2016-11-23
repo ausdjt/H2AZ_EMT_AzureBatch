@@ -81,7 +81,7 @@ rule run_htseq_count:
     input:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
         index = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai",
-        gtf = lambda wildcards: home + config["references"]["CanFam3.1"]["GTF"][wildcards.reference_version]
+        gtf = lambda wildcards: home + "/" + config["references"]["CanFam3.1"]["GTF"][wildcards.reference_version]
     output:
         "{assayID}/{runID}/{processed_dir}/{reference_version}/HTSeq/count/{unit}.txt"
     shell:
