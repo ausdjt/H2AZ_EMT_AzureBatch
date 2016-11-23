@@ -12,8 +12,8 @@ rule star_align_full_untrimmed_fastq:
     params:
         runThreadN = config["program_parameters"]["STAR"]["runThreadN"]
     input:
-        read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
-        read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1],
+        read1 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
+        read2 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R2_001.QT.CA.fastq.gz",
         index = lambda wildcards: home + config["references"]["CanFam3.1"]["STAR"][wildcards.reference_version]
     output:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam",
@@ -41,8 +41,8 @@ rule star_align_full:
         runThreadN = config["program_parameters"]["STAR"]["runThreadN"],
         trim_dir = config["trim_dir"]
     input:
-        read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][0],
-        read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config[wildcards.assayID][wildcards.unit][1],
+        read1 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R1_001.QT.CA.fastq.gz",
+        read2 = "{assayID}/{runID}/{processed_dir}/{params.trim_dir}/{unit}_R2_001.QT.CA.fastq.gz",
         index = lambda wildcards: home + config["references"]["CanFam3.1"]["STAR"][wildcards.reference_version]
     output:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
