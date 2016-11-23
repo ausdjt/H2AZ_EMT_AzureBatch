@@ -33,7 +33,7 @@ rule run_kallisto:
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"],
-               unit = config["RNA-Seq"])
+               unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]])
 
 rule run_STAR:
     input:
@@ -42,7 +42,7 @@ rule run_STAR:
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"],
-               unit = config["RNA-Seq"])
+               unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]])
 
 rule run_STAR_untrimmed:
     input:
@@ -51,7 +51,7 @@ rule run_STAR_untrimmed:
                runID = ["NB501086_0067_RDomaschenz_JCSMR_RNASeq", "NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"],
-               unit = config["RNA-Seq"])
+               unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]])
 
 rule run_htseq:
     input:
@@ -59,7 +59,7 @@ rule run_htseq:
                assayID = "RNA-Seq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"],
-               unit = config["RNA-Seq"])
+               unit = [config["samples"]["RNA-Seq"]["NB501086_0067_RDomaschenz_JCSMR_RNASeq"], config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]])
 
 rule run_cutadapt:
     input:
