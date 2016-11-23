@@ -7,8 +7,6 @@ __date__ = "2016-04-10"
 from snakemake.exceptions import MissingInputException
 
 rule kallisto_quant:
-    message:
-        "Running kallisto quant..."
     params:
         bootstraps = config["program_parameters"]["kallisto"]["bootstraps"],
         threads = 4,
@@ -29,8 +27,6 @@ rule kallisto_quant:
         """
 
 rule kallisto_quant_from_uncompressed:
-    message:
-        "Running kallisto quant with uncompressed FASTQ as input..."
     params:
         bootstraps = 1,
         threads = 4
