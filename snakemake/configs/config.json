@@ -84,17 +84,20 @@
             "minimum_perc" : "0.1"
         }
       },
-      "trim_params": "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30",
-      "trim_dir" : "trimmed_data",
-      "processed_dir" : "processed_data",
-      "aligned_dir" : "aligned_data",
-      "reports_dir" : "reports",
-      "temp_dir" : "temp_data",
-      "alignment_quality" : "20",
-      "raw_dir" : "fastq",
-      "deepTools_dir" : "/home/skurscheid/miniconda2/envs/deepTools/bin",
-      "HTSeq_dir" : "/home/skurscheid/miniconda2/envs/HTSeq/bin",
-      "cutadapt_dir" : "/home/skurscheid/miniconda2/envs/snakemake/bin",
-      "DEXSeq_dir" : "/home/skurscheid/R/x86_64-unknown-linux-gnu-library/DEXSeq/python_scripts/"
-    }
+      "cutadapt" :
+      {
+        "trim_params": "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30"
+      }
+    },
+    "trim_dir" : "trimmed_data",
+    "processed_dir" : "processed_data",
+    "aligned_dir" : "aligned_data",
+    "reports_dir" : "reports",
+    "temp_dir" : "temp_data",
+    "alignment_quality" : "20",
+    "raw_dir" : "fastq",
+    "deepTools_dir" : "/home/skurscheid/miniconda2/envs/deepTools/bin",
+    "HTSeq_dir" : "/home/skurscheid/miniconda2/envs/HTSeq/bin",
+    "cutadapt_dir" : "/home/skurscheid/miniconda2/envs/snakemake/bin",
+    "DEXSeq_dir" : "/home/skurscheid/R/x86_64-unknown-linux-gnu-library/DEXSeq/python_scripts/"
 }
