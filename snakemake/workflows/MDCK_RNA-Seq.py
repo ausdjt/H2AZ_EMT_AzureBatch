@@ -67,7 +67,8 @@ rule run_cutadapt:
                assayID = "RNA-Seq",
                runID = ["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                outdir = config["processed_dir"],
-               unit = [config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]],
+               trim_data = config["trim_dir"],
+               unit = config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                trim_data = config["trim_dir"],
                suffix = ["R1_001", "R2_001"]),
 
