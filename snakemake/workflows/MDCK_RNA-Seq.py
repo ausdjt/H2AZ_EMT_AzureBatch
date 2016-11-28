@@ -69,8 +69,7 @@ rule run_cutadapt:
                outdir = config["processed_dir"],
                trim_data = config["trim_dir"],
                unit = config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
-               trim_data = config["trim_dir"],
-               suffix = ["R1_001", "R2_001"]),
+               suffix = ["R1_001", "R2_001"])
 
 rule all:
     input:
