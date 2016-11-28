@@ -15,9 +15,15 @@ source("~/Development/GeneralPurpose/R/heatmap.3.R")
 source("~/Development/GeneralPurpose/R/lsos.R")
 
 # local functions ---------------------------------------------------------
-lDir <- function(x, y){
-  paste(x, y, sep = "/")
+lDir <- function(x, y, ...){
+  paste(x, y, ..., sep = "/")
 }
+
+# get snakemake run configuration -----------------------------------------
+runConfig <- jsonlite::fromJSON("~/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/configs/config.json")
+runConfig$references$CanFam3.1$version
+runConfig$samples$`RNA-Seq`$NB501086_0082_RDomaschenz_JCSMR_mRNAseq
+runID <- names(runConfig$samples$`RNA-Seq`)[2]
 
 # global variables --------------------------------------------------------
 ensemblHost <- "uswest.ensembl.org"
@@ -34,18 +40,22 @@ if (amILocal("JCSMR027564ML")){
   options(width = 137)
 }
 options(mc.cores = cpus)
+
 setwd(lDir(pathPrefix, 
-           "Data/Tremethick/EMT/RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/R_Analysis/"))
+           "Data/Tremethick/EMT/RNA-Seq/",
+           runID,
+            "/R_Analysis/"))
+
 dataPath <- lDir(pathPrefix, 
-                 "Data/Tremethick/EMT/RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data/CanFam3.1_ensembl84_ERCC/HTSeq/count/")
+                 "Data/Tremethick/EMT/RNA-Seq/",
+                 runID,
+                 "/processed_data/CanFam3.1_ensembl84_ERCC/HTSeq/count/")
+
 devPath <- "~/Development"
 
 files <- list.files(path = dataPath, full.names = T)
 names(files) <- list.files(path = dataPath, full.names = F)
 
-# get snakemake run configuration -----------------------------------------
-runConfig <- jsonlite::fromJSON("~/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/configs/config.json")
-runConfig$references$CanFam3.1$version
 
 # preparing annotation data from Ensembl ----------------------------------
 if (!file.exists("ensGenes.rda")){
@@ -110,7 +120,7 @@ if (!file.exists("ensGenes.rda")){
 
 # load kallisto data with tximport and inspect via PCA -------------------------
 base_dir <- paste(pathPrefix, 
-                "Data/Tremethick/EMT/RNA-Seq/NB501086_0067_RDomaschenz_JCSMR_RNASeq/processed_data", runConfig$references$CanFam3.1$version, "kallisto", sep = "/")
+                "Data/Tremethick/EMT/RNA-Seq/", runID ,"/processed_data", runConfig$references$CanFam3.1$version, "kallisto", sep = "/")
 sample_id <- dir(base_dir)
 kal_dirs <- sapply(sample_id, function(id) file.path(base_dir, id))
 condition <- unlist(lapply(strsplit(sample_id, "_"), function(x) paste(x[1:2], collapse = "_")))
