@@ -4,14 +4,15 @@ datDE <- lapply(names(resultsCompressed), function(x){
                       data <- lapply(names(resultsCompressed[[x]]$sleuth_results.gene), function(y){
                         print(x)
                         print(y)
-                        dat <- resultsCompressed[[x]]$sleuth_results.gene[[y]][which(resultsCompressed[[x]]$sleuth_results.gene[[y]]$target_id %in% cfam.qPCRGenesTab$ensembl_gene_id),]
+                        s <- resultsCompressed[[x]]$sleuth_results.gene[[y]]$target_id %in% cfam.qPCRGenesTab$ensembl_gene_id
+                        dat <- resultsCompressed[[x]]$sleuth_results.gene[[y]][s,]
                         dat <- merge(dat,
                                      ensGenes[,c("ensembl_gene_id", "external_gene_name")], 
                                      by.x = "target_id", 
                                      by.y = "ensembl_gene_id")
                         dat <- dat[order(dat$qval), ]
-                        yAxisMax <- max(-log10(dat$qval))
-                        xAxisMax <- max(dat$b)
+                        #yAxisMax <- max(-log10(dat$qval), na.rm = T)
+                        xAxisMax <- max(abs(dat$b)) + 1
                         pdf(paste("Volcano_plot_", x, y, ".pdf", sep = ""))
                         plot(dat$b,
                              -log10(dat$qval), 
@@ -19,21 +20,22 @@ datDE <- lapply(names(resultsCompressed), function(x){
                              xlab = "", 
                              ylab = "", 
                              frame = F,
-                             xlim = c(-10,10),
                              cex = 0.3,
+                             xlim = c(-round(xAxisMax, 0), round(xAxisMax,0)),
                              pch = 16, main = paste("Volcano plot\n", x, " Condition: ", y, sep = ""))
                         points(dat[which(-log10(dat$qval) >= 1), "b"], 
                                -log10(dat[which(-log10(dat$qval) >= 1), "qval"]),
                                col = "red", 
                                pch = 16, 
-                               cex = 1.2)
-                        axis(2, 
-                             pos = 0, 
-                             lwd = 3, 
-                             at = c(seq(0,yAxisMax,10)))
-                        axis(1,
+                               cex = 1.1)
+                        axis(2,
                              pos = 0, 
                              lwd = 3)
+#                             at = c(seq(0,yAxisMax,10)))
+                        axis(1,
+                             pos = 0, 
+                             lwd = 3,
+                             at = c(seq(-round(xAxisMax, 0), round(xAxisMax,0), 2)))
                         mtext("-log10(q-value)", 
                               side = 2)
                         mtext("beta value",
