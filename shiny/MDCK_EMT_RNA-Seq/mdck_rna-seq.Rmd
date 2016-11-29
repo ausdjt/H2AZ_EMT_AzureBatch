@@ -1,0 +1,286 @@
+---
+title: "MDCK RNA-Seq Analysis"
+author: "Sebastian Kurscheid"
+date: '2016-11-28'
+output:
+  html_document:
+    fontsize: 12
+    highlight: default
+    number_section: yes
+    theme: flatly
+    toc: yes
+    toc_depth: 5
+  html_notebook: default
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 5
+email: sebastian.kurscheid@anu.edu.au
+---
+
+```{r, setup, echo=FALSE, background=TRUE}
+require(DT)
+require(ade4)
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...){
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    r <- abs(cor(x, y))
+    txt <- format(c(r, 0.123456789), digits = digits)[1]
+    txt <- paste0(prefix, txt)
+    if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+    text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+source("~/Development/GeneralPurpose/R/heatmap.3.R")
+
+```
+
+# Introduction
+This is the analysis of the second RNA-Seq experiment profiling gene expression changes in MDCK cells treated with TGFb and the knockdown of H2AZ in MDCK cells. Adaptor-trimmed paired RNA-Seq reads were used as input for transcript abundance estimation using *"kallisto"*. The kallisto output was then used for the analysis in the following document. The actual differential expression analysis was performed using the R package *"sleuth"*, which has been specifically developed to take advantage of the kallisto abundance estimates and boostrapping which allow the simulation of technical variability of an RNA-Seq experiment, thus improving robustness of transcript abundance estimates.
+
+## Results
+
+### Exploratory analysis
+
+Purpose of this step is to get an impression of the overall quality of the experiment. The data is viewed from a global perspective, and the expected outcome is that replicates of the same experimental condition "cluster" together. For this purpose, three types of analysis are applied.
+
+#### Correlation analysis
+
+This is just a basic "sanity check" to estimate the correlation between the different biological replicates based on all observations (all transcript.) The diagonal value of 1 indicates the self-correlation between identical samples. Values < 1 indicate dissimilarity between the samples. We expecte biological replicates of the same condition to be more similar to each other than replicates of other conditions.
+
+##### Output
+```{r correlation_analysis, cache=TRUE, tidy.opts=list(tidy=60), eval=TRUE, echo=FALSE}
+load("~/Data/Tremethick/EMT/RNA-Seq/NB501086_0082_RDomaschenz_JCSMR_mRNAseq/processed_data/CanFam3.1_ensembl84_ERCC/R_Analysis/kallisto_estimated_abundances.rda")
+cor(txi$abundance, use = "pairwise.complete.obs", method = "pearson")
+```
+
+We can also visualise this data in a heatmap.
+```{r correlation_analysis_heatmap, cache=TRUE, tidy.opts=list(tidy=60), eval=TRUE, echo=FALSE, background=TRUE}
+cor_t <- 1 - abs(cor(txi$abundance,use = "pairwise.complete.obs", method = "pearson"))
+hc1 <- hclust(as.dist(cor_t), method = "ward")
+dend1 <- as.dendrogram(hc1)
+heatmap(cor_t, Colv = NA, labCol = NA, Rowv=dend1)
+```
+
+And finally, the correlation data can be presented in a scatter-plot matrix, using X-Y plots of every sample combination to illustrate the correlation between all of them:
+
+```{r correlation_analysis_scatterplotmatrix, cache=TRUE, tidy.opts=list(tidy=80), eval=TRUE, echo=FALSE}
+pairs(txi$abundance, lower.panel = panel.smooth, upper.panel = panel.cor)
+```
+
+##### Interpretation
+
+The hierarchical clustering of the correlation-derived distance matrix shows that TGFb treated samples group together, but that there is slight confusion between shZ and WT MDCK samples. This is *not* problematic at this point, as there are two additional exploratory analysis steps to check the quality of the experiment, and clustering of correlation data is probably the weakest method.
+
+********************
+#### Principal component analysis
+This analyis is based on "dimensionality reduction" which is aimed to reduced the information content of the experimental data and summarise those components which behave in a similar manner as "eigenvectors". Plotting the "loadings" of the "eigenvectors" enables us to inspect if the variability observed in the experiment (i.e. changes in gene expression) correlate with the known confounders (i.e. treatments/experimental conditions, and also other factors contributing potential batch effects)
+
+##### Output
+```{r PCA, cache=TRUE, tidy.opts=list(tidy=60), eval = TRUE, cache.lazy=TRUE}
+condition <- unlist(lapply(strsplit(colnames(txi$abundance), "_"), function(x) gsub("D6", "", x[1])))
+pca1 <- ade4::dudi.pca(t(txi$abundance), scannf = F, nf = 6)
+ade4::s.class(pca1$li, fac = as.factor(condition))
+ade4::s.arrow(pca1$li, clabel = 0.7)
+
+```
+
+##### Interpretation
+
+Plots of the PCA shows that all biological replicates behave in a similar manner, i.e. cluster together and form well separated groups. This indicates that the experiment was successful, and that we can expect to generate lists of differentially expressed genes with high confidence.
+
+********************
+
+#### Hierarchical clustering using transcript abundance estimates
+
+In order to reduce the number of variables, we first determine the standard deviations of every transcript in the experiment across all samples, and then only use transcripts with a minimum SD of 15 (thus representing those transcripts with the highest variability).
+
+##### Output
+```{r hierachical_clustering_raw_filter, cache=TRUE, tidy.opts=list(tidy=60), eval = TRUE}
+sd1 <- apply(txi$abundance, 1, sd)
+table(sd1 > 15)
+```
+
+A total of 1653 transcripts will be used for the hierarchical clustering.
+
+```{r hierachical_clustering_raw, cache=TRUE, tidy.opts=list(tidy=60), eval = TRUE, echo = FALSE}
+heatmap.3(t(log2(txi$abundance[sd1 > 15,] + 1)),
+          trace = "none", 
+          distfun = function(x) dist(x, method = "manhattan"), 
+          hclustfun = function(y) hclust(y,method="ward.D"),
+          cexRow = 0.6,
+          labCol = NA,
+          main = "Exploratory analysis of\nabundance estimates", cex.main = 0.3)
+```
+
+
+##### Interpretation
+Using the transcript abundance estimate, the hiearchical clustering results in a clear separation of the three conditions. It also appears that the shZ knockdown is overall more similar to the WT condition, whilst TGFb treatment does seem to trigger wider ranging changes.
+
+### Differential gene/transcript expression analysis
+
+The differential expression analysis was performed using sleuth.
+
+```{r load_data_for_DE, echo=FALSE, cache=TRUE}
+load("~/Data/Tremethick/EMT/RNA-Seq/NB501086_0082_RDomaschenz_JCSMR_mRNAseq/processed_data/CanFam3.1_ensembl84_ERCC/R_Analysis/resultsCompressed.rda")
+load("~/Data/Tremethick/EMT/RNA-Seq/NB501086_0082_RDomaschenz_JCSMR_mRNAseq/processed_data/CanFam3.1_ensembl84_ERCC/R_Analysis/cfam.qPCRGenesTab.rda")
+load("~/Data/Tremethick/EMT/RNA-Seq/NB501086_0082_RDomaschenz_JCSMR_mRNAseq/processed_data/CanFam3.1_ensembl84_ERCC/R_Analysis/ensGenes_CanFam3.1_ensembl84_ERCC.rda")
+```
+
+#### Volcano plots of the EMT genes used on the original qPCR array
+```{r volcano_plot_data_prep, echo=FALSE, cache=TRUE, background=TRUE}
+l1 <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), function(y){
+  s <- resultsCompressed[[1]]$sleuth_results.gene[[y]]$target_id %in% cfam.qPCRGenesTab$ensembl_gene_id
+  dat <- resultsCompressed[[1]]$sleuth_results.gene[[y]][s,]
+  dat <- merge(dat,
+               ensGenes[,c("ensembl_gene_id", "external_gene_name")], 
+               by.x = "target_id", 
+               by.y = "ensembl_gene_id")
+  dat <- dat[order(dat$qval), ]
+  #yAxisMax <- max(-log10(dat$qval), na.rm = T)
+  return(list(dataTable = dat))
+})
+names(l1) <- names(resultsCompressed[[1]]$sleuth_results.gene)
+```
+##### Output for TGFb-treated vs WT samples
+```{r volcano_plot_tgfb, echo=FALSE, cache=TRUE}
+y <- "conditionMDCKTGFb"
+dat <- l1[[y]]$dataTable
+  xAxisMax <- max(abs(dat$b)) + 1
+  plot(dat$b,
+       -log10(dat$qval), 
+       axes = F, 
+       xlab = "", 
+       ylab = "", 
+       frame = F,
+       cex = 0.3,
+       xlim = c(-round(xAxisMax, 0), round(xAxisMax,0)),
+       pch = 16, main = paste("Volcano plot\nCondition: ", y, sep = ""))
+  points(dat[which(-log10(dat$qval) >= 1), "b"], 
+         -log10(dat[which(-log10(dat$qval) >= 1), "qval"]),
+         col = "red", 
+         pch = 16, 
+         cex = 1.1)
+  axis(2,
+       pos = 0, 
+       lwd = 3)
+#                             at = c(seq(0,yAxisMax,10)))
+  axis(1,
+       pos = 0, 
+       lwd = 3,
+       at = c(seq(-round(xAxisMax, 0), round(xAxisMax,0), 2)))
+  mtext("-log10(q-value)", 
+        side = 2)
+  mtext("beta value",
+        side = 1, 
+        line = 2)
+  abline(h = 1, col = "red", lty = 2, lwd = 2)
+  # only adding labels to genes with adjuste p-value <= 0.01
+  text(dat[which(-log10(dat$qval) >= 2), "b"], -log10(dat[which(-log10(dat$qval) >= 2), "qval"]), 
+       labels = dat[which(-log10(dat$qval) >= 2), "external_gene_name" ],
+       cex = 0.7,
+       pos = 4, offset = 0.3)
+  text(-4,1.2, "< 0.1 [adjusted p-value]", cex = 0.7)
+
+```
+
+The table contains the results of the differential expression analysis (TGFb vs WT) for the qPCR EMT array genes.
+
+Note: 
+*Column "b" contains the effect size, which is roughly equivalent to the observed fold change. Positive "b" = up-regulated upon treatment and vice versa.
+*Column "qvalue" contains the p-value controlled for multiple testing, the smaller the q-value the better.
+
+```{r data_table_emt_genes_tgfb, cache=TRUE}
+selCols <- c("target_id", "qval", "b", "external_gene_name")
+DT::datatable(dat[,selCols])
+```
+
+##### Output for shZ-knockdown vs WT samples
+```{r volcano_plot_shz, echo=FALSE, cache=TRUE}
+y <- "conditionMDCKshZ"
+dat <- l1[[y]]$dataTable
+  xAxisMax <- max(abs(dat$b)) + 1
+  plot(dat$b,
+       -log10(dat$qval), 
+       axes = F, 
+       xlab = "", 
+       ylab = "", 
+       frame = F,
+       cex = 0.3,
+       xlim = c(-round(xAxisMax, 0), round(xAxisMax,0)),
+       pch = 16, main = paste("Volcano plot\nCondition: ", y, sep = ""))
+  points(dat[which(-log10(dat$qval) >= 1), "b"], 
+         -log10(dat[which(-log10(dat$qval) >= 1), "qval"]),
+         col = "red", 
+         pch = 16, 
+         cex = 1.1)
+  axis(2,
+       pos = 0, 
+       lwd = 3)
+#                             at = c(seq(0,yAxisMax,10)))
+  axis(1,
+       pos = 0, 
+       lwd = 3,
+       at = c(seq(-round(xAxisMax, 0), round(xAxisMax,0), 2)))
+  mtext("-log10(q-value)", 
+        side = 2)
+  mtext("beta value",
+        side = 1, 
+        line = 2)
+  abline(h = 1, col = "red", lty = 2, lwd = 2)
+  # only adding labels to genes with adjuste p-value <= 0.01
+  text(dat[which(-log10(dat$qval) >= 2), "b"], -log10(dat[which(-log10(dat$qval) >= 2), "qval"]), 
+       labels = dat[which(-log10(dat$qval) >= 2), "external_gene_name" ],
+       cex = 0.7,
+       pos = 4, offset = 0.3)
+  text(-4,1.2, "< 0.1 [adjusted p-value]", cex = 0.7)
+
+```
+
+The table contains the results of the differential expression analysis (shZ knockdown vs WT) for the qPCR EMT array genes.
+
+Note: 
+*Column "b" contains the effect size, which is roughly equivalent to the observed fold change. Positive "b" = up-regulated upon treatment and vice versa.
+*Column "qvalue" contains the p-value controlled for multiple testing, the smaller the q-value the better.
+
+```{r data_table_emt_genes_shz, echo = FALSE, cache=TRUE}
+selCols <- c("target_id", "qval", "b", "external_gene_name")
+DT::datatable(dat[,selCols])
+```
+
+#### Global differential expression analysis
+
+```{r global_de_data_prep, background=TRUE, cache=FALSE}
+l1 <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), function(y){
+  s <- resultsCompressed[[1]]$sleuth_results.gene[[y]]$target_id %in% ensGenes$ensembl_gene_id
+  dat <- resultsCompressed[[1]]$sleuth_results.gene[[y]][s,]
+  dat <- merge(dat,
+               ensGenes[,c("ensembl_gene_id", "external_gene_name", "description")], 
+               by.x = "target_id", 
+               by.y = "ensembl_gene_id")
+  dat <- dat[order(dat$qval), ]
+  return(list(dataTable = dat))
+})
+names(l1) <- names(resultsCompressed[[1]]$sleuth_results.gene)
+```
+
+##### Differentially expressed genes upon TGFb-treatment
+
+For brevity, only genes with a FDR/qvalue < 5% are selected.
+```{r global_DE_table_tgfb, cache=TRUE}
+y <- "conditionMDCKTGFb"
+dat <- l1[[y]]$dataTable
+selRows <- dat$qval < 0.05
+DT::datatable(dat[selRows,selCols])
+```
+
+##### Differentially expressed genes upon shZ knockdown
+
+For brevity, only genes with a FDR/qvalue < 5% are selected.
+```{r global_DE_table_shz, cache=TRUE}
+y <- "conditionMDCKshZ"
+dat <- l1[[y]]$dataTable
+selRows <- dat$qval < 0.05
+DT::datatable(dat[selRows,selCols])
+```
+
