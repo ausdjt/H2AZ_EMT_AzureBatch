@@ -8,3 +8,5 @@ _mdwriter.cson
 *.sh.po*
 *_cache
 *_files
+*.pdf
+*.html
