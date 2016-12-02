@@ -193,6 +193,7 @@ if (!file.exists("MDCK_kallisto_analysis_results.rda")){
 } else {
   load("MDCK_kallisto_analysis_results.rda")
 }
+names(results) <- names(s2c.list)
 
 # re-formatting of list object --------------------------------------------
 resultsCompressed <- lapply(names(results), function(x){
@@ -268,7 +269,7 @@ if(file.exists(lDir(devPath, "JCSMR-Tremethick-Lab/H2AZ_EMT/R_scripts/MDCK_volca
   }
 
 # heatmap of samples using MCF10A_wt as reference
-df1 <- sleuth_to_matrix(results[["MDCK"]]$sleuth_object, "obs_norm", "tpm")
+df1 <- sleuth::sleuth_to_matrix(results[["MDCK"]]$sleuth_object, "obs_norm", "tpm")
 df1 <- df1$data
 tgfb <- grep("TGFb", colnames(df1))
 shz <- grep("shZ", colnames(df1))

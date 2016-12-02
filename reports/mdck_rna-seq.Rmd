@@ -1,0 +1,118 @@
+---
+title: "MDCK RNA-Seq exploratory analysis"
+author: "Sebastian Kurscheid"
+date: '2016-11-28'
+output:
+  html_document:
+    fontsize: 12
+    highlight: default
+    number_section: true
+    theme: flatly
+    toc: true
+    toc_depth: 5
+  html_notebook: default
+  pdf_document:
+    number_sections: true
+    toc: true
+    toc_depth: 5
+email: sebastian.kurscheid@anu.edu.au
+---
+
+```{r, setup, echo=FALSE, background=TRUE}
+require(DT)
+require(ade4)
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...){
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    r <- abs(cor(x, y))
+    txt <- format(c(r, 0.123456789), digits = digits)[1]
+    txt <- paste0(prefix, txt)
+    if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+    text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+source("~/Development/GeneralPurpose/R/heatmap.3.R")
+
+```
+
+# Introduction
+This is the analysis of the second RNA-Seq experiment profiling gene expression changes in MDCK cells treated with TGFb and the knockdown of H2AZ in MDCK cells. Adaptor-trimmed paired RNA-Seq reads were used as input for transcript abundance estimation using *"kallisto"*. The kallisto output was then used for the analysis in the following document. The actual differential expression analysis was performed using the R package *"sleuth"*, which has been specifically developed to take advantage of the kallisto abundance estimates and boostrapping which allow the simulation of technical variability of an RNA-Seq experiment, thus improving robustness of transcript abundance estimates.
+
+## Results
+
+### Exploratory analysis
+
+Purpose of this step is to get an impression of the overall quality of the experiment. The data is viewed from a global perspective, and the expected outcome is that replicates of the same experimental condition "cluster" together. For this purpose, three types of analysis are applied.
+
+#### Correlation analysis
+
+This is just a basic "sanity check" to estimate the correlation between the different biological replicates based on all observations (all transcript.) The diagonal value of 1 indicates the self-correlation between identical samples. Values < 1 indicate dissimilarity between the samples. We expecte biological replicates of the same condition to be more similar to each other than replicates of other conditions.
+
+##### Output
+```{r correlation_analysis, cache=TRUE, tidy.opts=list(tidy=60), eval=TRUE, echo=FALSE}
+load("~/Data/Tremethick/EMT/RNA-Seq/NB501086_0082_RDomaschenz_JCSMR_mRNAseq/processed_data/CanFam3.1_ensembl84_ERCC/R_Analysis/kallisto_estimated_abundances.rda")
+cor(txi$abundance, use = "pairwise.complete.obs", method = "pearson")
+```
+
+We can also visualise this data in a heatmap.
+```{r correlation_analysis_heatmap, cache=TRUE, tidy.opts=list(tidy=60), eval=TRUE, echo=FALSE, background=TRUE}
+cor_t <- 1 - abs(cor(txi$abundance,use = "pairwise.complete.obs", method = "pearson"))
+hc1 <- hclust(as.dist(cor_t), method = "ward")
+dend1 <- as.dendrogram(hc1)
+heatmap(cor_t, Colv = NA, labCol = NA, Rowv=dend1)
+```
+
+And finally, the correlation data can be presented in a scatter-plot matrix, using X-Y plots of every sample combination to illustrate the correlation between all of them:
+
+```{r correlation_analysis_scatterplotmatrix, cache=TRUE, tidy.opts=list(tidy=80), eval=TRUE, echo=FALSE}
+pairs(txi$abundance, lower.panel = panel.smooth, upper.panel = panel.cor)
+```
+
+##### Interpretation
+
+The hierarchical clustering of the correlation-derived distance matrix shows that TGFb treated samples group together, but that there is slight confusion between shZ and WT MDCK samples. This is *not* problematic at this point, as there are two additional exploratory analysis steps to check the quality of the experiment, and clustering of correlation data is probably the weakest method.
+
+********************
+#### Principal component analysis
+This analyis is based on "dimensionality reduction" which is aimed to reduced the information content of the experimental data and summarise those components which behave in a similar manner as "eigenvectors". Plotting the "loadings" of the "eigenvectors" enables us to inspect if the variability observed in the experiment (i.e. changes in gene expression) correlate with the known confounders (i.e. treatments/experimental conditions, and also other factors contributing potential batch effects)
+
+##### Output
+```{r PCA, cache=TRUE, tidy.opts=list(tidy=60), eval = TRUE, cache.lazy=TRUE}
+condition <- unlist(lapply(strsplit(colnames(txi$abundance), "_"), function(x) gsub("D6", "", x[1])))
+pca1 <- ade4::dudi.pca(t(txi$abundance), scannf = F, nf = 6)
+ade4::s.class(pca1$li, fac = as.factor(condition))
+ade4::s.arrow(pca1$li, clabel = 0.7)
+
+```
+
+##### Interpretation
+
+Plots of the PCA shows that all biological replicates behave in a similar manner, i.e. cluster together and form well separated groups. This indicates that the experiment was successful, and that we can expect to generate lists of differentially expressed genes with high confidence.
+
+********************
+
+#### Hierarchical clustering using transcript abundance estimates
+
+In order to reduce the number of variables, we first determine the standard deviations of every transcript in the experiment across all samples, and then only use transcripts with a minimum SD of 15 (thus representing those transcripts with the highest variability).
+
+##### Output
+```{r hierachical_clustering_raw_filter, cache=TRUE, tidy.opts=list(tidy=60), eval = TRUE}
+sd1 <- apply(txi$abundance, 1, sd)
+table(sd1 > 15)
+```
+
+A total of 1653 transcripts will be used for the hierarchical clustering.
+
+```{r hierachical_clustering_raw, cache=TRUE, tidy.opts=list(tidy=60), eval = TRUE, echo = FALSE}
+heatmap.3(t(log2(txi$abundance[sd1 > 15,] + 1)),
+          trace = "none", 
+          distfun = function(x) dist(x, method = "manhattan"), 
+          hclustfun = function(y) hclust(y,method="ward.D"),
+          cexRow = 0.6,
+          labCol = NA,
+          main = "Exploratory analysis of\nabundance estimates", cex.main = 0.3)
+```
+
+
+##### Interpretation
+Using the transcript abundance estimate, the hiearchical clustering results in a clear separation of the three conditions. It also appears that the shZ knockdown is overall more similar to the WT condition, whilst TGFb treatment does seem to trigger wider ranging changes.

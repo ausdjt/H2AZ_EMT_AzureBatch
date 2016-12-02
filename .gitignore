@@ -10,3 +10,5 @@ _mdwriter.cson
 *_files
 *.pdf
 *.html
+*.rda
+*.nb.html
