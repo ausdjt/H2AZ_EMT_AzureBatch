@@ -13,6 +13,7 @@ require(readr)
 source("~/Development/GeneralPurpose/R/amILocal.R")
 source("~/Development/GeneralPurpose/R/heatmap.3.R")
 source("~/Development/GeneralPurpose/R/lsos.R")
+source("~/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/R_scripts/prepare_ensembl_annotation.R")
 
 # local functions ---------------------------------------------------------
 lDir <- function(x, y, ...){
@@ -21,9 +22,10 @@ lDir <- function(x, y, ...){
 
 # get snakemake run configuration -----------------------------------------
 runConfig <- jsonlite::fromJSON("~/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/configs/config.json")
-runConfig$references$CanFam3.1$version
-runConfig$samples$`RNA-Seq`$NB501086_0082_RDomaschenz_JCSMR_mRNAseq
 runID <- names(runConfig$samples$`RNA-Seq`)[2]
+refVersion <- "CanFam3.1"
+annotationVersion <- runConfig$references[[refVersion]]$version
+annotationVersion <- annotationVersion[1]
 
 # global variables --------------------------------------------------------
 ensemblHost <- "uswest.ensembl.org"
@@ -41,10 +43,17 @@ if (amILocal("JCSMR027564ML")){
 }
 options(mc.cores = cpus)
 
-setwd(lDir(pathPrefix, 
-           "Data/Tremethick/EMT/RNA-Seq/",
-           runID,
-            "/R_Analysis/"))
+analysisDir <- lDir(pathPrefix, 
+                    "Data/Tremethick/EMT/RNA-Seq/",
+                    runID,
+                    "/processed_data/CanFam3.1_ensembl84_ERCC/R_Analysis/")
+
+if (dir.exists(analysisDir)){
+  setwd(analysisDir)
+} else {
+  dir.create(analysisDir)
+  setwd(analysisDir)
+}
 
 dataPath <- lDir(pathPrefix, 
                  "Data/Tremethick/EMT/RNA-Seq/",
@@ -57,73 +66,22 @@ files <- list.files(path = dataPath, full.names = T)
 names(files) <- list.files(path = dataPath, full.names = F)
 
 
-# preparing annotation data from Ensembl ----------------------------------
-if (!file.exists("ensGenes.rda")){
-  mart <- biomaRt::useEnsembl(biomart = biomart, dataset = dataset, host = ensemblHost)
-  attribs <- biomaRt::listAttributes(mart)
-  ensGenes <- biomaRt::getBM(attributes = c("ensembl_gene_id",
-                              "external_gene_name",
-                              "chromosome_name",
-                              "start_position",
-                              "end_position",
-                              "strand",
-                              "band",
-                              "description",
-                              "percentage_gc_content",
-                              "gene_biotype"),
-                              mart = mart)
-  save(ensGenes, file = "ensGenes.rda")
-
-  # get Ensembl transcripts
-  ensTranscripts <- biomaRt::getBM(attributes = c("ensembl_transcript_id",
-                                                  "ensembl_gene_id",
-                                                  "transcript_length",
-                                                  "version", 
-                                                  "transcript_version",
-                                                  "external_gene_name"),
-                                   mart = mart,
-                                   filter = "ensembl_gene_id",
-                                   values = ensGenes$ensembl_gene_id)
-  save(ensTranscripts, file = "ensTranscripts.rda")
-  
-  # create t2g object
-  t2g <- ensTranscripts[, c("ensembl_transcript_id", 
-                            "ensembl_gene_id", 
-                            "external_gene_name", 
-                            "version", 
-                            "transcript_version")]
-  t2g$ensembl_transcript_id <- paste(t2g$ensembl_transcript_id, t2g$transcript_version, sep = ".")
-  t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id, ens_gene = ensembl_gene_id, ext_gene = external_gene_name)
-  save(t2g, file = "t2g.rda")
-  
-  mylength <- sapply(ensGenes$ensembl_gene_id, function(x){
-    y <- ensTranscripts[which(ensTranscripts$ensembl_gene_id == x), ]
-    y <- y[which.max(y$transcript_length), ]$transcript_length})
-  save(mylength, file = "mylength.rda")
-  mygc <- ensGenes$percentage_gc_content
-  names(mygc) <- ensGenes$ensembl_gene_id
-  save(mygc, file = "mygc.rda")
-  mybiotypes <- ensGenes$gene_biotype
-  names(mybiotypes) <- ensGenes$ensembl_gene_id
-  save(mybiotypes, file = "mybiotypes.rda")
-  mychroms <- data.frame(Chr = ensGenes$chromosome_name, GeneStart = ensGenes$start_position, GeneEnd = ensGenes$end_position)
-  save(mychroms, file = "mychroms.rda")
-  } else {
-  load("ensGenes.rda")
-  load("ensTranscripts.rda")
-  load("mylength.rda")
-  load("mygc.rda")
-  load("mybiotypes.rda")
-  load("mychroms.rda")
-  load("t2g.rda")
-}
+# preparing annotation data from Ensembl ------------------------------------
+annotationDataPath <- analysisDir
+prepare_ensembl_annotation(annotationDataPath, annotationVersion)
 
 # load kallisto data with tximport and inspect via PCA -------------------------
 base_dir <- paste(pathPrefix, 
-                "Data/Tremethick/EMT/RNA-Seq/", runID ,"/processed_data", runConfig$references$CanFam3.1$version, "kallisto", sep = "/")
+                "Data/Tremethick/EMT/RNA-Seq",
+                runID ,
+                "processed_data",
+                annotationVersion, 
+                "kallisto", 
+                sep = "/")
 sample_id <- dir(base_dir)
 kal_dirs <- sapply(sample_id, function(id) file.path(base_dir, id))
-condition <- unlist(lapply(strsplit(sample_id, "_"), function(x) paste(x[1:2], collapse = "_")))
+condition <- unlist(lapply(strsplit(sample_id, "_"), function(x) x[1]))
+condition <- gsub("D6", "", condition)
 files <- paste(kal_dirs, "abundance.tsv", sep = "/")
 names(files) <- sample_id
 txi <- tximport::tximport(files, 
@@ -132,6 +90,7 @@ txi <- tximport::tximport(files,
                           txIdCol = "target_id",
                           tx2gene = t2g,
                           reader = read_tsv)
+save(txi, file = "kallisto_estimated_abundances.rda")
 
 # exploratory analysis of the abundance data ------------------------------
 # perform PCA for first inspection of data
@@ -143,8 +102,7 @@ pdf("Exploratory_Analysis_sarrow_plot.pdf")
 ade4::s.arrow(pca1$li, clabel = 0.7)
 dev.off()
 
-cor(txi$abundance)
-pairs(txi$abundance, )
+pairs(log2(txi$abundance + 1))
 sd1 <- apply(txi$abundance, 1, sd)
 pdf("Exploratory_Analysis_Heatmap.pdf")
 heatmap.3(log2(txi$abundance[sd1 > 15,] + 1),
@@ -156,22 +114,11 @@ heatmap.3(log2(txi$abundance[sd1 > 15,] + 1),
           main = "Exploratory analysis on abundance estimates")
 dev.off()
 
-
-################################################################################
-# IMPORTANT!!!!!
-# PCA shows that the knockdown in sample MDCK_shZ_rep1 probably did not work 
-# removing it from list
-# clustering also shows that MDCK_TGFb_rep1 is actually more similar to
-# MDCK_shZ_rep2 than to MDCK_TGFb_rep2
 condition <- as.factor(condition)
-condition <- relevel(condition, "MDCK_wt")
 s2c <- data.frame(sample = sample_id, condition = condition)
 s2c <- dplyr::mutate(s2c, path = kal_dirs)
-s2c <- s2c[-1, ]
-s2c <- s2c[c("5", "6", "3", "4", "2"),]
 s2c$sample <- as.character(s2c$sample)
 s2c.list <- list(MDCK = s2c)
-################################################################################
 
 # actual processing using sleuth------------------------------------------------
 if (!file.exists("MDCK_kallisto_analysis_results.rda")){
@@ -241,13 +188,14 @@ if (!file.exists("MDCK_kallisto_analysis_results.rda")){
                 sleuth_results.gene = rt.gene.list,
                 kallisto_table_genes = kt_genes))
   })
+  names(results) <- names(s2c.list)
   save(results, file = "MDCK_kallisto_analysis_results.rda")
 } else {
   load("MDCK_kallisto_analysis_results.rda")
 }
+names(results) <- names(s2c.list)
 
 # re-formatting of list object --------------------------------------------
-names(results) <- names(s2c.list)
 resultsCompressed <- lapply(names(results), function(x){
   results[[x]][grep("sleuth_object", names(results[[x]]), invert = T)]
 })
@@ -321,21 +269,24 @@ if(file.exists(lDir(devPath, "JCSMR-Tremethick-Lab/H2AZ_EMT/R_scripts/MDCK_volca
   }
 
 # heatmap of samples using MCF10A_wt as reference
-df1 <- resultsCompressed[["MDCK"]]$kallisto_table_genes
+df1 <- sleuth::sleuth_to_matrix(results[["MDCK"]]$sleuth_object, "obs_norm", "tpm")
+df1 <- df1$data
+tgfb <- grep("TGFb", colnames(df1))
+shz <- grep("shZ", colnames(df1))
+wt <- grep("TGFb|shZ", colnames(df1), invert = T)
+df1 <- df1[, c(wt,shz,tgfb)]
 dim(df1)
 head(df1)
-df1 <- df1[, c("ensembl_gene_id", s2c.list[["MDCK"]]$sample)]
-df1 <- df1[complete.cases(df1),]
-df2 <- log2(df1[, c(2:ncol(df1))] + 1)
-rownames(df2) <- df1$ensembl_gene_id
+df2 <- log2(df1 + 1)
 filter <- apply(df2, 1, function(y) length(y[y>2])>=0.1)
 df2 <- as.matrix(df2[filter, ])
 sd1 <- apply(df2, 1, sd)
 length(sd1)
-table(sd1 > 1)
-pca1 <- ade4::dudi.pca(t(df2[sd1 > 1, ]), scannf = F, nf = 5, scale = T, center = T)
+table(sd1 > 0.5)
+pca1 <- ade4::dudi.pca(t(df2[sd1 > 0.5, ]), scannf = F, nf = 5, scale = T, center = T)
+ade4::s.class(pca1$li, fac = as.factor(condition))
 pdf("Heatmaps_MDCK_WT_TGFb_shZ.pdf")
-heatmap.3(df2[sd1 > 1.5,], 
+heatmap.3(df2[sd1 > 0.5,], 
           trace = "none",
           cexCol = 0.6,
           labRow = NA,

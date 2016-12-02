@@ -6,3 +6,9 @@ _mdwriter.cson
 *.sh.o*
 *.sh.e*
 *.sh.po*
+*_cache
+*_files
+*.pdf
+*.html
+*.rda
+*.nb.html
