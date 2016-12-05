@@ -105,7 +105,7 @@ rule cutadapt_pe:
     version:
         "0.2"
     params:
-        trim_params = config["trim_params"],
+        trim_params = config["program_parameters"]["cutadapt"]["trim_params"],
         cutadapt_dir = home + config["cutadapt_dir"]
     input:
         rules.gzip_unmapped_fastq.output
