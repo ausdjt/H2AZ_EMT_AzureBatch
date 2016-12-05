@@ -46,7 +46,7 @@ rule all:
                runID = runID,
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
-               unit = config["samples"][assayID][runID])
+               unit = config["samples"][assayID][runID]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_removed/{unit}.Q{qual}.sorted.DeDup.{suffix}",
                assayID = assayID,
                runID = runID,
