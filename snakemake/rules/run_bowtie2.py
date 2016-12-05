@@ -125,8 +125,8 @@ rule bowtie2_pe_unmapped_reads:
     message:
         "Running second round of bowtie2 alignments on previously unmapped reads..."
     params:
-        threads = config["bt2_params"]["threads"],
-        max_in = config["bt2_params"]["max_insert"]
+        threads = config["program_parameters"]["bt2_params"]["threads"],
+        max_in = config["program_parameters"]["bt2_params"]["max_insert"]
     input:
         rules.cutadapt_pe.output,
         bt2_index=config["references"]["CanFam3.1"]["genome"]
