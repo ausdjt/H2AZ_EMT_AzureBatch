@@ -16,7 +16,8 @@ import os
 import fnmatch
 from snakemake.exceptions import MissingInputException
 
-#configfile: "/home/skurscheid/Development/JCSMR-Tremethick-Lab/Hodgkins-Lymphoma/snakemake/configs/config.json"
+# set local variables
+home = os.environ['HOME']
 
 rule bowtie2_pe:
     params:
@@ -105,7 +106,7 @@ rule cutadapt_pe:
         "0.2"
     params:
         trim_params = config["trim_params"],
-        cutadapt_dir = config["cutadapt_dir"]
+        cutadapt_dir = home + config["cutadapt_dir"]
     input:
         rules.gzip_unmapped_fastq.output
     output:
