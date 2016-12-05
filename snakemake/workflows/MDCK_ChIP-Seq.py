@@ -18,8 +18,8 @@ wrapper_dir = home + "/Development/snakemake-wrappers/bio"
 include_prefix = home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
 
 # define parameters used in this workflow for config lookup
-assayID = "ChIP-Seq"
-runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
+assay = "ChIP-Seq"
+run = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
 
 # include:
 include:
@@ -32,8 +32,8 @@ include:
 rule run_cutadapt:
     input:
         expand("{assayID}/{runID}/{outdir}/{trim_data}/{unit}_{suffix}.QT.CA.fastq.gz",
-               assayID = assayID,
-               runID = runID,
+               assayID = assay,
+               runID = run,
                outdir = config["processed_dir"],
                trim_data = config["trim_dir"],
                unit = config["samples"][assayID][runID],
@@ -42,17 +42,17 @@ rule run_cutadapt:
 rule all:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_marked/{unit}.Q{qual}.sorted.MkDup.bam.bai",
-               assayID = assayID,
-               runID = runID,
+               assayID = assay,
+               runID = run,
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
-               unit = config["samples"][assayID][runID],
+               unit = config["samples"][assay][run],
                qual = config["alignment_quality"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_removed/{unit}.Q{qual}.sorted.DeDup.{suffix}",
-               assayID = assayID,
-               runID = runID,
+               assayID = assay,
+               runID = run,
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
-               unit = config["samples"][assayID][runID],
+               unit = config["samples"][assay][run],
                qual = config["alignment_quality"],
                suffix = ["bam", "bam.bai"])
