@@ -79,4 +79,4 @@ rule bam_rmdup:
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_removed/{unit}.Q{qual}.sorted.DeDup.{suffix}")
     shell:
-        "samtools rmdup {input} {output[0]}; samtools index {output[0]} {output[1]}"
+        "samtools rmdup {input} {output[0]}; samtools index {output[0]}"
