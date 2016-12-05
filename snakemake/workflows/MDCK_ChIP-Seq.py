@@ -37,13 +37,14 @@ rule run_cutadapt:
 
 rule all:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_marked/{unit}.Q{qual}.sorted.MkDup.bam.bai",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_marked/{unit}.Q{qual}.sorted.MkDup.{suffix}",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
-               qual = config["alignment_quality"]),
+               qual = config["alignment_quality"],
+               suffix = ["bam", "bam.bai"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_removed/{unit}.Q{qual}.sorted.DeDup.{suffix}",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
