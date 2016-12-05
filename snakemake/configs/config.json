@@ -4,7 +4,7 @@
       "CanFam3.1" :
       {
         "version" : ["CanFam3.1_ensembl84_ERCC", "CanFam3.1_ensembl84"],
-        "genome" : "/home/skurscheid/Data/References/Genomes/Canis_familiaris/Ensembl/Canis_familiaris.CanFam3.1.dna.toplevel.fa",
+        "genome" : "/Data/References/Genomes/Canis_familiaris/Ensembl/Canis_familiaris.CanFam3.1.dna.toplevel.fa",
         "GTF" :
         {
           "CanFam3.1_ensembl84_ERCC" : "Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",

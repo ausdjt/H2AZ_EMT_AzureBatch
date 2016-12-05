@@ -27,7 +27,7 @@ rule bowtie2_pe:
     input:
         read1="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R1_001.fastq.gz",
         read2="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R2_001.fastq.gz",
-        bt2_index=config["references"]["CanFam3.1"]["genome"]
+        bt2_index= home + config["references"]["CanFam3.1"]["genome"]
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/{unit}.bam")
     shell:
@@ -100,7 +100,7 @@ rule gzip_unmapped_fastq:
     shell:
         "gzip {input[0]}; gzip {input[1]}"
 
-rule cutadapt_pe:
+rule cutadapt_pe_unmapped:
     """Trims given paired-end reads with given parameters"""
     version:
         "0.2"
@@ -128,7 +128,7 @@ rule bowtie2_pe_unmapped_reads:
         threads = config["program_parameters"]["bt2_params"]["threads"],
         max_in = config["program_parameters"]["bt2_params"]["max_insert"]
     input:
-        rules.cutadapt_pe.output,
+        rules.cutadapt_pe_unmapped.output,
         bt2_index=config["references"]["CanFam3.1"]["genome"]
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/second_alignment/{unit}.2ndAlignment.bam")
