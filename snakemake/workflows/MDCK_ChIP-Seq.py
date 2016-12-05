@@ -18,7 +18,7 @@ wrapper_dir = home + "/Development/snakemake-wrappers/bio"
 include_prefix = home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
 
 # define parameters used in this workflow for config lookup
-assayID = "ChIP-Seq""
+assayID = "ChIP-Seq"
 runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
 
 # include:
