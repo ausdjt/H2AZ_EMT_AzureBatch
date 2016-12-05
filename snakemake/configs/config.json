@@ -47,6 +47,20 @@
           "MDCKTGFbD6_2" : ["MDCKTGFbD6_2_S5_R1_001.fastq.gz", "MDCKTGFbD6_2_S5_R2_001.fastq.gz"],
           "MDCKTGFbD6_3" : ["MDCKTGFbD6_3_S6_R1_001.fastq.gz","MDCKTGFbD6_3_S6_R2_001.fastq.gz"]
         }
+      },
+      "ChIP-Seq" :
+      {
+        "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq" :
+        {
+          "H2AZ-TGFb-rep1" : ["H2AZ-TGFb-rep1_S3_R1_001.fastq.gz", "H2AZ-TGFb-rep1_S3_R2_001.fastq.gz"],
+          "H2AZ-TGFb-rep2" : ["H2AZ-TGFb-rep2_S4_R1_001.fastq.gz", "H2AZ-TGFb-rep2_S4_R2_001.fastq.gz"],
+          "H2AZ-WT-rep1" : ["H2AZ-WT-rep1_S1_R1_001.fastq.gz", "H2AZ-WT-rep1_S1_R2_001.fastq.gz"],
+          "H2AZ-WT-rep2" : ["H2AZ-WT-rep2_S2_R1_001.fastq.gz", "H2AZ-WT-rep2_S2_R2_001.fastq.gz"],
+          "Input-TGFb-rep1" : ["Input-TGFb-rep1_S7_R1_001.fastq.gz", "Input-TGFb-rep1_S7_R2_001.fastq.gz"],
+          "Input-TGFb-rep2" : ["Input-TGFb-rep2_S8_R1_001.fastq.gz", "Input-TGFb-rep2_S8_R2_001.fastq.gz"],
+          "Input-WT-rep1" : ["Input-WT-rep1_S5_R1_001.fastq.gz", "Input-WT-rep1_S5_R2_001.fastq.gz"],
+          "Input-WT-rep2" : ["Input-WT-rep2_S6_R1_001.fastq.gz", "Input-WT-rep2_S6_R2_001.fastq.gz"]
+        }
       }
     },
     "program_parameters" :
@@ -94,10 +108,11 @@
     "aligned_dir" : "aligned_data",
     "reports_dir" : "reports",
     "temp_dir" : "temp_data",
-    "alignment_quality" : "20",
+    "alignment_quality" : "10",
     "raw_dir" : "fastq",
     "deepTools_dir" : "/home/sebastian/miniconda3/envs/deepTools/bin",
     "HTSeq_dir" : "/home/sebastian/miniconda3/envs/py27/bin",
     "cutadapt_dir" : "/home/sebastian/miniconda3/envs/snakemake/bin",
-    "DEXSeq_dir" : "/home/skurscheid/R/x86_64-unknown-linux-gnu-library/DEXSeq/python_scripts/"
+    "DEXSeq_dir" : "/home/skurscheid/R/x86_64-unknown-linux-gnu-library/DEXSeq/python_scripts/",
+    "picard" : "/bin/picard.jar"
 }
