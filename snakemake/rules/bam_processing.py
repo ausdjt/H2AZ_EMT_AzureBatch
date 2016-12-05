@@ -77,6 +77,6 @@ rule bam_rmdup:
     input:
         rules.bam_mark_duplicates.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_removed/{unit}.Q{qual}.sorted.DeDup.{suffix}")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_removed/{unit}.Q{qual}.sorted.DeDup.bam")
     shell:
         "samtools rmdup {input} {output[0]}; samtools index {output[0]}"
