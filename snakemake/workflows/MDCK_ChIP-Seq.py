@@ -36,7 +36,7 @@ rule run_cutadapt:
                runID = run,
                outdir = config["processed_dir"],
                trim_data = config["trim_dir"],
-               unit = config["samples"][assayID][runID],
+               unit = config["samples"][assay][run],
                suffix = ["R1_001", "R2_001"])
 
 rule all:
