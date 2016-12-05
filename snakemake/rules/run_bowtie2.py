@@ -25,8 +25,8 @@ rule bowtie2_pe:
         max_in=config["program_parameters"]["bt2_params"]["max_insert"],
         bt2_index=config["references"]["CanFam3.1"]["genome"]
     input:
-        read1="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R1_001.fastq.gz",
-        read2="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R2_001.fastq.gz",
+        read1="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
+        read2="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
         bt2_index= home + config["references"]["CanFam3.1"]["genome"]
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/{unit}.bam")
