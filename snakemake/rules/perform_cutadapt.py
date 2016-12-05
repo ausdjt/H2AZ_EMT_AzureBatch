@@ -8,6 +8,8 @@ __date__ = "2016-02-27"
 # this set of rules is meant to be imported by the master workflow document
 
 from snakemake.exceptions import MissingInputException
+import os
+home = os.environ['HOME']
 
 """
 Rules for trimming reads with cutadapt
@@ -21,7 +23,7 @@ rule cutadapt_pe:
     params:
         trim_params = config["program_parameters"]["cutadapt"]["trim_params"],
         raw_data = config["raw_dir"],
-        cutadapt_dir = config["cutadapt_dir"]
+        cutadapt_dir = home + config["cutadapt_dir"]
     input:
         read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.runID][wildcards.unit][0],
         read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.runID][wildcards.unit][1]
