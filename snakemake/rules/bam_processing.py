@@ -79,4 +79,14 @@ rule bam_rmdup:
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_removed/{unit}.Q{qual}.sorted.DeDup.bam")
     shell:
-        "samtools rmdup {input} {output[0]}; samtools index {output[0]}"
+        "samtools rmdup {input} {output}"
+
+rule bam_rmdup_index:
+    params:
+        qual = config["alignment_quality"]
+    input:
+        rules.bam_rmdup.output
+    output:
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_marked/{unit}.Q{qual}.sorted.DeDup.bam.bai")
+    shell:
+        "samtools index {input} {output}"
