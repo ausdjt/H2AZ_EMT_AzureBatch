@@ -12,8 +12,8 @@ load("data/cfamEnsGenesSigEMTCells.rda", .GlobalEnv)
 
 
 # prepare data sets -----------------------------------------------------
-# global data used for tables of all genes
-globalData <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), function(y){
+# gene expression data for all samples 
+globalGeneExpData <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), function(y){
   s <- resultsCompressed[[1]]$sleuth_results.gene[[y]]$target_id %in% ensGenes$ensembl_gene_id
   dat <- resultsCompressed[[1]]$sleuth_results.gene[[y]][s,]
   dat <- merge(dat,
@@ -23,7 +23,21 @@ globalData <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), function
   dat <- dat[order(dat$qval), ]
   return(list(dataTable = dat))
 })
-names(globalData) <- names(resultsCompressed[[1]]$sleuth_results.gene)
+names(globalGeneExpData) <- names(resultsCompressed[[1]]$sleuth_results.gene)
+
+
+# global DE data used for tables of all genes
+globalDEData <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), function(y){
+  s <- resultsCompressed[[1]]$sleuth_results.gene[[y]]$target_id %in% ensGenes$ensembl_gene_id
+  dat <- resultsCompressed[[1]]$sleuth_results.gene[[y]][s,]
+  dat <- merge(dat,
+               ensGenes[,c("ensembl_gene_id", "external_gene_name", "description")], 
+               by.x = "target_id", 
+               by.y = "ensembl_gene_id")
+  dat <- dat[order(dat$qval), ]
+  return(list(dataTable = dat))
+})
+names(globalDEData) <- names(resultsCompressed[[1]]$sleuth_results.gene)
 
 # this is the data corresponding to the genes present on the EMT qPCR array
 emtqPCRData <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), function(y){
@@ -149,8 +163,8 @@ shinyServer(function(input, output, session) {
   })
   
   selCols <- c("target_id", "qval", "b", "external_gene_name", "description")
-  output$global_de_tgfb = DT::renderDataTable(globalData[["conditionMDCKTGFb"]]$dataTable[,selCols])
-  output$global_de_shZ = DT::renderDataTable(globalData[["conditionMDCKshZ"]]$dataTable[,selCols])
+  output$global_de_tgfb = DT::renderDataTable(globalDEData[["conditionMDCKTGFb"]]$dataTable[,selCols])
+  output$global_de_shZ = DT::renderDataTable(globalDEData[["conditionMDCKshZ"]]$dataTable[,selCols])
   output$emtMarker_de_tgfb = DT::renderDataTable(emtqPCRData[["conditionMDCKTGFb"]]$dataTable[,selCols])
   output$emtMarker_de_shZ = DT::renderDataTable(emtqPCRData[["conditionMDCKshZ"]]$dataTable[,selCols])
   
@@ -169,7 +183,9 @@ shinyServer(function(input, output, session) {
            conditionMDCKTGFb = emtSignatureData[["conditionMDCKTGFb"]]$dataTable,
            conditionMDCKshZ = emtSignatureData[["conditionMDCKshZ"]]$dataTable
           )
-  })
+  }) #emtSigPlotData
+  
+  # setup UI for interactive plot
   output$plotui <- renderUI({
     plotOutput("plot", height=600,
                click = "plot_click",
@@ -185,6 +201,7 @@ shinyServer(function(input, output, session) {
     )
   }) # output$plotui
   
+  # actual plot for interactive volcano plot
   output$plot <- renderPlot({
     dat <- emtSigPlotData()
     
@@ -226,11 +243,16 @@ shinyServer(function(input, output, session) {
     abline(h = 1, col = "red", lty = 2, lwd = 2)
    }) # output$plot
   
-  selCols <- c(selCols, "epi_mes")
+  # setup which columns to display
+  selColsGlobal <- c(selCols, "epi_mes")
+  
+  # generate datatable for the selected points from the interactive plot
+  selColsGlobal <- c(selCols, "epi_mes")
+  
   output$plot_brushed_points <- DT::renderDataTable({
     dat <- emtSigPlotData()
     res <- brushedPoints(dat, input$plot_brush, "b", "log10_qval")
-    datatable(res[,selCols])
-  })
+    datatable(res[,selColsGlobal])
+  }) #output$plot_brushed_points
   
  })
