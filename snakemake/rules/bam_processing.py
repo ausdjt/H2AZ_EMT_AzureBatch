@@ -47,7 +47,7 @@ rule bam_mark_duplicates:
     params:
         qual = config["alignment_quality"],
         picard = home + config["picard"],
-        temp = home + config["temp_data"]
+        temp = home + config["temp_dir"]
     input:
         rules.bam_sort.output
     output:
