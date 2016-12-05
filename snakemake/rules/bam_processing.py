@@ -87,6 +87,6 @@ rule bam_rmdup_index:
     input:
         rules.bam_rmdup.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_marked/{unit}.Q{qual}.sorted.DeDup.bam.bai")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/duplicates_removed/{unit}.Q{qual}.sorted.DeDup.bam.bai")
     shell:
         "samtools index {input} {output}"
