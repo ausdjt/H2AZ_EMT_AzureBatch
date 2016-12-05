@@ -247,6 +247,8 @@ shinyServer(function(input, output, session) {
   selColsGlobal <- c(selCols, "epi_mes")
   
   # generate datatable for the selected points from the interactive plot
+  selColsGlobal <- c(selCols, "epi_mes")
+  
   output$plot_brushed_points <- DT::renderDataTable({
     dat <- emtSigPlotData()
     res <- brushedPoints(dat, input$plot_brush, "b", "log10_qval")
