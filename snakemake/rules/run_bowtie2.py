@@ -28,7 +28,7 @@ rule bowtie2_pe:
         read1="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
         read2="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz"
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/{unit}.bam")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{unit}.bam")
     shell:
         """
             bowtie2 \
@@ -51,7 +51,7 @@ rule bam_stats:
     input:
         rules.bowtie2_pe.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/{unit}.bam.stats.txt")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{unit}.bam.stats.txt")
     shell:
         """
             samtools flagstat {input} > {output}
@@ -61,7 +61,7 @@ rule bam_extract_unmapped_reads:
     input:
         rules.bowtie2_pe.output
     output:
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/unmapped_reads/{unit}_unmapped.bam")
+        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/unmapped_reads/{unit}_unmapped.bam")
     shell:
         "samtools view -f 4 -b {input} > {output}"
 
@@ -69,7 +69,7 @@ rule bam_sort_unmapped_reads:
     input:
         rules.bam_extract_unmapped_reads.output
     output:
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/unmapped_reads/sorted/{unit}_unmapped.sorted.bam")
+        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/unmapped_reads/sorted/{unit}_unmapped.sorted.bam")
     shell:
         "samtools sort -n {input} -T {wildcards.unit}.sorted -o {output}"
 
@@ -79,8 +79,8 @@ rule unmapped_reads_to_pe_fastq:
     input:
         rules.bam_sort_unmapped_reads.output
     output:
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/unmapped_reads/fastq/{unit}_unmapped_r1.fastq"),
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/unmapped_reads/fastq/{unit}_unmapped_r2.fastq")
+        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/unmapped_reads/fastq/{unit}_unmapped_r1.fastq"),
+        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/unmapped_reads/fastq/{unit}_unmapped_r2.fastq")
     shell:
         """
             bedtools bamtofastq -i {input} \
@@ -94,8 +94,8 @@ rule gzip_unmapped_fastq:
     input:
         rules.unmapped_reads_to_pe_fastq.output
     output:
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/unmapped_reads/fastq/{unit}_unmapped_r1.fastq.gz"),
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/unmapped_reads/fastq/{unit}_unmapped_r2.fastq.gz")
+        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/unmapped_reads/fastq/{unit}_unmapped_r1.fastq.gz"),
+        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/unmapped_reads/fastq/{unit}_unmapped_r2.fastq.gz")
     shell:
         "gzip {input[0]}; gzip {input[1]}"
 
@@ -109,8 +109,8 @@ rule cutadapt_pe_unmapped:
     input:
         rules.gzip_unmapped_fastq.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/unmapped_reads/fastq/{unit}_r1.QT.CA.fastq.gz"),
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/unmapped_reads/fastq/{unit}_r2.QT.CA.fastq.gz")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/unmapped_reads/fastq/{unit}_r1.QT.CA.fastq.gz"),
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/unmapped_reads/fastq/{unit}_r2.QT.CA.fastq.gz")
     shell:
         """
             {params.cutadapt_dir}/cutadapt {params.trim_params} \
@@ -130,7 +130,7 @@ rule bowtie2_pe_unmapped_reads:
     input:
         rules.cutadapt_pe_unmapped.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/second_alignment/{unit}.2ndAlignment.bam")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/second_alignment/{unit}.2ndAlignment.bam")
     shell:
         """
             bowtie2 \
@@ -152,7 +152,7 @@ rule bam_stats_2nd_alignment:
     input:
         rules.bowtie2_pe_unmapped_reads.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/second_alignment/{unit}.2ndAlignment.bam.stats.txt")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/second_alignment/{unit}.2ndAlignment.bam.stats.txt")
     shell:
         """
             samtools flagstat {input} > {output}
