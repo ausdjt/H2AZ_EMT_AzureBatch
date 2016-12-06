@@ -56,7 +56,7 @@ rule bam_mark_duplicates:
     shell:
         """
             java -Djava.io.tmpdir={params.temp} \
-            -Xmx36G \
+            -Xmx24G \
             -jar {params.picard} MarkDuplicates \
             INPUT={input}\
             OUTPUT={output}\
