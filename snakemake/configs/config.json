@@ -107,7 +107,7 @@
     "processed_dir" : "processed_data",
     "aligned_dir" : "aligned_data",
     "reports_dir" : "reports",
-    "temp_dir" : "temp_data",
+    "temp_dir" : "/temp_data",
     "alignment_quality" : "10",
     "raw_dir" : "fastq",
     "deepTools_dir" : "/home/sebastian/miniconda3/envs/deepTools/bin",
