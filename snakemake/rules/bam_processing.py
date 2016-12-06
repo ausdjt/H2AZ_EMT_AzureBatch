@@ -40,7 +40,7 @@ rule bam_sort:
     input:
         rules.bam_quality_filter.output
     output:
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/sorted/{unit}.Q{qual}.sorted.bam")
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/sorted/{unit}.Q{qual}.sorted.bam"
     shell:
         "samtools sort {input} -@ {params.threads} -f {output}"
 
