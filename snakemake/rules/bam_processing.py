@@ -35,13 +35,14 @@ rule bam_quality_filter:
 
 rule bam_sort:
     params:
-        qual = config["alignment_quality"]
+        qual = config["alignment_quality"],
+        threads = "2"
     input:
         rules.bam_quality_filter.output
     output:
         temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/sorted/{unit}.Q{qual}.sorted.bam")
     shell:
-        "samtools sort {input} -T {wildcards.unit}.Q{params.qual}.sorted -o {output}"
+        "samtools sort {input} -@ {params.threads} -f {output}"
 
 rule bam_mark_duplicates:
     params:
