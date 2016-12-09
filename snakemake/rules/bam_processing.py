@@ -42,7 +42,7 @@ rule bam_sort:
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/sorted/{unit}.Q{qual}.sorted.bam"
     shell:
-        "samtools sort -@ {params.threads} {input} {output}"
+        "samtools sort -@ {params.threads} {input} -T {wildcards.unit}.Q{params.qual}.sorted -o {output}"
 
 rule bam_mark_duplicates:
     params:
