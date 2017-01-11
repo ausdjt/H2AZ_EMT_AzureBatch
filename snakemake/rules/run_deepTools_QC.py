@@ -13,14 +13,12 @@ Rules for running deepTools QC/QC on ChIP-Seq data
 For usage, include this in your workflow.
 """
 
-
-
 rule multiBamSummary:
     version:
         0.2
     params:
         deepTools_dir = config["deepTools_dir"],
-        binSize = config["deepTools"]["binSize"],
+        binSize = config["program_parameters"]["deepTools"]["binSize"],
         labels = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"]
     threads:
         24
@@ -51,7 +49,7 @@ rule multiBamSummary_deduplicated:
         0.2
     params:
         deepTools_dir = config["deepTools_dir"],
-        binSize = config["deepTools"]["binSize"],
+        binSize = config["program_parameters"]["deepTools"]["binSize"],
         labels = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"]
     threads:
         24
