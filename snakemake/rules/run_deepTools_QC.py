@@ -33,7 +33,7 @@ rule multiBamSummary:
                qual = config["alignment_quality"],
                suffix = "MkDup.bam")
     output:
-        npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/{duplicates}/results.npz"
+        npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/duplicates_marked/results.npz"
     shell:
         """
             {params.deepTools_dir}/multiBamSummary bins --bamfiles {input} \
@@ -64,7 +64,7 @@ rule multiBamSummary_deduplicated:
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                suffix = "DeDup.bam")
     output:
-        npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/{duplicates}/results.npz"
+        npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/duplicates_removed/results.npz"
     shell:
         """
             {params.deepTools_dir}/multiBamSummary bins --bamfiles {input} \
