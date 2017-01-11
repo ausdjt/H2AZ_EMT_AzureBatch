@@ -24,6 +24,8 @@ include:
     include_prefix + "run_bowtie2.py"
 include:
     include_prefix + "bam_processing.py"
+include:
+    include_prefix + "run_deepTools_QC.py"
 
 rule run_cutadapt:
     input:
@@ -34,6 +36,42 @@ rule run_cutadapt:
                trim_data = config["trim_dir"],
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                suffix = ["R1_001", "R2_001"])
+
+rule deepTools_QC:
+    input:
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotCorrelation/{duplicates}/heatmap_SpearmanCorr_readCounts.png",
+                   assayID = "ChIP-Seq",
+                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+                   outdir = config["processed_dir"],
+                   reference_version = config["references"]["CanFam3.1"]["version"][0],
+                   duplicates = ["duplicates_removed", "duplicates_removed"],
+                   suffix = ["png", "tab"]),
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotPCA/{duplicates}/PCA_readCounts.png",
+                   assayID = "ChIP-Seq",
+                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+                   outdir = config["processed_dir"],
+                   reference_version = config["references"]["CanFam3.1"]["version"][0],
+                   duplicates = ["duplicates_removed", "duplicates_removed"]),
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/duplicates_marked/histogram.png",
+                   assayID = "ChIP-Seq",
+                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+                   outdir = config["processed_dir"],
+                   reference_version = config["references"]["CanFam3.1"]["version"][0]),
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/duplicates_removed/histogram.png",
+                   assayID = "ChIP-Seq",
+                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+                   outdir = config["processed_dir"],
+                   reference_version = config["references"]["CanFam3.1"]["version"][0]),
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/duplicates_marked/fingerprints.png",
+                   assayID = "ChIP-Seq",
+                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+                   outdir = config["processed_dir"],
+                   reference_version = config["references"]["CanFam3.1"]["version"][0]),
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/duplicates_removed/fingerprints.png",
+                   assayID = "ChIP-Seq",
+                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+                   outdir = config["processed_dir"],
+                   reference_version = config["references"]["CanFam3.1"]["version"][0])
 
 rule all:
     input:

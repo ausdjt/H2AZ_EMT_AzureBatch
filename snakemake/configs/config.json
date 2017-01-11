@@ -4,21 +4,26 @@
       "CanFam3.1" :
       {
         "version" : ["CanFam3.1_ensembl84_ERCC", "CanFam3.1_ensembl84"],
-        "genome" : "/Data/References/Genomes/Canis_familiaris/Ensembl/CanFam3.1",
+        "genome" : "/Data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.dna.toplevel.fa",
         "GTF" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",
-          "CanFam3.1_ensembl84" : "Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84.gtf"
+          "CanFam3.1_ensembl84_ERCC" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",
+          "CanFam3.1_ensembl84" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84.gtf"
         },
         "kallisto" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all_ERCC.ki",
-          "CanFam3.1_ensembl84" : "Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki"
+          "CanFam3.1_ensembl84_ERCC" : "/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all_ERCC.ki",
+          "CanFam3.1_ensembl84" : "/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki"
         },
         "STAR" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index_ERCC",
-          "CanFam3.1_ensembl84" : "Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index"
+          "CanFam3.1_ensembl84_ERCC" : "/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index_ERCC",
+          "CanFam3.1_ensembl84" : "/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index"
+        },
+        "bowtie2" :
+        {
+          "CanFam3.1_ensembl84_ERCC" : "/Data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/CanFam3.1",
+          "CanFam3.1_ensembl84" : "/Data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/CanFam3.1"
         }
       }
     },
@@ -89,7 +94,9 @@
       {
         "SES_sample_length" : ["1000"],
         "SES_numer_of_samples" : ["10000000.0"],
-        "ignoreForNormalization" : ["MT X"]
+        "ignoreForNormalization" : ["MT X"],
+        "binSize" : ["10000"],
+        "threads" : "4"
       },
       "picard_tools" :
       {
@@ -110,8 +117,8 @@
     "temp_dir" : "/temp_data",
     "alignment_quality" : "10",
     "raw_dir" : "fastq",
-    "deepTools_dir" : "/home/sebastian/miniconda3/envs/deepTools/bin",
-    "HTSeq_dir" : "/home/sebastian/miniconda3/envs/py27/bin",
+    "deepTools_dir" : "/miniconda3/envs/deepTools/bin",
+    "HTSeq_dir" : "/miniconda3/envs/py27/bin",
     "cutadapt_dir" : "/miniconda3/envs/snakemake/bin",
     "DEXSeq_dir" : "/home/skurscheid/R/x86_64-unknown-linux-gnu-library/DEXSeq/python_scripts/",
     "picard" : "/bin/picard.jar"
