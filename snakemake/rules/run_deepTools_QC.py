@@ -179,7 +179,6 @@ rule plotFingerprint:
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
-               duplicates = ["duplicates_marked"],
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
                suffix = "MkDup.bam")
@@ -207,7 +206,6 @@ rule plotFingerprint_deduplicated:
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
-               duplicates = ["duplicates_removed"],
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
                suffix = "DeDup.bam")
