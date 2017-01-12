@@ -39,19 +39,19 @@ rule run_cutadapt:
 
 rule deepTools_QC:
     input:
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotCorrelation/{duplicates}/heatmap_SpearmanCorr_readCounts.png",
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotCorrelation/{duplicates}/heatmap_SpearmanCorr_readCounts.{suffix}",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
-                   duplicates = ["duplicates_removed", "duplicates_removed"],
+                   duplicates = ["duplicates_marked", "duplicates_removed"],
                    suffix = ["png", "tab"]),
             expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotPCA/{duplicates}/PCA_readCounts.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
-                   duplicates = ["duplicates_removed", "duplicates_removed"]),
+                   duplicates = ["duplicates_marked", "duplicates_removed"]),
             expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_{duplicates}.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
