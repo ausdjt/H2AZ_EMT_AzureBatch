@@ -72,7 +72,7 @@ rule deepTools_QC_deduplicated:
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
-                   duplicates = "duplicates_removed")
+                   duplicates = "duplicates_removed"),
             expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
