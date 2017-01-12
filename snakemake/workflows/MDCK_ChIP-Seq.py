@@ -63,9 +63,10 @@ rule deepTools_QC:
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
-                   duplicates = "duplicates_marked"),
+                   duplicates = "duplicates_marked")
 
 rule deepTools_QC_deduplicated:
+    input:
             expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
