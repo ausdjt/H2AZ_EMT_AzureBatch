@@ -19,7 +19,7 @@ rule multiBamSummary:
     params:
         deepTools_dir = config["deepTools_dir"],
         binSize = config["program_parameters"]["deepTools"]["binSize"],
-        labels = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"]
+        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys())
     threads:
         24
     input:
@@ -50,7 +50,7 @@ rule multiBamSummary_deduplicated:
     params:
         deepTools_dir = config["deepTools_dir"],
         binSize = config["program_parameters"]["deepTools"]["binSize"],
-        labels = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"]
+        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys())
     threads:
         24
     input:
@@ -116,7 +116,7 @@ rule plotPCA:
 rule bamPEFragmentSize:
     params:
         deepTools_dir = config["deepTools_dir"],
-        labels = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"]
+        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys()),
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
@@ -141,7 +141,7 @@ rule bamPEFragmentSize:
 rule bamPEFragmentSize_deduplicated:
     params:
         deepTools_dir = config["deepTools_dir"],
-        labels = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
+        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys()),
         plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fragment size"
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
