@@ -129,7 +129,7 @@ rule bamPEFragmentSize:
                qual = config["alignment_quality"],
                suffix = "MkDup.bam")
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/duplicates_marked/histogram.png"
+        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/duplicates_marked/histogram_{duplicates}.png"
     shell:
         """
             {params.deepTools_dir}/bamPEFragmentSize --bamfiles {input} \
@@ -155,7 +155,7 @@ rule bamPEFragmentSize_deduplicated:
                qual = config["alignment_quality"],
                suffix = "DeDup.bam")
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/duplicates_removed/histogram.png"
+        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/duplicates_removed/histogram_{duplicates}.png"
     shell:
         """
             {params.deepTools_dir}/bamPEFragmentSize --bamfiles {input} \
@@ -181,7 +181,7 @@ rule plotFingerprint:
                qual = config["alignment_quality"],
                suffix = "MkDup.bam")
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_{duplicates}.png"
+        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_{duplicates}.png"
     shell:
         """
             {params.deepTools_dir}/plotFingerprint --bamfiles {input} \
