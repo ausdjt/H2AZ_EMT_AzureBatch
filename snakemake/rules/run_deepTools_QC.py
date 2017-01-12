@@ -181,7 +181,7 @@ rule plotFingerprint:
                qual = config["alignment_quality"],
                suffix = "MkDup.bam")
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_marked.png"
+        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_duplicates_marked.png"
     shell:
         """
             {params.deepTools_dir}/plotFingerprint --bamfiles {input} \
@@ -208,7 +208,7 @@ rule plotFingerprint_deduplicated:
                qual = config["alignment_quality"],
                suffix = "DeDup.bam")
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_removed.png"
+        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_duplicates_removed.png"
     shell:
         """
             {params.deepTools_dir}/plotFingerprint --bamfiles {input} \
