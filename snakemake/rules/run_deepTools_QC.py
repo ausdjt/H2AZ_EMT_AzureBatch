@@ -90,7 +90,7 @@ rule plotCorrelation_heatmap:
             {params.deepTools_dir}/plotCorrelation -in {input.npz} \
                                                    --corMethod spearman \
                                                    --skipZeros \
-                                                   --plotTitle {params.plotTitle} \
+                                                   --plotTitle "{params.plotTitle}" \
                                                    --whatToPlot heatmap \
                                                    --colorMap RdYlBu \
                                                    --plotNumbers \
@@ -110,7 +110,7 @@ rule plotPCA:
         """
             {params.deepTools_dir}/plotPCA -in {input.npz} \
                                            -o {output} \
-                                           -plotTitle {params.plotTitle}
+                                           --plotTitle "{params.plotTitle}"
         """
 
 rule bamPEFragmentSize:
@@ -161,7 +161,7 @@ rule bamPEFragmentSize_deduplicated:
             {params.deepTools_dir}/bamPEFragmentSize --bamfiles {input} \
                                                      --samplesLabel {params.labels} \
                                                      --numberOfProcessors {threads} \
-                                                     --plotTitle {params.plotTitle} \
+                                                     --plotTitle "{params.plotTitle}" \
                                                      --histogram {output}
         """
 
@@ -187,7 +187,7 @@ rule plotFingerprint:
             {params.deepTools_dir}/plotFingerprint --bamfiles {input} \
                                                    --numberOfProcessors {threads} \
                                                    --centerReads \
-                                                   --plotTitle {params.plotTitle} \
+                                                   --plotTitle "{params.plotTitle}" \
                                                    --skipZeros \
                                                    --plotFile {output}
         """
@@ -214,7 +214,7 @@ rule plotFingerprint_deduplicated:
             {params.deepTools_dir}/plotFingerprint --bamfiles {input} \
                                                    --numberOfProcessors {threads} \
                                                    --centerReads \
-                                                   --plotTitle {params.plotTitle} \
+                                                   --plotTitle "{params.plotTitle}" \
                                                    --skipZeros \
                                                    --plotFile {output}
         """
