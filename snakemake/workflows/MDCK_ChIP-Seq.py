@@ -52,13 +52,13 @@ rule deepTools_QC:
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
                    duplicates = ["duplicates_removed", "duplicates_removed"]),
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram.png",
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_{duplicates}.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
                    duplicates = "duplicates_marked"),
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints.png",
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_{duplicates}.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
@@ -67,19 +67,18 @@ rule deepTools_QC:
 
 rule deepTools_QC_deduplicated:
     input:
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints.png",
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_{duplicates}.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
                    duplicates = "duplicates_removed"),
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram.png",
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_{duplicates}.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
-                   duplicates = "duplicates_removed"),
-
+                   duplicates = "duplicates_removed")
 
 rule all:
     input:
