@@ -17,7 +17,7 @@ rule multiBamSummary:
     version:
         0.2
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         binSize = config["program_parameters"]["deepTools"]["binSize"],
         labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys())
     threads:
@@ -48,7 +48,7 @@ rule multiBamSummary_deduplicated:
     version:
         0.2
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         binSize = config["program_parameters"]["deepTools"]["binSize"],
         labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys())
     threads:
@@ -78,7 +78,7 @@ rule multiBamSummary_deduplicated:
 
 rule plotCorrelation_heatmap:
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         plotTitle = lambda wildcards: "Correlation heatmap - " + wildcards.duplicates
     input:
         npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/{duplicates}/results.npz"
@@ -100,7 +100,7 @@ rule plotCorrelation_heatmap:
 
 rule plotPCA:
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         plotTitle = lambda wildcards: "PCA - " + wildcards.duplicates
     input:
         npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/{duplicates}/results.npz"
@@ -115,7 +115,7 @@ rule plotPCA:
 
 rule bamPEFragmentSize:
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys()),
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
@@ -140,7 +140,7 @@ rule bamPEFragmentSize:
 
 rule bamPEFragmentSize_deduplicated:
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys()),
         plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fragment size"
     threads:
@@ -167,7 +167,7 @@ rule bamPEFragmentSize_deduplicated:
 
 rule plotFingerprint:
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fingerprint"
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
@@ -194,7 +194,7 @@ rule plotFingerprint:
 
 rule plotFingerprint_deduplicated:
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fingerprint"
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
