@@ -155,7 +155,7 @@ rule bamPEFragmentSize_deduplicated:
                qual = config["alignment_quality"],
                suffix = "DeDup.bam")
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/duplicates_removed/histogram_duplicates_removed.png"
+        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_duplicates_removed.png"
     shell:
         """
             {params.deepTools_dir}/bamPEFragmentSize --bamfiles {input} \
