@@ -120,12 +120,11 @@ rule bamPEFragmentSize:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{duplicates}/{unit}.Q{qual}.sorted.{suffix}",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{unit}.Q{qual}.sorted.{suffix}",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
-               duplicates = ["duplicates_marked"],
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
                suffix = "MkDup.bam")
@@ -147,12 +146,11 @@ rule bamPEFragmentSize_deduplicated:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{duplicates}/{unit}.Q{qual}.sorted.{suffix}",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{unit}.Q{qual}.sorted.{suffix}",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
-               duplicates = ["duplicates_removed"],
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
                suffix = "DeDup.bam")
@@ -183,7 +181,7 @@ rule plotFingerprint:
                qual = config["alignment_quality"],
                suffix = "MkDup.bam")
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints.png"
+        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_{duplicates}.png"
     shell:
         """
             {params.deepTools_dir}/plotFingerprint --bamfiles {input} \
@@ -210,7 +208,7 @@ rule plotFingerprint_deduplicated:
                qual = config["alignment_quality"],
                suffix = "DeDup.bam")
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints.png"
+        "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_{duplicates}.png"
     shell:
         """
             {params.deepTools_dir}/plotFingerprint --bamfiles {input} \
