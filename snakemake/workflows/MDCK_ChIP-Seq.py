@@ -58,25 +58,28 @@ rule deepTools_QC:
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
                    duplicates = "duplicates_marked"),
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram.png",
-                   assayID = "ChIP-Seq",
-                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-                   outdir = config["processed_dir"],
-                   reference_version = config["references"]["CanFam3.1"]["version"][0],
-                   duplicates = "duplicates_removed"),
             expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
                    duplicates = "duplicates_marked"),
+
+rule deepTools_QC_deduplicated:
             expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints.png",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
                    reference_version = config["references"]["CanFam3.1"]["version"][0],
                    duplicates = "duplicates_removed")
-                   
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram.png",
+                   assayID = "ChIP-Seq",
+                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+                   outdir = config["processed_dir"],
+                   reference_version = config["references"]["CanFam3.1"]["version"][0],
+                   duplicates = "duplicates_removed"),
+
+
 rule all:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{unit}.Q{qual}.sorted.MkDup.{suffix}",
