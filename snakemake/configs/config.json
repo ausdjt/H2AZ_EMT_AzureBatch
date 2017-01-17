@@ -111,8 +111,8 @@
       },
       "macs2" :
       {
-        "gsize" : "2.0e9",
-      }
+        "gsize" : "2.0e9"
+      },
     },
     "trim_dir" : "trimmed_data",
     "processed_dir" : "processed_data",
