@@ -168,7 +168,8 @@ rule bamPEFragmentSize_deduplicated:
 rule plotFingerprint:
     params:
         deepTools_dir = home + config["deepTools_dir"],
-        plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fingerprint"
+        plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fingerprint",
+        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys())
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
@@ -188,6 +189,7 @@ rule plotFingerprint:
                                                    --numberOfProcessors {threads} \
                                                    --centerReads \
                                                    --plotTitle "{params.plotTitle}" \
+                                                   --labels {params.labels} \
                                                    --skipZeros \
                                                    --plotFile {output}
         """
@@ -195,7 +197,8 @@ rule plotFingerprint:
 rule plotFingerprint_deduplicated:
     params:
         deepTools_dir = home + config["deepTools_dir"],
-        plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fingerprint"
+        plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fingerprint",
+        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"].keys())
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
@@ -215,6 +218,7 @@ rule plotFingerprint_deduplicated:
                                                    --numberOfProcessors {threads} \
                                                    --centerReads \
                                                    --plotTitle "{params.plotTitle}" \
+                                                   --labels {params.labels} \
                                                    --skipZeros \
                                                    --plotFile {output}
         """
