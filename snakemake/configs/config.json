@@ -108,6 +108,10 @@
       "cutadapt" :
       {
         "trim_params": "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30"
+      },
+      "macs2" :
+      {
+        "gsize" : "2.0e9",
       }
     },
     "trim_dir" : "trimmed_data",
