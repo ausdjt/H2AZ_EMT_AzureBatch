@@ -110,7 +110,7 @@
           "reference-point" :
           {
             "--upstream" : "1500",
-            "--downstream" : "1500",
+            "--downstream" : "1500"
           }
         }
       },
