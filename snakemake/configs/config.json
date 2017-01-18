@@ -92,11 +92,27 @@
       },
       "deepTools" :
       {
+        "threads" : "4",
         "SES_sample_length" : ["1000"],
         "SES_numer_of_samples" : ["10000000.0"],
         "ignoreForNormalization" : ["MT X"],
         "binSize" : ["10000"],
-        "threads" : "4"
+        "computeMatrix" :
+        {
+          "scale-regions" :
+          {
+            "--upstream" : "1500",
+            "--downstream" : "1500",
+            "--medianGeneSize" : "8635",
+            "--unscaled5prime" : "200",
+            "--unscaled3prime" : "200"
+          },
+          "reference-point" :
+          {
+            "--upstream" : "1500",
+            "--downstream" : "1500",
+          }
+        }
       },
       "picard_tools" :
       {
