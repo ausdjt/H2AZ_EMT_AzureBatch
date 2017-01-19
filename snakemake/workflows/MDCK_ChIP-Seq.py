@@ -39,21 +39,18 @@ rule run_cutadapt:
 
 rule run_deepTools:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.{unit}.{suffix}",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.{suffix}",
           assayID = "ChIP-Seq",
           runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
           outdir = config["processed_dir"],
           reference_version = config["references"]["CanFam3.1"]["version"][0],
           application = "deepTools",
           tool = "plotProfile",
-          mode = "",
+          mode = ["reference-point", "scale-regions"],
           referencePoint = "TSS",
           duplicates = ["duplicates_marked", "duplicates_removed"],
           region = "allGenes",
-          unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
           suffix = ["pdf", "data", "bed"])
-
-
 
 rule deepTools_QC:
     input:
