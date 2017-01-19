@@ -23,7 +23,7 @@ rule bamCoverage_MNase:
     version:
         0.1
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"]
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
@@ -49,7 +49,7 @@ rule bamCoverage_MNase_RPKM_deduplicated:
     version:
         0.1
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"]
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
@@ -76,7 +76,7 @@ rule computeMatrix:
     version:
         0.1
     params:
-        deepTools_dir = config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"],
         program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
@@ -102,7 +102,7 @@ rule plotProfile:
     version:
         0.1
     params:
-        deepTools_dir = config["deepTools_dir"]
+        deepTools_dir = home + config["deepTools_dir"],
     input:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{mode}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
     output:
