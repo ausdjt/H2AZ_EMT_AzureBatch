@@ -97,6 +97,10 @@
         "SES_numer_of_samples" : ["10000000.0"],
         "ignoreForNormalization" : ["MT X"],
         "binSize" : ["10000"],
+        "regionFiles" :
+        {
+          "allGenes" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/allGenes.bed"
+        },
         "computeMatrix" :
         {
           "scale-regions" :
@@ -110,7 +114,8 @@
           "reference-point" :
           {
             "--upstream" : "1500",
-            "--downstream" : "1500"
+            "--downstream" : "1500",
+            "--referencePoint" : ""
           }
         }
       },
