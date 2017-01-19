@@ -111,7 +111,7 @@ rule plotProfile:
         regions = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.bed"
     shell:
         """
-            {params.deepTools_dir}/plotProfile --matrixFile {input} \
+            {params.deepTools_dir}/plotProfile --matrixFile {input.matrix_gz} \
                                                --outFileName {output.figure} \
                                                --outFileNameData {output.data} \
                                                --outFileSortedRegions {output.regions} \
