@@ -46,7 +46,7 @@ rule run_deepTools:
           reference_version = config["references"]["CanFam3.1"]["version"][0],
           application = "deepTools",
           tool = "plotProfile",
-          mode = "",
+          mode = ["reference-point", "scale-regions"],
           referencePoint = "TSS",
           duplicates = ["duplicates_marked", "duplicates_removed"],
           region = "allGenes",
