@@ -72,7 +72,7 @@ rule bamCoverage_MNase_RPKM_deduplicated:
         """
 
 
-rule computeMatrix_referencePoint:
+rule computeMatrix:
     version:
         0.1
     params:
@@ -92,7 +92,7 @@ rule computeMatrix_referencePoint:
                       duplicates = ["duplicates_marked", "duplicates_removed"],
                       unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                       norm = "RPKM"),
-        region = lambda wildcards: config["program_parameters"]["deepTools"]["regionFiles"][wildcards.region]
+        region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards.region]
     output:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
     wrapper:
