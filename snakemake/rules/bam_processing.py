@@ -29,7 +29,7 @@ rule bam_quality_filter:
     input:
         rules.bowtie2_pe.output
     output:
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/quality_filtered/{unit}.Q{qual}.bam")
+        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/quality_filtered/{sample}.Q{qual}.bam")
     shell:
         "samtools view -b -h -q {params.qual} {input} > {output}"
 
@@ -40,9 +40,9 @@ rule bam_sort:
     input:
         rules.bam_quality_filter.output
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/sorted/{unit}.Q{qual}.sorted.bam"
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/sorted/{sample}.Q{qual}.sorted.bam"
     shell:
-        "samtools sort -@ {params.threads} {input} -T {wildcards.unit}.Q{params.qual}.sorted -o {output}"
+        "samtools sort -@ {params.threads} {input} -T {wildcards.sample}.Q{params.qual}.sorted -o {output}"
 
 rule bam_mark_duplicates:
     params:
@@ -52,7 +52,7 @@ rule bam_mark_duplicates:
     input:
         rules.bam_sort.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{unit}.Q{qual}.sorted.bam")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{sample}.Q{qual}.sorted.bam")
     shell:
         """
             java -Djava.io.tmpdir={params.temp} \
@@ -70,7 +70,7 @@ rule bam_index:
     input:
         rules.bam_mark_duplicates.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{unit}.Q{qual}.sorted.bam.bai")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{sample}.Q{qual}.sorted.bam.bai")
     shell:
         "samtools index {input} {output}"
 
@@ -78,7 +78,7 @@ rule bam_rmdup:
     input:
         rules.bam_mark_duplicates.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{unit}.Q{qual}.sorted.bam")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{sample}.Q{qual}.sorted.bam")
     shell:
         "samtools rmdup {input} {output}"
 
@@ -88,6 +88,6 @@ rule bam_rmdup_index:
     input:
         rules.bam_rmdup.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{unit}.Q{qual}.sorted.bam.bai")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{sample}.Q{qual}.sorted.bam.bai")
     shell:
         "samtools index {input} {output}"

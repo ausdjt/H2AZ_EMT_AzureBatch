@@ -25,10 +25,10 @@ rule bowtie2_pe:
         max_in= config["program_parameters"]["bt2_params"]["max_insert"],
         bt2_index= home + config["references"]["CanFam3.1"]["genome"]
     input:
-        read1="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
-        read2="{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz"
+        read1="{assayID}/{runID}/{outdir}/trimmed_data/{sample}_R1_001.QT.CA.fastq.gz",
+        read2="{assayID}/{runID}/{outdir}/trimmed_data/{sample}_R2_001.QT.CA.fastq.gz"
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{unit}.bam")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{sample}.bam")
     shell:
         """
             bowtie2 \
@@ -37,9 +37,9 @@ rule bowtie2_pe:
             --no-discordant \
             --maxins {params.max_in} \
             --threads {params.threads}\
-            --rg-id '{wildcards.unit}' \
-            --rg 'LB:{wildcards.unit}' \
-            --rg 'SM:{wildcards.unit}' \
+            --rg-id '{wildcards.sample}' \
+            --rg 'LB:{wildcards.sample}' \
+            --rg 'SM:{wildcards.sample}' \
             --rg 'PL:Illumina' \
             --rg 'PU:NA' \
             -1 {input.read1} \
