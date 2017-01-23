@@ -3,6 +3,7 @@ __license__ = "MIT"
 __date__ = "2016-12-05"
 
 from snakemake.exceptions import MissingInputException
+import snakemake.utils
 import os
 
 rule:
@@ -114,16 +115,16 @@ rule all:
                reference_version = config["references"]["CanFam3.1"]["version"][0],
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
-               suffix = ["bam", "bam.bai"]),
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.{suffix}",
-          assayID = "ChIP-Seq",
-          runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-          outdir = config["processed_dir"],
-          reference_version = config["references"]["CanFam3.1"]["version"][0],
-          application = "deepTools",
-          tool = "plotProfile",
-          mode = ["reference-point", "scale-regions"],
-          referencePoint = "TSS",
-          duplicates = ["duplicates_marked", "duplicates_removed"],
-          region = "allGenes",
-          suffix = ["pdf", "data", "bed"])
+               suffix = ["bam", "bam.bai"])
+        # expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.{suffix}",
+        #   assayID = "ChIP-Seq",
+        #   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+        #   outdir = config["processed_dir"],
+        #   reference_version = config["references"]["CanFam3.1"]["version"][0],
+        #   application = "deepTools",
+        #   tool = "plotProfile",
+        #   mode = ["reference-point", "scale-regions"],
+        #   referencePoint = "TSS",
+        #   duplicates = ["duplicates_marked", "duplicates_removed"],
+        #   region = "allGenes",
+        #   suffix = ["pdf", "data", "bed"])
