@@ -19,30 +19,34 @@ def cli_parameters_computeMatrix(wildcards):
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
 
+def cli_parameters_bamCoverage(wildcards):
+    a = config["program_parameters"][wildcards.application][wildcards.tool][wildcards.mode]
+    if wildcards.mode == "MNase":
+        a["--MNase"] = " "
+    return(a)
+
 rule bamCoverage:
     version:
         0.1
     params:
         deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
-        program_parameters = lambda wildcards: "--MNase" if wildcards.mode == "MNase" else ""
+        lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_bamCoverage(wildcards).items())
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
         bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/duplicates_marked/" + wildcards.unit + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_marked/{unit}_{mode}_{norm}.bw"
+        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{unit}_{mode}_{norm}.bw"
     shell:
         """
         {params.deepTools_dir}/bamCoverage --bam {input.bam} \
                                            --outFileName {output} \
                                            --outFileFormat bigwig \
                                            {params.program_parameters} \
-                                           --binSize 1 \
                                            --numberOfProcessors {threads} \
                                            --normalizeUsingRPKM \
                                            --ignoreForNormalization {params.ignore}\
-                                           --smoothLength 30 \
                                            --skipNonCoveredRegions
         """
 
@@ -73,31 +77,31 @@ rule bamCoverage:
 #         """
 
 
-rule bamCoverage_MNase_RPKM_deduplicated:
-    version:
-        0.1
-    params:
-        deepTools_dir = home + config["deepTools_dir"],
-        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"]
-    threads:
-        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
-    input:
-        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{unit}.Q10.sorted.DeDup.bam"
-    output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_removed/{unit}_{mode}_{norm}.bw"
-    shell:
-        """
-        {params.deepTools_dir}/bamCoverage --bam {input} \
-                                           --outFileName {output} \
-                                           --outFileFormat bigwig \
-                                           --MNase \
-                                           --binSize 1 \
-                                           --numberOfProcessors {threads} \
-                                           --normalizeUsingRPKM \
-                                           --ignoreForNormalization {params.ignore}\
-                                           --smoothLength 30 \
-                                           --skipNonCoveredRegions
-        """
+# rule bamCoverage_MNase_RPKM_deduplicated:
+#     version:
+#         0.1
+#     params:
+#         deepTools_dir = home + config["deepTools_dir"],
+#         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"]
+#     threads:
+#         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+#     input:
+#         "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{unit}.Q10.sorted.DeDup.bam"
+#     output:
+#         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_removed/{unit}_{mode}_{norm}.bw"
+#     shell:
+#         """
+#         {params.deepTools_dir}/bamCoverage --bam {input} \
+#                                            --outFileName {output} \
+#                                            --outFileFormat bigwig \
+#                                            --MNase \
+#                                            --binSize 1 \
+#                                            --numberOfProcessors {threads} \
+#                                            --normalizeUsingRPKM \
+#                                            --ignoreForNormalization {params.ignore}\
+#                                            --smoothLength 30 \
+#                                            --skipNonCoveredRegions
+#         """
 
 
 rule computeMatrix:
