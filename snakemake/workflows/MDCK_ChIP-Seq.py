@@ -5,6 +5,7 @@ __date__ = "2016-12-05"
 from snakemake.exceptions import MissingInputException
 import snakemake.utils
 import os
+import pdb
 
 rule:
     version: 0.1

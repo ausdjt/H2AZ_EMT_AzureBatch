@@ -19,7 +19,7 @@ For usage, include this in your workflow.
 """
 
 rule cutadapt_pe:
-    """Trims given paired-end reads with given parameters"""
+    pdb.set_trace()
     params:
         trim_params = config["program_parameters"]["cutadapt"]["trim_params"],
         raw_data = config["raw_dir"],
