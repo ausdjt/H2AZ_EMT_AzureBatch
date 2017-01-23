@@ -30,15 +30,15 @@ include:
 # include:
 #     include_prefix + "run_deepTools.py"
 
-rule run_cutadapt:
-    input:
-        expand("{assayID}/{runID}/{outdir}/{trim_data}/{unit}_{suffix}.QT.CA.fastq.gz",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               trim_data = config["trim_dir"],
-               unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
-               suffix = ["R1_001", "R2_001"])
+# rule run_cutadapt:
+#     input:
+#         expand("{assayID}/{runID}/{outdir}/{trim_data}/{unit}_{suffix}.QT.CA.fastq.gz",
+#                assayID = "ChIP-Seq",
+#                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+#                outdir = config["processed_dir"],
+#                trim_data = config["trim_dir"],
+#                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
+#                suffix = ["R1_001", "R2_001"])
 
 # rule run_deepTools:
 #     input:
