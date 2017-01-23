@@ -9,6 +9,7 @@ __date__ = "2016-02-27"
 
 from snakemake.exceptions import MissingInputException
 import os
+import pdb
 home = os.environ['HOME']
 
 """
