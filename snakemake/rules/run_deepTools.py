@@ -35,7 +35,7 @@ rule bamCoverage:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/" + wildcards.duplicates + "/" + wildcards.sample + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
+        bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/duplicates_marked/" +  wildcards.sample + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_marked/{sample}_{mode}_{norm}.bw"
     shell:
@@ -60,9 +60,9 @@ rule bamCoverage_deduplicated:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/" + wildcards.duplicates + "/" + wildcards.sample + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
+        bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/duplicates_removed/" + wildcards.sample + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_removed/{sample}_{mode}_{norm}.bw"
+            "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_removed/{sample}_{mode}_{norm}.bw"
     shell:
         """
         {params.deepTools_dir}/bamCoverage --bam {input.bam} \
