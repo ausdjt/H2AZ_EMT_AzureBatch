@@ -92,7 +92,7 @@
       },
       "deepTools" :
       {
-        "threads" : "4",
+        "threads" : "8",
         "SES_sample_length" : ["1000"],
         "SES_numer_of_samples" : ["10000000.0"],
         "ignoreForNormalization" : ["MT X"],
@@ -100,6 +100,20 @@
         "regionFiles" :
         {
           "allGenes" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/allGenes.bed"
+        },
+        "bamCoverage" :
+        {
+          "MNase" :
+          {
+            "--binSize" : "1",
+            "--smoothLength" : "30"
+          },
+          "normal" :
+          {
+            "--centerReads" : " ",
+            "--binSize" : "50",
+            "--smoothLength" : "30"
+          }
         },
         "computeMatrix" :
         {
