@@ -91,7 +91,7 @@ rule all:
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
                tool = "bowtie2",
-               duplicates = ["duplicates_marked", "duplicates_removed"]
+               duplicates = ["duplicates_marked", "duplicates_removed"],
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
                suffix = ["bam", "bam.bai"]),
