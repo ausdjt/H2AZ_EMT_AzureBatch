@@ -19,7 +19,6 @@ For usage, include this in your workflow.
 """
 
 rule cutadapt_pe:
-    pdb.set_trace()
     params:
         trim_params = config["program_parameters"]["cutadapt"]["trim_params"],
         raw_data = config["raw_dir"],
@@ -30,11 +29,12 @@ rule cutadapt_pe:
     output:
         trimmed_read1 = "{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
         trimmed_read2 = "{assayID}/{runID}/{outdir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz"
-    shell:
-        """
+    run:
+        pdb.set_trace()
+        shell("""
             {params.cutadapt_dir}/cutadapt {params.trim_params} \
                                             -o {output.trimmed_read1} \
                                             -p {output.trimmed_read2} \
                                             {input.read1} \
                                             {input.read2}
-        """
+        """)
