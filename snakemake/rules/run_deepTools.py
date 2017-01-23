@@ -31,7 +31,7 @@ rule bamCoverage:
     params:
         deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
-        lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_bamCoverage(wildcards).items())
+        program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_bamCoverage(wildcards).items())
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
@@ -49,34 +49,6 @@ rule bamCoverage:
                                            --ignoreForNormalization {params.ignore}\
                                            --skipNonCoveredRegions
         """
-
-# rule bamCoverage_MNase:
-#     version:
-#         0.1
-#     params:
-#         deepTools_dir = home + config["deepTools_dir"],
-#         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"]
-#     threads:
-#         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
-#     input:
-#         "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{unit}.Q10.sorted.MkDup.bam"
-#     output:
-#         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_marked/{unit}_{mode}_{norm}.bw"
-#     shell:
-#         """
-#         {params.deepTools_dir}/bamCoverage --bam {input} \
-#                                            --outFileName {output} \
-#                                            --outFileFormat bigwig \
-#                                            --MNase \
-#                                            --binSize 1 \
-#                                            --numberOfProcessors {threads} \
-#                                            --normalizeUsingRPKM \
-#                                            --ignoreForNormalization {params.ignore}\
-#                                            --smoothLength 30 \
-#                                            --skipNonCoveredRegions
-#         """
-
-
 # rule bamCoverage_MNase_RPKM_deduplicated:
 #     version:
 #         0.1
