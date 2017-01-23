@@ -75,7 +75,6 @@ rule bamCoverage_deduplicated:
                                            --skipNonCoveredRegions
         """
 
-
 rule computeMatrix:
     version:
         0.1
@@ -121,29 +120,3 @@ rule plotProfile:
                                                --outFileSortedRegions {output.regions} \
                                                --plotType se
         """
-
-# rule bamCoverage_MNase_RPKM_deduplicated:
-#     version:
-#         0.1
-#     params:
-#         deepTools_dir = home + config["deepTools_dir"],
-#         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"]
-#     threads:
-#         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
-#     input:
-#         "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{unit}.Q10.sorted.DeDup.bam"
-#     output:
-#         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_removed/{unit}_{mode}_{norm}.bw"
-#     shell:
-#         """
-#         {params.deepTools_dir}/bamCoverage --bam {input} \
-#                                            --outFileName {output} \
-#                                            --outFileFormat bigwig \
-#                                            --MNase \
-#                                            --binSize 1 \
-#                                            --numberOfProcessors {threads} \
-#                                            --normalizeUsingRPKM \
-#                                            --ignoreForNormalization {params.ignore}\
-#                                            --smoothLength 30 \
-#                                            --skipNonCoveredRegions
-#         """
