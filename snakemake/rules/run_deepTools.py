@@ -26,7 +26,7 @@ rule bamCoverage:
         deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
         program_parameters = lambda wildcards: "--MNase" if wildcards.mode == "MNase" else ""
-    threads:
+    threads:y
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
         bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/duplicates_marked/" + wildcards.unit + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
@@ -116,7 +116,7 @@ rule computeMatrix:
                       reference_version = config["references"]["CanFam3.1"]["version"][0],
                       application = "deepTools",
                       tool = "bamCoverage",
-                      mode = "MNase",
+                      mode = ["MNase", "normal"],
                       duplicates = ["duplicates_marked", "duplicates_removed"],
                       unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                       norm = "RPKM"),
