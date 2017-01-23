@@ -26,7 +26,7 @@ rule bamCoverage:
         deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
         program_parameters = lambda wildcards: "--MNase" if wildcards.mode == "MNase" else ""
-    threads:y
+    threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
         bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/duplicates_marked/" + wildcards.unit + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
