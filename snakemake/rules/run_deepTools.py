@@ -35,7 +35,7 @@ rule bamCoverage:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/duplicates_marked/" + wildcards.unit + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
+        bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/" + wildcards.duplicates + "/" + wildcards.unit + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{unit}_{mode}_{norm}.bw"
     shell:
