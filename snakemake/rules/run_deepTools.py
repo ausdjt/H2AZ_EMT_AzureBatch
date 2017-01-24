@@ -21,9 +21,10 @@ def cli_parameters_computeMatrix(wildcards):
 
 def cli_parameters_bamCoverage(wildcards):
     a = config["program_parameters"][wildcards.application][wildcards.tool][wildcards.mode]
+    b = ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in a.items())
     if wildcards.mode == "MNase":
-        a["--MNase"] = " "
-    return(a)
+        b = b + " --MNase"
+    return(b)
 
 rule bamCoverage:
     version:
@@ -31,7 +32,7 @@ rule bamCoverage:
     params:
         deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
-        program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_bamCoverage(wildcards).items())
+        program_parameters = cli_parameters_bamCoverage(wildcards)
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
