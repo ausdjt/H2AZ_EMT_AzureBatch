@@ -32,7 +32,7 @@ rule bamCoverage:
     params:
         deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
-        program_parameters = cli_parameters_bamCoverage(wildcards)
+        program_parameters = cli_parameters_bamCoverage
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
