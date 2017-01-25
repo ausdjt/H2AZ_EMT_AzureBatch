@@ -33,6 +33,21 @@ def cli_parameters_bamCoverage(wildcards):
         b = b + "--MNase"
     return(b.rstrip())
 
+def get_computeMatrix_input(wildcards):
+    fn = []
+    path = "/".join((wildcards["assayID"],
+                     wildcards["runID"],
+                     config["processed_dir"],
+                     config["references"]["CanFam3.1"]["version"][0],
+                     wildcards["application"],
+                     "bamCoverage",
+                     wildcards["mode"],
+                     wildcards["duplicates"]))
+    for i in config["samples"][wildcards["assayID"]][wildcards["runID"]]:
+        fn.append("/".join((path, "_".join((i, wildcards["mode"], "RPKM.bw")))))
+    return(fn)
+
+
 rule bamCoverage:
     version:
         0.1
@@ -58,51 +73,16 @@ rule bamCoverage:
                                            --skipNonCoveredRegions
         """
 
-# rule bamCoverage_deduplicated:
-#     version:
-#         0.1
-#     params:
-#         deepTools_dir = home + config["deepTools_dir"],
-#         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
-#         program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_bamCoverage(wildcards).items())
-#     threads:
-#         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
-#     input:
-#         bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/duplicates_removed/" + wildcards.sample + ".Q" + config["alignment_quality"] + ".sorted.MkDup.bam"
-#     output:
-#             "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/duplicates_removed/{sample}_{mode}_{norm}.bw"
-#     shell:
-#         """
-#         {params.deepTools_dir}/bamCoverage --bam {input.bam} \
-#                                            --outFileName {output} \
-#                                            --outFileFormat bigwig \
-#                                            {params.program_parameters} \
-#                                            --numberOfProcessors {threads} \
-#                                            --normalizeUsingRPKM \
-#                                            --ignoreForNormalization {params.ignore}\
-#                                            --skipNonCoveredRegions
-#         """
-
 rule computeMatrix:
     version:
-        0.1
+        0.2
     params:
         deepTools_dir = home + config["deepTools_dir"],
         program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        file = expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample}_{mode}_{norm}.bw",
-                      assayID = "ChIP-Seq",
-                      runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-                      outdir = config["processed_dir"],
-                      reference_version = config["references"]["CanFam3.1"]["version"][0],
-                      application = "deepTools",
-                      tool = "bamCoverage",
-                      mode = ["MNase", "normal"],
-                      duplicates = ["duplicates_marked", "duplicates_removed"],
-                      sample = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
-                      norm = "RPKM"),
+        file = get_computeMatrix_input,
         region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards.region]
     output:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
