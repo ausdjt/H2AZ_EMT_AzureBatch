@@ -96,7 +96,7 @@ rule all:
                command = ["reference-point", "scale-regions"],
                duplicates = ["duplicates_marked", "duplicates_removed"],
                referencePoint = "TSS",
-               plotType = "se"
+               plotType = "se",
                mode = ["MNase", "normal"]
                region = "allGenes",
                suffix = ["pdf", "data", "bed"])
