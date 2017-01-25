@@ -86,15 +86,17 @@ rule all:
                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
                suffix = ["bam", "bam.bai"]),
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.{suffix}",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.{suffix}",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
                application = "deepTools",
                tool = "plotProfile",
-               mode = ["reference-point", "scale-regions"],
-               referencePoint = "TSS",
+               command = ["reference-point", "scale-regions"],
                duplicates = ["duplicates_marked", "duplicates_removed"],
+               referencePoint = "TSS",
+               plotType = "se"
+               mode = ["MNase", "normal"]
                region = "allGenes",
                suffix = ["pdf", "data", "bed"])
