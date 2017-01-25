@@ -1,3 +1,6 @@
+import json
+from pprint import pprint
+
 def get_computeMatrix_input(wildcards):
     path = "/".join((wildcards.assayID,
                      wildcards.runID,
@@ -15,20 +18,22 @@ def get_computeMatrix_input(wildcards):
                      " "))
     return(files)
 
-def bam_merge_input(wildcards):
+def get_computeMatrix_input(wildcards):
     fn = []
-    path = "/".join((wildcards.assayID,
-                     wildcards.runID,
+    path = "/".join((wildcards["assayID"],
+                     wildcards["runID"],
                      config["processed_dir"],
                      config["references"]["CanFam3.1"]["version"][0],
-                     wildcards.application,
+                     wildcards["application"],
                      "bamCoverage",
-                     wildcards.mode,
-                     wildcards.duplicates
-                     "/"))
-    for i in config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"]:
-        fn.append("".join((path, "_".join((i, wildcards.mode, "RPKM.bw")))))
+                     wildcards["mode"],
+                     wildcards["duplicates"]))
+    for i in config["samples"][wildcards["assayID"]][wildcards["runID"]]:
+        fn.append("/".join((path, "_".join((i, wildcards["mode"], "RPKM.bw")))))
     return(fn)
+
+
+wildcards = {"assayID" : "ChIP-Seq", "runID" : "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq", "application" : "deepTools", "mode" : "normal", "duplicates" : "duplicates_marked"}
 
 
 
