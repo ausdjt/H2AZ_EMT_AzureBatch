@@ -14,8 +14,8 @@ For usage, include this in your workflow.
 """
 
 def cli_parameters_computeMatrix(wildcards):
-    a = config["program_parameters"][wildcards.application][wildcards.tool][wildcards.mode]
-    if wildcards.mode == "reference-point":
+    a = config["program_parameters"][wildcards["application"]][wildcards["tool"]][wildcards["command"]]
+    if wildcards["command"] == "reference-point":
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
 

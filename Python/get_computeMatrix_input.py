@@ -1,22 +1,8 @@
 import json
 from pprint import pprint
 
-def get_computeMatrix_input(wildcards):
-    path = "/".join((wildcards.assayID,
-                     wildcards.runID,
-                     config["processed_dir"],
-                     config["references"]["CanFam3.1"]["version"][0],
-                     wildcards.application,
-                     "bamCoverage",
-                     wildcards.mode,
-                     wildcards.duplicates
-                     "/"))
-
-    files = "_".join(
-                     config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
-                     "RPKM",
-                     " "))
-    return(files)
+with open("/Users/u1001407/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/configs/config.json") as data_file:
+    config = json.load(data_file)
 
 def get_computeMatrix_input(wildcards):
     fn = []
@@ -35,6 +21,31 @@ def get_computeMatrix_input(wildcards):
 
 wildcards = {"assayID" : "ChIP-Seq", "runID" : "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq", "application" : "deepTools", "mode" : "normal", "duplicates" : "duplicates_marked"}
 
+wildcards = {"outdir" : "processed_data",
+             "application" : "deepTools",
+             "reference_version" : "CanFam3.1_ensembl84_ERCC",
+             "runID" : "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+             "tool" : "computeMatrix",
+             "duplicates" : "duplicates_removed",
+             "command" : "scale-regions",
+             "region" : "allGenes",
+             "assayID" : "ChIP-Seq",
+             "mode" : "normal",
+             "referencePoint" : "TSS"}
+
+wildcards = {"outdir" : "processed_data",
+             "application" : "deepTools",
+             "reference_version" : "CanFam3.1_ensembl84_ERCC",
+             "runID" : "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+             "tool" : "computeMatrix",
+             "duplicates" : "duplicates_removed",
+             "command" : "scale-regions",
+             "region" : "allGenes",
+             "assayID" : "ChIP-Seq",
+             "mode" : "MNase",
+             "referencePoint" : "TSS"}
+
+get_computeMatrix_input(wildcards)
 
 
 file = expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample}_{mode}_{norm}.bw",
