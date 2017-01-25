@@ -97,6 +97,6 @@ rule all:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                referencePoint = "TSS",
                plotType = "se",
-               mode = ["MNase", "normal"]
+               mode = ["MNase", "normal"],
                region = "allGenes",
                suffix = ["pdf", "data", "bed"])
