@@ -85,7 +85,7 @@ rule computeMatrix:
         file = get_computeMatrix_input,
         region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards.region]
     output:
-        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
+        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
     wrapper:
         "file://" + wrapper_dir + "/deepTools/computeMatrix/wrapper.py"
 
@@ -95,16 +95,16 @@ rule plotProfile:
     params:
         deepTools_dir = home + config["deepTools_dir"],
     input:
-        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{mode}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
+        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
     output:
-        figure = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.pdf",
-        data = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.data",
-        regions = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/profile.{region}.bed"
+        figure = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.pdf",
+        data = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.data",
+        regions = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.bed"
     shell:
         """
             {params.deepTools_dir}/plotProfile --matrixFile {input.matrix_gz} \
                                                --outFileName {output.figure} \
                                                --outFileNameData {output.data} \
                                                --outFileSortedRegions {output.regions} \
-                                               --plotType se
+                                               --plotType {wildcards.plotType}
         """
