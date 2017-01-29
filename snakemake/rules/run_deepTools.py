@@ -87,7 +87,7 @@ rule computeMatrix:
     output:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
     shell:
-    """
+       """
         {params.deepTools_dir}/computeMatrix {wildcards.command} \
                                              --regionsFileName {input.region} \
                                              --scoreFileName {input.file} \
@@ -96,7 +96,7 @@ rule computeMatrix:
                                              --numberOfProcessors {threads} \
                                              {params.program_parameters} \
                                              --outFileName {output.matrix_gz}
-    """
+       """
 
 rule plotProfile:
     version:
