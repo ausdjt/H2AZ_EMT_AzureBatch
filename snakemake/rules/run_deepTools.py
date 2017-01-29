@@ -93,7 +93,7 @@ rule plotProfile:
     version:
         0.1
     params:
-        deepTools_dir = home + config["deepTools_dir"],
+        deepTools_dir = home + config["deepTools_dir"]
     input:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
     output:
