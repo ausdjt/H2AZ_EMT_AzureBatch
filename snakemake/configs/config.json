@@ -121,7 +121,7 @@
           {
             "--upstream" : "1500",
             "--downstream" : "1500",
-            "--medianGeneSize" : "8635",
+            "--regionBodyLength" : "5000",
             "--unscaled5prime" : "200",
             "--unscaled3prime" : "200"
           },
