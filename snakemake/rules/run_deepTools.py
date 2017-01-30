@@ -86,23 +86,14 @@ rule computeMatrix:
         region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards.region]
     output:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
-    shell:
-       """
-        {params.deepTools_dir}/computeMatrix {wildcards.command} \
-                                             --regionsFileName {input.region} \
-                                             --scoreFileName {input.file} \
-                                             --missingDataAsZero \
-                                             --skipZeros \
-                                             --numberOfProcessors {threads} \
-                                             {params.program_parameters} \
-                                             --outFileName {output.matrix_gz}
-       """
+    wrapper:
+        "file://" + wrapper_dir + "/deepTools/computeMatrix/wrapper.py"
 
 rule plotProfile:
     version:
         0.1
     params:
-        deepTools_dir = home + config["deepTools_dir"]
+        deepTools_dir = home + config["deepTools_dir"],
     input:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
     output:
