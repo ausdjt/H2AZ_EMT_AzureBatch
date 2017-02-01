@@ -29,6 +29,9 @@ include:
     include_prefix + "run_deepTools_QC.py"
 include:
     include_prefix + "run_deepTools.py"
+include:
+    include_prefix + "bam_processing_stage2.py"
+
 
 rule deepTools_QC:
     input:
@@ -83,4 +86,14 @@ rule all:
                plotType = "se",
                mode = ["MNase", "normal"],
                region = "allGenes",
-               suffix = ["pdf", "data", "bed"])
+               suffix = ["pdf", "data", "bed"]),
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sample_group}.{suffix}",
+               assayID = "ChIP-Seq",
+               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+               outdir = config["processed_dir"],
+               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               application = "samtools",
+               command = "merge",
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               sample_group = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
+               suffix = ["bam", "bam.bai"])

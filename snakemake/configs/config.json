@@ -65,6 +65,13 @@
           "Input-TGFb-rep2" : ["Input-TGFb-rep2_S8_R1_001.fastq.gz", "Input-TGFb-rep2_S8_R2_001.fastq.gz"],
           "Input-WT-rep1" : ["Input-WT-rep1_S5_R1_001.fastq.gz", "Input-WT-rep1_S5_R2_001.fastq.gz"],
           "Input-WT-rep2" : ["Input-WT-rep2_S6_R1_001.fastq.gz", "Input-WT-rep2_S6_R2_001.fastq.gz"]
+        },
+        "replicates" :
+        {
+          "H2AZ-TGFb" : ["H2AZ-TGFb-rep1", "H2AZ-TGFb-rep2"],
+          "H2AZ-WT" : ["H2AZ-WT-rep1", "H2AZ-WT-rep2"],
+          "Input-TGFb" : ["Input-TGFb-rep1", "Input-TGFb-rep2"],
+          "Input-WT" : ["Input-WT-rep1", "Input-WT-rep1"]
         }
       }
     },
