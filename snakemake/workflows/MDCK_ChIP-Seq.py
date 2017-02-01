@@ -107,7 +107,7 @@ rule all:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                treatment = "H2AZ-WT",
                control = "Input-WT",
-               mode = ["normal"])
+               mode = ["normal"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{treatment}_vs_{control}_{mode}_RPKM.bw",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
