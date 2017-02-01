@@ -108,7 +108,8 @@ rule all:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                scaleFactors = ["readCount", "SES"],
                treatment = "H2AZ-WT",
-               control = "Input-WT"),
+               control = "Input-WT",
+               ratio = "log2"),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_RPKM.bw",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
@@ -120,4 +121,5 @@ rule all:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                scaleFactors = ["readCount", "SES"],
                treatment = "H2AZ-TGFb",
-               control = "Input-TGFb")
+               control = "Input-TGFb",
+               ratio = "log2")
