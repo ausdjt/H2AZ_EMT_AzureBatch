@@ -122,7 +122,7 @@ rule bam_compare_pooled_replicates:
         control = "{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{control}.bam",
         treatment = "{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{treatment}.bam"
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_RPKM.bw"
+        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_RPKM.bw"
     shell:
         """
             {params.deepTools_dir}/bamCompare --bamfile1 {input.treatment} \
