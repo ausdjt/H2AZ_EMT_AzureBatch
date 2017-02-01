@@ -50,7 +50,7 @@ def get_computeMatrix_input(wildcards):
 
 rule bamCoverage:
     version:
-        0.1
+        0.2
     params:
         deepTools_dir = home + config["deepTools_dir"],
         ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
@@ -91,7 +91,7 @@ rule computeMatrix:
 
 rule plotProfile:
     version:
-        0.1
+        0.2
     params:
         deepTools_dir = home + config["deepTools_dir"],
     input:
@@ -107,4 +107,31 @@ rule plotProfile:
                                                --outFileNameData {output.data} \
                                                --outFileSortedRegions {output.regions} \
                                                --plotType {wildcards.plotType}
+        """
+
+rule bam_compare_pooled_replicates:
+    version:
+        0.1
+    params:
+        deepTools_dir = home + config["deepTools_dir"],
+        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
+        program_parameters = cli_parameters_bamCoverage
+    threads:
+        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+    input:
+        control = "{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{control}.{suffix}
+        treatment = "{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{treatment}.{suffix}
+    output:
+        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{treatment}_vs_{control}_{mode}_RPKM.bw"
+    shell:
+        """
+            {params.deepTools_dir}/bamCompare --bamfile1 {input.treatment} \
+                                              --bamfile2 {input.control} \
+                                              --outFileName {output} \
+                                              --scaleFactorsMethod {wildcards.scaleFactorsMethod} \
+                                              --ratio {wildcards.ratio} \
+                                              --numberOfProcessors {threads} \
+                                              --normalizeUsingRPKM \
+                                              --ignoreForNormalization {params.ignore} \
+                                              --skipNonCoveredRegions
         """
