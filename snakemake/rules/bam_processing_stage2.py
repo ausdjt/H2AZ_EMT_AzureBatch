@@ -28,7 +28,7 @@ def bam_merge_input(wildcards):
                      "bowtie2",
                      wildcards["duplicates"]))
     for i in config["samples"]["ChIP-Seq"]["replicates"][wildcards["sample_group"]]:
-        fn.append("/".join((path, ".".join((i, "Q20.sorted.bam")))))
+        fn.append("/".join((path, ".".join((i, "Q", config["alignment_quality"],".sorted.bam")))))
     return(fn)
 
 rule bam_merge:
