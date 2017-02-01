@@ -122,6 +122,20 @@
             "--smoothLength" : "30"
           }
         },
+        "bamCompare" :
+        {
+          "MNase" :
+          {
+            "--binSize" : "1",
+            "--smoothLength" : "30"
+          },
+          "normal" :
+          {
+            "--centerReads" : " ",
+            "--binSize" : "50",
+            "--smoothLength" : "150"
+          }
+        },
         "computeMatrix" :
         {
           "scale-regions" :
