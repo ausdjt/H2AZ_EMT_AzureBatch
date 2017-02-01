@@ -113,12 +113,12 @@
           "MNase" :
           {
             "--binSize" : "1",
-            "--smoothLength" : "30"
+            "--smoothLength" : "10"
           },
           "normal" :
           {
             "--centerReads" : " ",
-            "--binSize" : "50",
+            "--binSize" : "10",
             "--smoothLength" : "30"
           }
         },

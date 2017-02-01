@@ -135,3 +135,28 @@ rule bam_compare_pooled_replicates:
                                               --ignoreForNormalization {params.ignore} \
                                               --skipNonCoveredRegions
         """
+
+rule bam_coverage_pooled_replicates:
+    version:
+        0.1
+    params:
+        deepTools_dir = home + config["deepTools_dir"],
+        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
+        program_parameters = cli_parameters_bamCoverage
+    threads:
+        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+    input:
+        bam = "{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{sample_group}.bam",
+    output:
+        bigwig = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_{norm}.bw"
+    shell:
+        """
+            {params.deepTools_dir}/bamCoverage --bam {input.bam} \
+                                               --outFileName {output.bigwig} \
+                                               --outFileFormat bigwig \
+                                               {params.program_parameters} \
+                                               --numberOfProcessors {threads} \
+                                               --normalizeUsingRPKM \
+                                               --ignoreForNormalization {params.ignore}\
+                                               --skipNonCoveredRegions
+        """
