@@ -146,6 +146,7 @@ rule all:
                sample_group = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
 
 rule bamCoverage_replicates:
+    input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_RPKM.bw",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
