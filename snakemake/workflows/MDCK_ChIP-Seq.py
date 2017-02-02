@@ -32,6 +32,17 @@ include:
 include:
     include_prefix + "bam_processing_stage2.py"
 
+temp = expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_RPKM.bw",
+               assayID = "ChIP-Seq",
+               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+               outdir = config["processed_dir"],
+               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               application = "deepTools",
+               tool = "bamCoverage",
+               mode = ["normal", "MNase"],
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               sample_group = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
+print(temp)
 
 rule deepTools_QC:
     input:
@@ -123,6 +134,18 @@ rule all:
                treatment = "H2AZ-TGFb",
                control = "Input-TGFb",
                ratio = "log2"),
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_RPKM.bw",
+               assayID = "ChIP-Seq",
+               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+               outdir = config["processed_dir"],
+               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               application = "deepTools",
+               tool = "bamCoverage",
+               mode = ["normal", "MNase"],
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               sample_group = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
+
+rule bamCoverage_replicates:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_RPKM.bw",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
