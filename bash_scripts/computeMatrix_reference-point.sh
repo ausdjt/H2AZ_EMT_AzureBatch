@@ -4,8 +4,8 @@ computeMatrix reference-point \
               --regionsFileName $1 \
               --scoreFileName $2 \
               --referencePoint TSS \
-              --beforeRegionStartLength 1000 \
-              --afterRegionStartLength 500 \
+              --beforeRegionStartLength 1500 \
+              --afterRegionStartLength 1500 \
               --binSize 10 \
               --sortRegions no \
               --skipZeros \

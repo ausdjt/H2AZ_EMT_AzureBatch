@@ -1,12 +1,12 @@
 #!/bin/bash
 
-export data_dir=~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_marked
+export data_dir=~/Data/Tremethick/EMT/initial_analysis/GenomeWide/H2AZ/processed_data/duplicates_marked
 export script_dir=~/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/bash_scripts
 export refPoints_dir=~/Data/Annotations/CanFam3/Ensembl
-export regionFiles_dir=~/Data/Tremethick/EMT/GenomeWide/deepTools/regionFiles
-export chip_dir=~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_marked
-export input_dir=~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_marked
-export bigwig_dir=~/Data/Tremethick/EMT/GenomeWide/bigwig
+export regionFiles_dir=~/Data/Tremethick/EMT/initial_analysis/GenomeWide/deepTools/regionFiles
+export chip_dir=~/Data/Tremethick/EMT/initial_analysis/GenomeWide/H2AZ/processed_data/duplicates_marked
+export input_dir=~/Data/Tremethick/EMT/initial_analysis/GenomeWide/Input/processed_data/duplicates_marked
+export bigwig_dir=~/Data/Tremethick/EMT/initial_analysis/GenomeWide/bigwig
 
 # TGFb-treated
 bigwigCompare --bigwig1 $chip_dir/H2AZ_TGFb.bw \
@@ -77,7 +77,7 @@ ${script_dir}/profiler_TSS.sh                   ${data_dir}/H2AZ_TGFb_EMT_up_gen
 
 # 2016-04-07 changed BAM files to use de-duplicated data
 export script_dir=~/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/bash_scripts
-export refPoints_dir=~/Data/Annotations/CanFam3/Ensembl
+export refPoints_dir=~/Data/References/Annotations/CanFam3/Ensembl
 export chip_dir=~/Data/Tremethick/EMT/GenomeWide/H2AZ/processed_data/duplicates_removed
 export input_dir=~/Data/Tremethick/EMT/GenomeWide/Input/processed_data/duplicates_removed
 export bigwig_dir=~/Data/Tremethick/EMT/GenomeWide/bigwig
