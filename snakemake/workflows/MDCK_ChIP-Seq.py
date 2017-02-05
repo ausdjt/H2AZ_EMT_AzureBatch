@@ -32,7 +32,7 @@ include:
 include:
     include_prefix + "bam_processing_stage2.py"
 
-# temp = expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_RPKM.bw",
+# temp = expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sampleGroup}_{mode}_RPKM.bw",
 #                assayID = "ChIP-Seq",
 #                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
 #                outdir = config["processed_dir"],
@@ -41,7 +41,7 @@ include:
 #                tool = "bamCoverage",
 #                mode = ["normal", "MNase"],
 #                duplicates = ["duplicates_marked", "duplicates_removed"],
-#                sample_group = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
+#                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
 # print(temp)
 
 rule deepTools_QC:
@@ -91,7 +91,7 @@ rule allGenes_plots:
 
 rule merge_replicates:
     input:
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sample_group}.{suffix}",
+            expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.{suffix}",
                    assayID = "ChIP-Seq",
                    runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                    outdir = config["processed_dir"],
@@ -99,12 +99,12 @@ rule merge_replicates:
                    application = "samtools",
                    command = "merge",
                    duplicates = ["duplicates_marked", "duplicates_removed"],
-                   sample_group = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
+                   sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
                    suffix = ["bam", "bam.bai"]),
 
 rule bamCoverage_replicates:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_RPKM.bw",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sampleGroup}_{mode}_RPKM.bw",
                assayID = "ChIP-Seq",
                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
                outdir = config["processed_dir"],
@@ -113,7 +113,7 @@ rule bamCoverage_replicates:
                tool = "bamCoverage",
                mode = ["normal", "MNase"],
                duplicates = ["duplicates_marked", "duplicates_removed"],
-               sample_group = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
+               sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
 
 rule bamCompare_replicates:
     input:

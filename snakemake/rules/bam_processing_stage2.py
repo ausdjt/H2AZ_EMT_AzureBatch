@@ -27,7 +27,7 @@ def bam_merge_input(wildcards):
                      wildcards["reference_version"],
                      "bowtie2",
                      wildcards["duplicates"]))
-    for i in config["samples"]["ChIP-Seq"]["replicates"][wildcards["sample_group"]]:
+    for i in config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]]:
         fn.append("/".join((path, ".".join((i, "".join(("Q", config["alignment_quality"])),"sorted.bam")))))
     return(fn)
 
@@ -41,7 +41,7 @@ rule bam_merge:
     input:
         bam_merge_input
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sample_group}.bam")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.bam")
     run:
         if (len(input) > 1):
             shell("samtools merge --threads {threads} {output} {input}")
@@ -52,6 +52,6 @@ rule index_merged_bam:
     input:
         rules.bam_merge.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sample_group}.bam.bai")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.bam.bai")
     shell:
         "samtools index {input} {output}"
