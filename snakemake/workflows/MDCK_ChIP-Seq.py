@@ -44,71 +44,90 @@ include:
 #                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
 # print(temp)
 
+RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
+ASSAYID = "ChIP-Seq"
+OUTDIR = config["processed_dir"]
+REFVERSION = config["references"]["CanFam3.1"]["version"][0]
+QUALITY = config["alignment_quality"]
+
+rule all:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{tool}/{duplicates}/{unit}.Q{qual}.sorted.{suffix}",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               tool = "bowtie2",
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
+               qual = QUALITY,
+               suffix = ["bam", "bam.bai"])
+
 rule deepTools_QC:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotCorrelation/{duplicates}/heatmap_SpearmanCorr_readCounts.{suffix}",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
                duplicates = ["duplicates_marked", "duplicates_removed"],
                suffix = ["png", "tab"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotPCA/{duplicates}/PCA_readCounts.png",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
                duplicates = ["duplicates_marked", "duplicates_removed"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_{duplicates}.png",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
                duplicates = ["duplicates_marked", "duplicates_removed"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_{duplicates}.png",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
                duplicates = ["duplicates_marked", "duplicates_removed"])
 
 rule allGenes_plots:
     input:
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.{suffix}",
-                   assayID = "ChIP-Seq",
-                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-                   outdir = config["processed_dir"],
-                   reference_version = config["references"]["CanFam3.1"]["version"][0],
-                   application = "deepTools",
-                   tool = "plotProfile",
-                   command = ["reference-point", "scale-regions"],
-                   duplicates = ["duplicates_marked", "duplicates_removed"],
-                   referencePoint = "TSS",
-                   plotType = "se",
-                   mode = ["MNase", "normal"],
-                   region = "allGenes",
-                   suffix = ["pdf", "data", "bed"])
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.{suffix}",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               application = "deepTools",
+               tool = "plotProfile",
+               command = ["reference-point", "scale-regions"],
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               referencePoint = "TSS",
+               plotType = "se",
+               mode = ["MNase", "normal"],
+               region = "allGenes",
+               suffix = ["pdf", "data", "bed"])
 
 rule merge_replicates:
     input:
-            expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.{suffix}",
-                   assayID = "ChIP-Seq",
-                   runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-                   outdir = config["processed_dir"],
-                   reference_version = config["references"]["CanFam3.1"]["version"][0],
-                   application = "samtools",
-                   command = "merge",
-                   duplicates = ["duplicates_marked", "duplicates_removed"],
-                   sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
-                   suffix = ["bam", "bam.bai"]),
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.{suffix}",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               application = "samtools",
+               command = "merge",
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
+               suffix = ["bam", "bam.bai"]),
 
 rule bamCoverage_replicates:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sampleGroup}_{mode}_RPKM.bw",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
                application = "deepTools",
                tool = "bamCoverage",
                mode = ["normal", "MNase"],
@@ -118,10 +137,10 @@ rule bamCoverage_replicates:
 rule bamCompare_replicates:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_RPKM.bw",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
                application = "deepTools",
                tool = "bamCompare",
                mode = ["normal"],
@@ -131,10 +150,10 @@ rule bamCompare_replicates:
                control = "Input-WT",
                ratio = "log2"),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_RPKM.bw",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["CanFam3.1"]["version"][0],
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
                application = "deepTools",
                tool = "bamCompare",
                mode = ["normal"],
@@ -143,16 +162,3 @@ rule bamCompare_replicates:
                treatment = "H2AZ-TGFb",
                control = "Input-TGFb",
                ratio = "log2")
-
-rule all:
-    input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{tool}/{duplicates}/{unit}.Q{qual}.sorted.{suffix}",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-               outdir = config["processed_dir"],
-               reference_version = config["references"]["CanFam3.1"]["version"][0],
-               tool = "bowtie2",
-               duplicates = ["duplicates_marked", "duplicates_removed"],
-               unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
-               qual = config["alignment_quality"],
-               suffix = ["bam", "bam.bai"]),
