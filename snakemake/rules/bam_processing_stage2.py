@@ -18,6 +18,8 @@ from snakemake.exceptions import MissingInputException
 
 # set some local variables
 home = os.environ['HOME']
+configfile = "/home/sebastian/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/configs/config.json"
+
 
 RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
 ASSAYID = "ChIP-Seq"
