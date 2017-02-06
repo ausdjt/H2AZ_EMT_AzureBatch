@@ -118,7 +118,7 @@ rule plotProfile:
                                                --plotType {wildcards.plotType}
         """
 
-sub workflow merge_replicates:
+subworkflow merge_replicates:
     snakefile: "subworkflow_merge_replicates.py"
 
 rule bam_coverage_pooled_replicates:
