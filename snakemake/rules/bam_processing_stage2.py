@@ -28,18 +28,6 @@ OUTDIR = config["processed_dir"]
 REFVERSION = config["references"]["CanFam3.1"]["version"][0]
 QUALITY = config["alignment_quality"]
 
-# def bam_merge_input(wildcards):
-#     fn = []
-#     path = "/".join((wildcards["assayID"],
-#                      wildcards["runID"],
-#                      wildcards["outdir"],
-#                      wildcards["reference_version"],
-#                      "bowtie2",
-#                      wildcards["duplicates"]))
-#     for i in config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]]:
-#         fn.append("/".join((path, ".".join((i, "".join(("Q", config["alignment_quality"])),"sorted.bam")))))
-#     return(fn)
-
 rule all:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.{suffix}",
