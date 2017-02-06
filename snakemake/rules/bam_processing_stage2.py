@@ -19,17 +19,17 @@ from snakemake.exceptions import MissingInputException
 # set some local variables
 home = os.environ['HOME']
 
-def bam_merge_input(wildcards):
-    fn = []
-    path = "/".join((wildcards["assayID"],
-                     wildcards["runID"],
-                     wildcards["outdir"],
-                     wildcards["reference_version"],
-                     "bowtie2",
-                     wildcards["duplicates"]))
-    for i in config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]]:
-        fn.append("/".join((path, ".".join((i, "".join(("Q", config["alignment_quality"])),"sorted.bam")))))
-    return(fn)
+# def bam_merge_input(wildcards):
+#     fn = []
+#     path = "/".join((wildcards["assayID"],
+#                      wildcards["runID"],
+#                      wildcards["outdir"],
+#                      wildcards["reference_version"],
+#                      "bowtie2",
+#                      wildcards["duplicates"]))
+#     for i in config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]]:
+#         fn.append("/".join((path, ".".join((i, "".join(("Q", config["alignment_quality"])),"sorted.bam")))))
+#     return(fn)
 
 rule bam_merge:
     version:
