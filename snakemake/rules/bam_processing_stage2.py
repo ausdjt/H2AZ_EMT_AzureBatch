@@ -19,6 +19,12 @@ from snakemake.exceptions import MissingInputException
 # set some local variables
 home = os.environ['HOME']
 
+RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
+ASSAYID = "ChIP-Seq"
+OUTDIR = config["processed_dir"]
+REFVERSION = config["references"]["CanFam3.1"]["version"][0]
+QUALITY = config["alignment_quality"]
+
 # def bam_merge_input(wildcards):
 #     fn = []
 #     path = "/".join((wildcards["assayID"],
@@ -30,6 +36,20 @@ home = os.environ['HOME']
 #     for i in config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]]:
 #         fn.append("/".join((path, ".".join((i, "".join(("Q", config["alignment_quality"])),"sorted.bam")))))
 #     return(fn)
+
+rule all:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.{suffix}",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               application = "samtools",
+               command = "merge",
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
+               suffix = ["bam", "bam.bai"]),
+
 
 rule bam_merge:
     version:

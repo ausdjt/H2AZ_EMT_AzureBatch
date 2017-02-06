@@ -13,6 +13,8 @@ Rules for running deepTools analysis on ChIP-Seq data
 For usage, include this in your workflow.
 """
 
+CWD = os.getcwd()
+
 def cli_parameters_computeMatrix(wildcards):
     a = config["program_parameters"][wildcards["application"]][wildcards["tool"]][wildcards["command"]]
     if wildcards["command"] == "reference-point":
@@ -46,7 +48,6 @@ def get_computeMatrix_input(wildcards):
     for i in config["samples"][wildcards["assayID"]][wildcards["runID"]]:
         fn.append("/".join((path, "_".join((i, wildcards["mode"], "RPKM.bw")))))
     return(fn)
-
 
 rule bamCoverage:
     version:
@@ -117,6 +118,34 @@ rule plotProfile:
                                                --plotType {wildcards.plotType}
         """
 
+sub worfklow merge_replicates:
+    workdir: CWD
+    snakefile: "subworkflow_merge_replicates.py"
+
+rule bam_coverage_pooled_replicates:
+    version:
+        0.1
+    params:
+        deepTools_dir = home + config["deepTools_dir"],
+        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
+        program_parameters = cli_parameters_bamCoverage
+    threads:
+        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+    input:
+        bam = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{sample_group}.bam")
+    output:
+        bigwig = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_{norm}.bw"
+    shell:
+        """
+            {params.deepTools_dir}/bamCoverage --bam {input.bam} \
+                                               --outFileName {output.bigwig} \
+                                               --outFileFormat bigwig \
+                                               {params.program_parameters} \
+                                               --numberOfProcessors {threads} \
+                                               --normalizeUsingRPKM \
+                                               --ignoreForNormalization {params.ignore}
+        """
+
 rule bam_compare_pooled_replicates:
     version:
         0.1
@@ -141,28 +170,4 @@ rule bam_compare_pooled_replicates:
                                               --numberOfProcessors {threads} \
                                               --normalizeUsingRPKM \
                                               --ignoreForNormalization {params.ignore}
-        """
-
-rule bam_coverage_pooled_replicates:
-    version:
-        0.1
-    params:
-        deepTools_dir = home + config["deepTools_dir"],
-        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
-        program_parameters = cli_parameters_bamCoverage
-    threads:
-        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
-    input:
-        bam = "{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{sample_group}.bam",
-    output:
-        bigwig = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_{norm}.bw"
-    shell:
-        """
-            {params.deepTools_dir}/bamCoverage --bam {input.bam} \
-                                               --outFileName {output.bigwig} \
-                                               --outFileFormat bigwig \
-                                               {params.program_parameters} \
-                                               --numberOfProcessors {threads} \
-                                               --normalizeUsingRPKM \
-                                               --ignoreForNormalization {params.ignore}
         """
