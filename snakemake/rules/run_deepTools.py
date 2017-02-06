@@ -133,7 +133,7 @@ rule bam_coverage_pooled_replicates:
     input:
         bam = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{sample_group}.bam")
     output:
-        bigwig = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_{norm}.bw"
+        bigwig = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/bamCoverage/{mode}/{duplicates}/{sample_group}_{mode}_{norm}.bw"
     shell:
         """
             {params.deepTools_dir}/bamCoverage --bam {input.bam} \
