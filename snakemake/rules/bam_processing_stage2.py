@@ -39,7 +39,7 @@ rule bam_merge:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["bt2_params"]["threads"]).strip("['']"))
     input:
-        bam_merge_input
+        lambda wildcards: bam_merge_input(wildcards)
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.bam")
     run:
