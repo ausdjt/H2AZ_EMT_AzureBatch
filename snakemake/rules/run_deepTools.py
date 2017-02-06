@@ -155,7 +155,7 @@ rule bigwig_compare_pooled_replicates:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        control = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamCoverage/{mode}/{duplicates}/{control}_{mode}_{norm}.bw"
+        control = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamCoverage/{mode}/{duplicates}/{control}_{mode}_{norm}.bw",
         treatment = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamCoverage/{mode}/{duplicates}/{treatment}_{mode}_{norm}.bw"
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_{norm}.bw"
