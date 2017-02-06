@@ -155,7 +155,7 @@ rule bam_compare_pooled_replicates:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        control = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{control}.bam",)
+        control = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{control}.bam"),
         treatment = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{treatment}.bam")
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_RPKM.bw"
