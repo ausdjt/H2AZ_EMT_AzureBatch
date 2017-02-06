@@ -44,6 +44,7 @@ rule bam_merge:
                                  runID = wildcards["runID"],
                                  outdir = wildcards["outdir"],
                                  reference_version = wildcards["reference_version"],
+                                 duplicates = wildcards["duplicates"],
                                  unit = config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]],
                                  qual = config["alignment_quality"],
                                  suffix = "sorted.bam")
