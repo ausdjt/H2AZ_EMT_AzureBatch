@@ -32,18 +32,7 @@ include:
 include:
     include_prefix + "bam_processing_stage2.py"
 
-# temp = expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sampleGroup}_{mode}_RPKM.bw",
-#                assayID = "ChIP-Seq",
-#                runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
-#                outdir = config["processed_dir"],
-#                reference_version = config["references"]["CanFam3.1"]["version"][0],
-#                application = "deepTools",
-#                tool = "bamCoverage",
-#                mode = ["normal", "MNase"],
-#                duplicates = ["duplicates_marked", "duplicates_removed"],
-#                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
-# print(temp)
-
+# run parameters as variables
 RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
 ASSAYID = "ChIP-Seq"
 OUTDIR = config["processed_dir"]
@@ -148,7 +137,7 @@ rule bamCompare_replicates:
                scaleFactors = ["readCount", "SES"],
                treatment = "H2AZ-WT",
                control = "Input-WT",
-               ratio = "log2"),
+               ratio = ["log2", "subtract"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_RPKM.bw",
                assayID = ASSAYID,
                runID = RUNID,
@@ -161,4 +150,4 @@ rule bamCompare_replicates:
                scaleFactors = ["readCount", "SES"],
                treatment = "H2AZ-TGFb",
                control = "Input-TGFb",
-               ratio = "log2")
+               ratio = ["log2", "subtract"])
