@@ -22,7 +22,7 @@ def cli_parameters_computeMatrix(wildcards):
     return(a)
 
 def cli_parameters_bamCoverage(wildcards):
-    a = config["program_parameters"][wildcards["application"]][wildcards["tool"]][wildcards["mode"]]
+    a = config["program_parameters"][wildcards["application"]]["bamCoverage"][wildcards["mode"]]
     b = str()
     for (key, val) in a.items():
         if val == " ":
