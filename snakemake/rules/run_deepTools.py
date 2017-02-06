@@ -119,7 +119,6 @@ rule plotProfile:
         """
 
 sub workflow merge_replicates:
-    workdir: CWD
     snakefile: "subworkflow_merge_replicates.py"
 
 rule bam_coverage_pooled_replicates:
