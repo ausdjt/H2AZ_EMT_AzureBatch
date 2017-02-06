@@ -39,13 +39,14 @@ rule bam_merge:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["bt2_params"]["threads"]).strip("['']"))
     input:
-        lambda wildcards: "/".join(("/".join((wildcards["assayID"],
-                         wildcards["runID"],
-                         wildcards["outdir"],
-                         wildcards["reference_version"],
-                         "bowtie2",
-                         wildcards["duplicates"]))),(".".join((config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]], "".join(("Q", config["alignment_quality"])),"sorted.bam"))))
-
+        lambda wildcards: expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{duplicates}/{unit}.Q{qual}.{suffix}",
+                                 assayID = wildcards["assayID"],
+                                 runID = wildcards["runID"],
+                                 outdir = wildcards["outdir"],
+                                 reference_version = wildcards["reference_version"],
+                                 unit = config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]],
+                                 qual = config["alignment_quality"],
+                                 suffix = "sorted.bam")
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.bam")
     run:
