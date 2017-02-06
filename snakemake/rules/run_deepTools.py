@@ -62,7 +62,7 @@ rule bamCoverage:
                      assayID = wildcards["assayID"],
                      runID = wildcards["runID"],
                      outdir = wildcards["outdir"],
-                     reference_version = wildcards["reference_version"]
+                     reference_version = wildcards["reference_version"],
                      application = "bowtie2",
                      duplicates = wildcards["duplicates"],
                      sample = wildcards["sample"],
