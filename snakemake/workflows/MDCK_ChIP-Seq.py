@@ -97,7 +97,7 @@ rule allGenes_plots:
 
 rule bamCoverage_replicates:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sampleGroup}_{mode}_RPKM.bw",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/merged_replicates/{sampleGroup}_{mode}_{norm}.bw",
                assayID = ASSAYID,
                runID = RUNID,
                outdir = OUTDIR,
@@ -106,7 +106,8 @@ rule bamCoverage_replicates:
                tool = "bamCoverage",
                mode = ["normal", "MNase"],
                duplicates = ["duplicates_marked", "duplicates_removed"],
-               sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"])
+               sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
+               norm = "RPKM")
 
 rule bigwigCompare_replicates:
     input:
