@@ -29,8 +29,6 @@ include:
     include_prefix + "run_deepTools_QC.py"
 include:
     include_prefix + "run_deepTools.py"
-# include:
-#     include_prefix + "bam_processing_stage2.py"
 
 # run parameters as variables
 RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
@@ -96,19 +94,6 @@ rule allGenes_plots:
                mode = ["MNase", "normal"],
                region = "allGenes",
                suffix = ["pdf", "data", "bed"])
-
-# rule merge_replicates:
-#     input:
-#         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.{suffix}",
-#                assayID = ASSAYID,
-#                runID = RUNID,
-#                outdir = OUTDIR,
-#                reference_version = REFVERSION,
-#                application = "samtools",
-#                command = "merge",
-#                duplicates = ["duplicates_marked", "duplicates_removed"],
-#                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
-#                suffix = ["bam", "bam.bai"]),
 
 rule bamCoverage_replicates:
     input:
