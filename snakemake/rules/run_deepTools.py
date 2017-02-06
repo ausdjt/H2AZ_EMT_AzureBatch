@@ -131,7 +131,7 @@ rule bam_coverage_pooled_replicates:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-            bam = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{sample_group}.bam")
+        bam = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{sample_group}.bam")
     output:
         bigwig = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample_group}_{mode}_{norm}.bw"
     shell:
@@ -145,7 +145,7 @@ rule bam_coverage_pooled_replicates:
                                                --ignoreForNormalization {params.ignore}
         """
 
-rule bam_compare_pooled_replicates:
+rule bigwig_compare_pooled_replicates:
     version:
         0.1
     params:
@@ -155,10 +155,10 @@ rule bam_compare_pooled_replicates:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        control = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{control}.bam"),
-        treatment = merge_replicates("{assayID}/{runID}/{outdir}/{reference_version}/samtools/merge/{duplicates}/{treatment}.bam")
+        control = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamCoverage/{mode}/{duplicates}/{control}_{mode}_{norm}.bw"
+        treatment = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamCoverage/{mode}/{duplicates}/{treatment}_{mode}_{norm}.bw"
     output:
-        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_RPKM.bw"
+        "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_{norm}.bw"
     shell:
         """
             {params.deepTools_dir}/bamCompare --bamfile1 {input.treatment} \
