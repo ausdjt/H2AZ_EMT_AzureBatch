@@ -58,7 +58,16 @@ rule bamCoverage:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        bam = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/" + wildcards.outdir + "/" + wildcards.reference_version + "/bowtie2/" + wildcards.duplicates + "/" +  wildcards.sample + ".Q" + config["alignment_quality"] + ".sorted.bam"
+        bam = expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{duplicates}/{sample}.Q{qual}.{suffix}",
+                     assayID = wildcards["assayID"],
+                     runID = wildcards["runID"],
+                     outdir = wildcards["outdir"],
+                     reference_version = wildcards["reference_version"]
+                     application = "bowtie2",
+                     duplicates = wildcards["duplicates"],
+                     sample = wildcards["sample"],
+                     qual = config["alignment_quality"],
+                     suffix = "sorted.bam")
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample}_{mode}_{norm}.bw"
     shell:
@@ -94,7 +103,7 @@ rule plotProfile:
     params:
         deepTools_dir = home + config["deepTools_dir"],
     input:
-        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz"
+        rules.computeMatrix.output
     output:
         figure = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.pdf",
         data = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.data",
