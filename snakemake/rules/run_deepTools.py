@@ -118,7 +118,7 @@ rule plotProfile:
                                                --plotType {wildcards.plotType}
         """
 
-sub worfklow merge_replicates:
+sub workflow merge_replicates:
     workdir: CWD
     snakefile: "subworkflow_merge_replicates.py"
 
