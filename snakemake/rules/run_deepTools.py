@@ -58,16 +58,16 @@ rule bamCoverage:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        bam = expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{duplicates}/{sample}.Q{qual}.{suffix}",
-                     assayID = wildcards["assayID"],
-                     runID = wildcards["runID"],
-                     outdir = wildcards["outdir"],
-                     reference_version = wildcards["reference_version"],
-                     application = "bowtie2",
-                     duplicates = wildcards["duplicates"],
-                     sample = wildcards["sample"],
-                     qual = config["alignment_quality"],
-                     suffix = "sorted.bam")
+        bam = lambda wildcards: expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{duplicates}/{sample}.Q{qual}.{suffix}",
+                                       assayID = wildcards["assayID"],
+                                       runID = wildcards["runID"],
+                                       outdir = wildcards["outdir"],
+                                       reference_version = wildcards["reference_version"],
+                                       application = "bowtie2",
+                                       duplicates = wildcards["duplicates"],
+                                       sample = wildcards["sample"],
+                                       qual = config["alignment_quality"],
+                                       suffix = "sorted.bam")
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{sample}_{mode}_{norm}.bw"
     shell:
