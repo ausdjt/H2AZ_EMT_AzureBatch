@@ -150,8 +150,7 @@ rule bigwig_compare_pooled_replicates:
         0.1
     params:
         deepTools_dir = home + config["deepTools_dir"],
-        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"],
-        program_parameters = cli_parameters_bamCoverage
+        ignore = config["program_parameters"]["deepTools"]["ignoreForNormalization"]
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
@@ -161,12 +160,9 @@ rule bigwig_compare_pooled_replicates:
         "{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_{norm}.bw"
     shell:
         """
-            {params.deepTools_dir}/bamCompare --bamfile1 {input.treatment} \
-                                              --bamfile2 {input.control} \
-                                              --outFileName {output} \
-                                              --scaleFactorsMethod {wildcards.scaleFactors} \
-                                              --ratio {wildcards.ratio} \
-                                              --numberOfProcessors {threads} \
-                                              --normalizeUsingRPKM \
-                                              --ignoreForNormalization {params.ignore}
+            {params.deepTools_dir}/bigwigCompare --bigwig1 {input.treatment} \
+                                                 --bigwig2 {input.control} \
+                                                 --outFileName {output} \
+                                                 --ratio {wildcards.ratio} \
+                                                 --numberOfProcessors {threads}
         """
