@@ -39,7 +39,13 @@ rule bam_merge:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["bt2_params"]["threads"]).strip("['']"))
     input:
-        lambda wildcards: bam_merge_input(wildcards)
+        lambda wildcards: join(("/".join((wildcards["assayID"],
+                         wildcards["runID"],
+                         wildcards["outdir"],
+                         wildcards["reference_version"],
+                         "bowtie2",
+                         wildcards["duplicates"]))), ("/".join((path, ".".join((config["samples"]["ChIP-Seq"]["replicates"][wildcards["sampleGroup"]], "".join(("Q", config["alignment_quality"])),"sorted.bam"))))))
+
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.bam")
     run:
