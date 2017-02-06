@@ -16,7 +16,7 @@ For usage, include this in your workflow.
 CWD = os.getcwd()
 
 def cli_parameters_computeMatrix(wildcards):
-    a = config["program_parameters"][wildcards["application"]][wildcards["tool"]][wildcards["command"]]
+    a = config["program_parameters"][wildcards["application"]]["computeMatrix"]][wildcards["command"]]
     if wildcards["command"] == "reference-point":
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
