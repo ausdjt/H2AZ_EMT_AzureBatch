@@ -27,7 +27,6 @@ include:
     include_prefix + "bam_processing.py"
 include:
     include_prefix + "run_deepTools_QC.py"
-
 include:
     include_prefix + "run_deepTools.py"
 
@@ -79,9 +78,9 @@ rule deepTools_QC:
                reference_version = REFVERSION,
                duplicates = ["duplicates_marked", "duplicates_removed"])
 
-rule run_computeMatrix:
+rule run_computeMatrix_pooled_replicates:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sample_group}_{region}_{mode}.matrix.gz",
                assayID = ASSAYID,
                runID = RUNID,
                outdir = OUTDIR,
@@ -91,6 +90,7 @@ rule run_computeMatrix:
                command = ["reference-point", "scale-regions"],
                duplicates = ["duplicates_marked", "duplicates_removed"],
                referencePoint = "TSS",
+               sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
                region = ["allGenes", "Tan_EMT_up", "Tan_EMT_down"],
                mode = ["MNase", "normal"])
 
