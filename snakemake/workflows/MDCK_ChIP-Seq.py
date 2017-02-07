@@ -1,4 +1,4 @@
-_author__ = "Sebastian Kurscheid (sebastian.kurscheid@anu.edu.au)"
+__author__ = "Sebastian Kurscheid (sebastian.kurscheid@anu.edu.au)"
 __license__ = "MIT"
 __date__ = "2016-12-05"
 
@@ -9,9 +9,6 @@ import pdb
 
 rule:
     version: 0.1
-
-localrules:
-    all,
 
 home = os.environ['HOME']
 
