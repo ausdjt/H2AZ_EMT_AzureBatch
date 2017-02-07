@@ -28,7 +28,7 @@ rule run_computeMatrix_pooled_replicates:
                command = ["reference-point", "scale-regions"],
                duplicates = ["duplicates_marked", "duplicates_removed"],
                referencePoint = "TSS",
-               sampleGroup = ["H2AZ-WT", "H2AZ-TGFb", "Input-WT", "Input-TGFb"],
+               sampleGroup = ["H2AZ-WT", "H2AZ-TGFb", "Input-WT", "Input-TGFb", "qPCRGenesUp", "qPCRGenesDown"],
                region = ["allGenes", "TanEMTup", "TanEMTdown"],
                mode = ["MNase", "normal"])
 
