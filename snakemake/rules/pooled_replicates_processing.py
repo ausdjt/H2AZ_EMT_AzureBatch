@@ -9,7 +9,7 @@ REFVERSION = config["references"]["CanFam3.1"]["version"][0]
 QUALITY = config["alignment_quality"]
 
 def cli_parameters_computeMatrix(wildcards):
-    a = config["program_parameters"][wildcards["application"]]["computeMatrix"]][wildcards["command"]]
+    a = config["program_parameters"][wildcards["application"]]["computeMatrix"][wildcards["command"]]
     if wildcards["command"] == "reference-point":
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
