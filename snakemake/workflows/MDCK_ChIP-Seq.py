@@ -78,6 +78,21 @@ rule deepTools_QC:
                reference_version = REFVERSION,
                duplicates = ["duplicates_marked", "duplicates_removed"])
 
+rule run_computeMatrix:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{region}_{mode}.matrix.gz",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               application = "deepTools",
+               tool = "computeMatrix",
+               command = ["reference-point", "scale-regions"],
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               referencePoint = "TSS",
+               region = ["allGenes", "Tan_EMT_up", "Tan_EMT_down"],
+               mode = ["MNase", "normal"])
+
 rule allGenes_plots:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/{plotType}.{mode}.{region}.{suffix}",
