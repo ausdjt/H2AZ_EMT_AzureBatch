@@ -107,8 +107,8 @@
         "regionFiles" :
         {
           "allGenes" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/allGenes.bed",
-          "Tan_EMT_up" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_up_genes.bed",
-          "Tan_EMT_down" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_down_genes.bed"
+          "TanEMTup" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_up_genes.bed",
+          "TanEMTdown" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_down_genes.bed"
         },
         "bamCoverage" :
         {

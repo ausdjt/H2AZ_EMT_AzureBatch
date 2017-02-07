@@ -29,7 +29,7 @@ rule run_computeMatrix_pooled_replicates:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                referencePoint = "TSS",
                sampleGroup = ["H2AZ-WT", "H2AZ-TGFb", "Input-WT", "Input-TGFb"],
-               region = ["allGenes", "Tan_EMT_up", "Tan_EMT_down"],
+               region = ["allGenes", "TanEMTup", "TanEMTdown"],
                mode = ["MNase", "normal"])
 
 rule computeMatrix_pooled_replicates:
