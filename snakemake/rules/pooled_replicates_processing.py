@@ -1,11 +1,12 @@
 from snakemake.exceptions import MissingInputException
 import os
-#
-# RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-# ASSAYID = "ChIP-Seq"
-# OUTDIR = config["processed_dir"]
-# REFVERSION = config["references"]["CanFam3.1"]["version"][0]
-# QUALITY = config["alignment_quality"]
+
+# run parameters as variables
+RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
+ASSAYID = "ChIP-Seq"
+OUTDIR = config["processed_dir"]
+REFVERSION = config["references"]["CanFam3.1"]["version"][0]
+QUALITY = config["alignment_quality"]
 
 # def cli_parameters_computeMatrix(wildcards):
 #     a = config["program_parameters"][wildcards["application"]]["computeMatrix"]][wildcards["command"]]
