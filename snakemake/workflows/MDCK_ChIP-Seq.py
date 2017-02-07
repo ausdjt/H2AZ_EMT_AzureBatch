@@ -11,7 +11,7 @@ rule:
     version: 0.1
 
 localrules:
-    all, run_kallisto, run_STAR, run_htseq, run_cutadapt
+    all
 
 home = os.environ['HOME']
 
