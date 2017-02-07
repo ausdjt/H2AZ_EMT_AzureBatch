@@ -19,33 +19,33 @@ def cli_parameters_computeMatrix(wildcards):
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
 
-def cli_parameters_bamCoverage(wildcards):
-    a = config["program_parameters"][wildcards["application"]]["bamCoverage"][wildcards["mode"]]
-    b = str()
-    for (key, val) in a.items():
-        if val == " ":
-            f = key + " "
-            b = b + f
-        else:
-            f = key + "=" + val + " "
-            b = b + f
-    if wildcards["mode"] == "MNase":
-        b = b + "--MNase"
-    return(b.rstrip())
-
-def get_computeMatrix_input(wildcards):
-    fn = []
-    path = "/".join((wildcards["assayID"],
-                     wildcards["runID"],
-                     config["processed_dir"],
-                     config["references"]["CanFam3.1"]["version"][0],
-                     wildcards["application"],
-                     "bamCoverage",
-                     wildcards["mode"],
-                     wildcards["duplicates"]))
-    for i in config["samples"][wildcards["assayID"]][wildcards["runID"]]:
-        fn.append("/".join((path, "_".join((i, wildcards["mode"], "RPKM.bw")))))
-    return(fn)
+# def cli_parameters_bamCoverage(wildcards):
+#     a = config["program_parameters"][wildcards["application"]]["bamCoverage"][wildcards["mode"]]
+#     b = str()
+#     for (key, val) in a.items():
+#         if val == " ":
+#             f = key + " "
+#             b = b + f
+#         else:
+#             f = key + "=" + val + " "
+#             b = b + f
+#     if wildcards["mode"] == "MNase":
+#         b = b + "--MNase"
+#     return(b.rstrip())
+#
+# def get_computeMatrix_input(wildcards):
+#     fn = []
+#     path = "/".join((wildcards["assayID"],
+#                      wildcards["runID"],
+#                      config["processed_dir"],
+#                      config["references"]["CanFam3.1"]["version"][0],
+#                      wildcards["application"],
+#                      "bamCoverage",
+#                      wildcards["mode"],
+#                      wildcards["duplicates"]))
+#     for i in config["samples"][wildcards["assayID"]][wildcards["runID"]]:
+#         fn.append("/".join((path, "_".join((i, wildcards["mode"], "RPKM.bw")))))
+#     return(fn)
 
 # rule bamCoverage:
 #     version:
