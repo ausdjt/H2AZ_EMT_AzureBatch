@@ -11,6 +11,22 @@ def cli_parameters_computeMatrix(wildcards):
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
 
+rule run_computeMatrix_pooled_replicates:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sample_group}_{region}_{mode}.matrix.gz",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               application = "deepTools",
+               tool = "computeMatrix",
+               command = ["reference-point", "scale-regions"],
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               referencePoint = "TSS",
+               sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
+               region = ["allGenes", "Tan_EMT_up", "Tan_EMT_down"],
+               mode = ["MNase", "normal"])
+
 # subworkflow merge_replicates:
 #     workdir: "/home/sebastian/Data/Tremethick/EMT"
 #     snakefile: "subworkflow_merge_replicates.py"
