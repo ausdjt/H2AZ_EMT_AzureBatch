@@ -8,11 +8,11 @@ OUTDIR = config["processed_dir"]
 REFVERSION = config["references"]["CanFam3.1"]["version"][0]
 QUALITY = config["alignment_quality"]
 
-# def cli_parameters_computeMatrix(wildcards):
-#     a = config["program_parameters"][wildcards["application"]]["computeMatrix"]][wildcards["command"]]
-#     if wildcards["command"] == "reference-point":
-#         a["--referencePoint"] = wildcards.referencePoint
-#     return(a)
+def cli_parameters_computeMatrix(wildcards):
+    a = config["program_parameters"][wildcards["application"]]["computeMatrix"]][wildcards["command"]]
+    if wildcards["command"] == "reference-point":
+        a["--referencePoint"] = wildcards.referencePoint
+    return(a)
 
 # rule run_computeMatrix_pooled_replicates:
 #     input:
