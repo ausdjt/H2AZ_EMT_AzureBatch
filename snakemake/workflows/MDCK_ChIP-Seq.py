@@ -79,7 +79,7 @@ QUALITY = config["alignment_quality"]
 
 rule run_computeMatrix_pooled_replicates:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sample_group}_{region}_{mode}.matrix.gz",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sampleGroup}_{region}_{mode}.matrix.gz",
                assayID = ASSAYID,
                runID = RUNID,
                outdir = OUTDIR,
