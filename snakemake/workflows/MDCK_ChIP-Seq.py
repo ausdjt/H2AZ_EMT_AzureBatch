@@ -27,8 +27,10 @@ include_prefix = home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/ru
 #     include_prefix + "bam_processing.py"
 # include:
 #     include_prefix + "run_deepTools_QC.py"
+# include:
+#     include_prefix + "run_deepTools.py"
 include:
-    include_prefix + "run_deepTools.py"
+    include_prefix + "pooled_replicates_processing.py"
 
 # run parameters as variables
 RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
