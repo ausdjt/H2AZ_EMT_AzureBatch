@@ -1,21 +1,17 @@
-__author__ = "Sebastian Kurscheid (sebastian.kurscheid@anu.edu.au)"
-__license__ = "MIT"
-__date__ = "2017-02-07"
-
 from snakemake.exceptions import MissingInputException
 import os
+#
+# RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
+# ASSAYID = "ChIP-Seq"
+# OUTDIR = config["processed_dir"]
+# REFVERSION = config["references"]["CanFam3.1"]["version"][0]
+# QUALITY = config["alignment_quality"]
 
-RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-ASSAYID = "ChIP-Seq"
-OUTDIR = config["processed_dir"]
-REFVERSION = config["references"]["CanFam3.1"]["version"][0]
-QUALITY = config["alignment_quality"]
-
-def cli_parameters_computeMatrix(wildcards):
-    a = config["program_parameters"][wildcards["application"]]["computeMatrix"]][wildcards["command"]]
-    if wildcards["command"] == "reference-point":
-        a["--referencePoint"] = wildcards.referencePoint
-    return(a)
+# def cli_parameters_computeMatrix(wildcards):
+#     a = config["program_parameters"][wildcards["application"]]["computeMatrix"]][wildcards["command"]]
+#     if wildcards["command"] == "reference-point":
+#         a["--referencePoint"] = wildcards.referencePoint
+#     return(a)
 
 # rule run_computeMatrix_pooled_replicates:
 #     input:
