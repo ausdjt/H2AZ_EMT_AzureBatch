@@ -41,7 +41,7 @@ rule computeMatrix_pooled_replicates:
     threads:
         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
-        file = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/bamCoverage/{mode}/{duplicates}/merged_replicates/{sampleGroup}_{mode}_{norm}.bw",
+        file = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/bamCoverage/{mode}/{duplicates}/merged_replicates/{sampleGroup}_{mode}_RPKM.bw",
         region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards.region]
     output:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sampleGroup}_{region}_{mode}.matrix.gz"
