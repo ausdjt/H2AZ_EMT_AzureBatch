@@ -1,6 +1,8 @@
 from snakemake.exceptions import MissingInputException
 import os
 
+home = os.environ['HOME']
+
 # run parameters as variables
 RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
 ASSAYID = "ChIP-Seq"
