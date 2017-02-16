@@ -112,7 +112,9 @@
             "TanEMTup" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_up_genes.bed",
             "TanEMTdown" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_down_genes.bed",
             "qPCRGenesUp" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_up.bed",
-            "qPCRGenesDown" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_down.bed"
+            "qPCRGenesDown" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_down.bed",
+            "random100up" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/random100up.bed",
+            "random100down" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/random100down.bed"
           }
         },
         "bamCoverage" :
