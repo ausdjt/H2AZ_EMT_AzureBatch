@@ -30,7 +30,7 @@ rule run_computeMatrix_pooled_replicates:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                referencePoint = "TSS",
                sampleGroup = ["H2AZ-WT", "H2AZ-TGFb", "Input-WT", "Input-TGFb"],
-               region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown"],
+               region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
                mode = ["MNase", "normal"])
 
 rule run_plotProfile_pooled_replicates:
@@ -46,7 +46,7 @@ rule run_plotProfile_pooled_replicates:
                 duplicates = ["duplicates_marked", "duplicates_removed"],
                 referencePoint = "TSS",
                 plotType = "se",
-                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown"],
+                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
                 mode = ["MNase", "normal"],
                 suffix = ["pdf", "bed", "data"])
 
