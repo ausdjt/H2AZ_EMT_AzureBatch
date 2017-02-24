@@ -50,6 +50,25 @@ rule run_plotProfile_pooled_replicates:
                 mode = ["MNase", "normal"],
                 suffix = ["pdf", "bed", "data"])
 
+rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{treatment}_vs_{control}_{mode}_{ratio}_{norm}_{region}_{mode}.matrix.gz",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               application = "deepTools",
+               command = ["reference-point", "scale-regions"],
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               referencePoint = "TSS",
+               treatment = "H2AZ-WT",
+               control = "Input-WT",
+               mode = "normal",
+               ratio = ["log2", "subtract"],
+               norm = "RPKM",
+               region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
+               mode = ["MNase", "normal"])
+
 # Actual run rules
 rule computeMatrix_pooled_replicates:
     version:
@@ -98,6 +117,31 @@ rule computeMatrix_pooled_replicates_single_matrix:
         region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
     output:
         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/allSamples_{region}_{mode}.matrix.gz"
+    shell:
+        """
+            {params.deepTools_dir}/computeMatrix {wildcards.command} \
+                                                 --regionsFileName {input.region} \
+                                                 --scoreFileName {input.file} \
+                                                 --missingDataAsZero \
+                                                 --skipZeros \
+                                                 --numberOfProcessors {threads} \
+                                                 {params.program_parameters} \
+                                                 --outFileName {output.matrix_gz}
+        """
+
+rule computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
+    version:
+        0.1
+    params:
+        deepTools_dir = home + config["deepTools_dir"],
+        program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
+    threads:
+        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+    input:
+        file = lambda wildcards: expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/bigwigCompare/normal/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_{norm}.bw"),
+        region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
+    output:
+        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{treatment}_vs_{control}_{mode}_{ratio}_{norm}_{region}_{mode}.matrix.gz"
     shell:
         """
             {params.deepTools_dir}/computeMatrix {wildcards.command} \
