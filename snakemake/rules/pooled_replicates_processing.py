@@ -50,7 +50,7 @@ rule run_plotProfile_pooled_replicates:
                 mode = ["MNase", "normal"],
                 suffix = ["pdf", "bed", "data"])
 
-rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
+rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix_WT:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal.{scaleFactors}.{ratio}_{norm}_{region}_{mode}.matrix.gz",
                assayID = ASSAYID,
@@ -68,6 +68,26 @@ rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
                norm = "RPKM",
                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
                mode = ["MNase", "normal"])
+
+rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix_TGFb:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal.{scaleFactors}.{ratio}_{norm}_{region}_{mode}.matrix.gz",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               application = "deepTools",
+               command = ["reference-point", "scale-regions"],
+               duplicates = ["duplicates_marked", "duplicates_removed"],
+               referencePoint = "TSS",
+               treatment = "H2AZ-TGFb",
+               control = "Input-TGFb",
+               scaleFactors = ["SES", "readCount"],
+               ratio = ["log2", "subtract"],
+               norm = "RPKM",
+               region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
+               mode = ["MNase", "normal"])
+
 
 # Actual run rules
 # rule computeMatrix_pooled_replicates:
