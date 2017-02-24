@@ -52,7 +52,7 @@ rule run_plotProfile_pooled_replicates:
 
 rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal.{ratio}_{norm}_{region}_{mode}.matrix.gz",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal.{scaleFactors}.{ratio}_{norm}_{region}_{mode}.matrix.gz",
                assayID = ASSAYID,
                runID = RUNID,
                outdir = OUTDIR,
@@ -63,6 +63,7 @@ rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
                referencePoint = "TSS",
                treatment = "H2AZ-WT",
                control = "Input-WT",
+               scaleFactors = ["SES", "readCount"],
                ratio = ["log2", "subtract"],
                norm = "RPKM",
                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
