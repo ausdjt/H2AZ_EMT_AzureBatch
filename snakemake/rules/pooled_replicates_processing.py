@@ -52,7 +52,7 @@ rule run_plotProfile_pooled_replicates:
 
 rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal_{ratio}_{norm}_{region}_{mode}.matrix.gz",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal.{ratio}_{norm}_{region}_{mode}.matrix.gz",
                assayID = ASSAYID,
                runID = RUNID,
                outdir = OUTDIR,
@@ -140,7 +140,7 @@ rule computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
         file = lambda wildcards: expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/bigwigCompare/normal/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_normal_{ratio}_{norm}.bw"),
         region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
     output:
-        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal_{ratio}_{norm}_{region}_{mode}.matrix.gz"
+        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal.{ratio}_{norm}_{region}_{mode}.matrix.gz"
     shell:
         """
             {params.deepTools_dir}/computeMatrix {wildcards.command} \
