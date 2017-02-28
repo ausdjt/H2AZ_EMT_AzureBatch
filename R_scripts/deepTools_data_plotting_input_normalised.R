@@ -12,8 +12,6 @@ dataDir <- paste(baseDir,
 setwd("~/Data/Tremethick/EMT/ChIP-Seq/NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq/processed_data/CanFam3.1_ensembl84_ERCC/R_Analysis/")
 list.files(dataDir)
 
-
-
 # plot the TSS of 100 up & 100 down-regulated randomly selected ge --------
 files <- list.files(dataDir, pattern = "Tan")
 files <- files[grep("normal", files)]
@@ -33,7 +31,7 @@ plotData <- do.call("rbind", plotData)
 plotDataWT <- plotData[grep("WT", plotData$sample),]
 plotDataTGFb <- plotData[grep("TGFb", plotData$sample),]
 table(plotData$geneset)
-
+ylimMax <- max(plotData$value)
 # make difference data by subtracting WT from TGFb
 bin <- 1:300
 diff1 <- data.frame(bin = bin,
@@ -49,12 +47,16 @@ diff2 <- data.frame(bin = bin,
                     group = "down_diff",
                     geneset = "TanEMTup")
 diffData <- rbind(diff1, diff2)
+ylimMin <- min(diffData$value)
 
 # publication plot --------------------------------------------------------
 #pdf("TSS_coverage_Tan_EMT_genes_with_diff.pdf")
 #dev.off()
 lineSize <- 2
 vlineCol <- "black"
+wtCol <- "darkgreen"
+TGFbCol <- "darkblue"
+diffCol <-"darkgrey"
 
 wtPlot <- ggplot(plotDataWT[grep("WT", plotDataWT$sample),], aes(bin, value)) 
 #wtPlot <- wtPlot + geom_line(size = lineSize, col = "darkgreen")
@@ -67,7 +69,7 @@ wtPlot <- wtPlot + facet_wrap(c("geneset"), ncol = 2, labeller = label_both)
 wtPlot <- wtPlot + ylab(NULL)
 wtPlot <- wtPlot + xlab(NULL)
 wtPlot <- wtPlot + geom_vline(xintercept = 150, colour = vlineCol, linetype = "longdash")
-wtPlot <- wtPlot + ylim(0,75)
+wtPlot <- wtPlot + ylim(0,ylimMax)
 wtPlot <- wtPlot + theme(axis.title.x=element_blank(),
                          axis.text.x=element_blank(),
                          axis.ticks.x=element_blank(),
@@ -91,7 +93,7 @@ tgfbPlot <- tgfbPlot + facet_wrap(c("geneset"), ncol = 2, labeller = label_both)
 tgfbPlot <- tgfbPlot + ylab(NULL)
 tgfbPlot <- tgfbPlot + xlab(NULL)
 tgfbPlot <- tgfbPlot + geom_vline(xintercept = 150, colour = vlineCol, linetype = "longdash")
-tgfbPlot <- tgfbPlot + ylim(0,75)
+tgfbPlot <- tgfbPlot + ylim(0,ylimMax)
 tgfbPlot <- tgfbPlot + theme(axis.title.x=element_blank(),
                              axis.text.x=element_blank(),
                              axis.ticks.x=element_blank(),
