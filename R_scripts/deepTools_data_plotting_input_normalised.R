@@ -121,8 +121,8 @@ diffPlot <- diffPlot + scale_x_continuous(breaks=c(0, 50, 100, 150, 200, 250, 30
                                           labels=c("-1500", "-1000", "-500", "TSS", "+500", "+1000", "+1500"))
 diffPlot <- diffPlot + theme(strip.background = element_blank(), strip.text = element_blank(),
                              axis.line.y = element_line(colour = "black", size = 1),
-                             axis.line.x = element_line(colour = "black", size = 1),
                              axis.text.y = element_text(margin = margin(0,1.1,0,0, "mm"), size = 14),
+                             axis.line.x = element_line(colour = "black", size = 1),
                              axis.text.x = element_text(size = 14),
                              panel.background = element_blank(),
                              panel.border = element_blank(), 
