@@ -1,3 +1,5 @@
+require(deepToolsUtils)
+
 # using Tan et al. 2014 EMT signatures
 # supplied as gene symbols :(
 sigEMTCells <- readr::read_tsv("~/Data/References/Annotations/Literature/Tan_et_al_2014/Thiery_generic_EMT_sig_cellLine.txt")
@@ -39,12 +41,17 @@ cfamEnsGenesSigEMTCells <- cfamEnsGenesSigEMTCells[,-1]
 cfamEnsGenesSigEMTCells <- rbind(cfamEnsGenesSigEMTCells, c("ENSCAFG00000010615", "H2AFZ", NA))
 # adding TGFB1
 cfamEnsGenesSigEMTCells <- rbind(cfamEnsGenesSigEMTCells, c("ENSCAFG00000005014", "TGFB1", NA))
+# adding SPP1, FN1, N-Cadherin
+cfamEnsGenesSigEMTCells <- rbind(cfamEnsGenesSigEMTCells, ensGenes[ensembl_gene_id %in% c("ENSCAFG00000009569", "ENSCAFG00000014345", "ENSCAFG00000018115"), c("ensembl_gene_id", "external_gene_name")], fill = T)
 
 colnames(cfamEnsGenesSigEMTCells)[1] <- "ensembl_gene_id"
-save(cfamEnsGenesSigEMTCells, file = "~/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/shiny/MDCK_EMT_RNA-Seq/data/cfamEnsGenesSigEMTCells.rda")
-# 
+save(cfamEnsGenesSigEMTCells, file = "~/Development/JCSMR-Tremethick-Lab/EMT_shiny_app/MDCK_EMT_RNA-Seq/data/cfamEnsGenesSigEMTCells.rda")
 
-# volcano plot of cell line EMT genes -----------------------------
+
+
+
+
+# collect DE data for cell line EMT genes -----------------------------
 emtSignatureData <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), function(y){
   s <- resultsCompressed[[1]]$sleuth_results.gene[[y]]$target_id %in% cfamEnsGenesSigEMTCells$ensembl_gene_id
   dat <- resultsCompressed[[1]]$sleuth_results.gene[[y]][s,]
@@ -61,6 +68,15 @@ emtSignatureData <- lapply(names(resultsCompressed[[1]]$sleuth_results.gene), fu
 })
 names(emtSignatureData) <- names(resultsCompressed[[1]]$sleuth_results.gene)
 
+# separate up & down-regulated genes and prepare annotation files  --------
+# TGFb-treatment
+y <- "conditionMDCKTGFb"
+conditionMDCKTGFbDat <- as.data.table(emtSignatureData[[y]]$dataTable)
+setkey(conditionMDCKTGFbDat, b, target_id)
+deepToolsUtils::WriteGRangesToBED(gr.genes[conditionMDCKTGFbDat[b > 0]$target_id], out_file = "~/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_up_genes.bed")
+deepToolsUtils::WriteGRangesToBED(gr.genes[conditionMDCKTGFbDat[b < 0]$target_id], out_file = "~/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_down_genes.bed")
+
+# volcano plots -----------------------------------------------------------
 y <- "conditionMDCKshZ"
 dat <- emtSignatureData[[y]]$dataTable
 xAxisMax <- max(abs(dat$b)) + 1
