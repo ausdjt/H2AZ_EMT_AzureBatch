@@ -98,7 +98,7 @@ maxCor2 <- which.max(allCor$x.all2.estimate) ; allCor[which.max(allCor$x.all2.es
 
 # plot of Spearman correlation between differential expression and --------
 corPlot1 <- ggplot(allCor, aes(bin, x.all1.estimate)) + 
-  geom_line(col = "black", size = lineSize) +
+  geom_line(col = "darkgrey", size = lineSize) +
   scale_x_continuous(breaks=c(0, 10, 20, 30, 40, 50, 60),
                      labels=c("-1500", "-1000", "-500", "TSS", "+500", "+1000", "+1500")) +
   geom_text_repel(data = allCor[c(maxCor1, minCor1),], aes(x = bin, y = x.all2.estimate, label =c("-2 Nucleosome", "+2 Nucleosome")), nudge_y = c(0.05, 0.1)) +
@@ -115,7 +115,7 @@ corPlot1
 
 # with genes that have min. +/- 10 H2A.Z difference in a given bin
 corPlot2 <- ggplot(allCor, aes(bin, x.all2.estimate)) + 
-  geom_line(col = "black", size = lineSize) +
+  geom_line(col = "darkgrey", size = lineSize) +
   scale_x_continuous(breaks=c(0, 10, 20, 30, 40, 50, 60),
                      labels=c("-1500", "-1000", "-500", "TSS", "+500", "+1000", "+1500")) +
   geom_text_repel(data = allCor[c(maxCor2, minCor2),], aes(x = bin, y = x.all2.estimate, label =c("-2", "+1")), nudge_y = c(-0.15, +0.1), size = 3) +
@@ -123,7 +123,7 @@ corPlot2 <- ggplot(allCor, aes(bin, x.all2.estimate)) +
   theme(panel.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black", size = 1)) +
+        axis.line = element_line(colour = "black", axisLineSize)) +
   xlab(NULL) +
   ylab(NULL) +
   geom_vline(xintercept = 30, colour = vlineCol, linetype = "longdash")
@@ -149,7 +149,7 @@ plotMax <- ggplot(datMax, aes(x = value, y = logFC)) +
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black", size = 1),
+        axis.line = element_line(colour = "black", axisLineSize),
         axis.text.y = element_text(margin = margin(0,3,0,0, "mm")))
 plotMax
 
@@ -167,7 +167,7 @@ plotMin <- ggplot(datMin, aes(x = value, y = logFC)) +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.background = element_rect(fill = NA),
-        axis.line = element_line(colour = "black", size = 1))
+        axis.line = element_line(colour = "black", axisLineSize))
 plotMin
 # plotting ----------------------------------------------------------------
 gpFontSize <- gpar(fontsize = 8)

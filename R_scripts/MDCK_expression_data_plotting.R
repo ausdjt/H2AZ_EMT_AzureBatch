@@ -92,10 +92,6 @@ l1 <- g_legend(p1)
 p1 <- p1 + theme(legend.position = "none")
 ggsave("Figure2_CD_Volcano_Plots_sized.pdf", p1, width = 196, height = 98, units = "mm", useDingbats = F)
 ggsave("Figure2_CD_Volcano_Plots_legend_only.pdf", l1, width = 196, height = 98, units = "mm", useDingbats = F)
-plot(l1)
-pdf("Figure2_CD_Volcano_Plots.pdf", height = 7, width = 14)
-p1
-dev.off()
 
 # Venn diagrams (argh) ----------------------------------------------------
 TGFbup <- volcanoData[volcanoData$experiment == "TGFb" & volcanoData$expression == "up"]$target_id
