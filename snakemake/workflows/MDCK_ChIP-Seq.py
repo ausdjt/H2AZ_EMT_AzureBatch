@@ -92,21 +92,21 @@ rule subsample:
 #                reference_version = REFVERSION,
 #                duplicates = ["duplicates_marked", "duplicates_removed"])
 
-rule run_computeMatrix_pooled_replicates:
-    input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sampleGroup}_{region}_{mode}.matrix.gz",
-               assayID = ASSAYID,
-               runID = RUNID,
-               outdir = OUTDIR,
-               reference_version = REFVERSION,
-               application = "deepTools",
-               tool = "computeMatrix",
-               command = ["reference-point", "scale-regions"],
-               duplicates = ["duplicates_marked", "duplicates_removed"],
-               referencePoint = "TSS",
-               sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
-               region = ["allGenes", "Tan_EMT_up", "Tan_EMT_down"],
-               mode = ["MNase", "normal"])
+# rule run_computeMatrix_pooled_replicates:
+#     input:
+#         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sampleGroup}_{region}_{mode}.matrix.gz",
+#                assayID = ASSAYID,
+#                runID = RUNID,
+#                outdir = OUTDIR,
+#                reference_version = REFVERSION,
+#                application = "deepTools",
+#                tool = "computeMatrix",
+#                command = ["reference-point", "scale-regions"],
+#                duplicates = ["duplicates_marked", "duplicates_removed"],
+#                referencePoint = "TSS",
+#                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
+#                region = ["allGenes", "Tan_EMT_up", "Tan_EMT_down"],
+#                mode = ["MNase", "normal"])
 
 # rule allGenes_plots:
 #     input:
