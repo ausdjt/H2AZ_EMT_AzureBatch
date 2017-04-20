@@ -122,7 +122,7 @@ rule bam_dedup_subsample_index:
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.{params.frac}.sorted.bam.bai")
     shell:
-    """
-        sambamba index --nthreads={threads}\
-                       {input} {output}
-    """
+        """
+            sambamba index --nthreads={threads}\
+                           {input} {output}
+        """
