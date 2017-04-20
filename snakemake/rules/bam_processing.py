@@ -98,15 +98,14 @@ rule bam_dedup_subsample:
     params:
         qual = config["alignment_quality"],
         seed = 1234,
-        frac = 0.1
     input:
         rules.bam_rmdup.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{sample}.Q{qual}.{params.frac}.sorted.bam")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.{params.frac}.sorted.bam")
     shell:
         """
             sambamba view --format=bam\
-                          --subsample={params.frac}\
+                          --subsample={wildcards.frac}\
                           --subsampling-seed={params.seed}\
                           --nthreads={threads}\
                           {input} > {output}
@@ -118,11 +117,10 @@ rule bam_dedup_subsample_index:
     params:
         qual = config["alignment_quality"],
         seed = 1234,
-        frac = 0.1
     input:
         rules.bam_dedup_subsample.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{sample}.Q{qual}.{params.frac}.sorted.bam.bai")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.{params.frac}.sorted.bam.bai")
     shell:
     """
         sambamba index --nthreads={threads}\

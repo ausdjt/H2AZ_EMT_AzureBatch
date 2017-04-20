@@ -20,8 +20,8 @@ include_prefix = home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/ru
 #    include_prefix + "perform_cutadapt.py"
 # include:
 #     include_prefix + "run_bowtie2.py"
-# include:
-#     include_prefix + "bam_processing.py"
+include:
+    include_prefix + "bam_processing.py"
 # include:
 #     include_prefix + "run_deepTools_QC.py"
 # include:
@@ -48,6 +48,21 @@ QUALITY = config["alignment_quality"]
 #                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
 #                qual = QUALITY,
 #                suffix = ["bam", "bam.bai"])
+
+rule subsample:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{tool}/{duplicates}/subsampled/{frac}/{unit}.Q{qual}.sorted.{suffix}",
+               assayID = ASSAYID,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               tool = "bowtie2",
+               duplicates = ["duplicates_removed"],
+               frac = "0.1",
+               unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
+               qual = QUALITY,
+               suffix = ["bam", "bam.bai"])
+
 
 # rule deepTools_QC:
 #     input:
