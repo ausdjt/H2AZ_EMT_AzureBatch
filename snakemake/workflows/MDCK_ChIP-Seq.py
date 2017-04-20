@@ -18,8 +18,8 @@ include_prefix = home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/ru
 
 #include:
 #    include_prefix + "perform_cutadapt.py"
-# include:
-#     include_prefix + "run_bowtie2.py"
+include:
+    include_prefix + "run_bowtie2.py"
 include:
     include_prefix + "bam_processing.py"
 # include:
