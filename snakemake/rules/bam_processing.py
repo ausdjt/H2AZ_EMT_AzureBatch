@@ -101,7 +101,7 @@ rule bam_dedup_subsample:
     input:
         rules.bam_rmdup.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.{params.frac}.sorted.bam")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.sorted.bam")
     shell:
         """
             sambamba view --format=bam\
@@ -120,7 +120,7 @@ rule bam_dedup_subsample_index:
     input:
         rules.bam_dedup_subsample.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.{params.frac}.sorted.bam.bai")
+        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.sorted.bam.bai")
     shell:
         """
             sambamba index --nthreads={threads}\
