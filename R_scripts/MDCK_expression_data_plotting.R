@@ -130,5 +130,5 @@ dev.off()
 
 deshZTab["ENSCAFG00000032723"] # no difference
 deTGFbTab["ENSCAFG00000032723"] # slightly down-regulated
-
+deTGFbTab["ENSCAFG00000005014"] # 
 

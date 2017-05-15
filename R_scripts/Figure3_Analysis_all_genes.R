@@ -9,12 +9,11 @@ require(data.table)
 require(ggplot2)
 require(deepToolsUtils)
 
-baseDir <- "~/Data/Publications/MDCK_EMT_Paper"
-dataDir <- paste(baseDir, 
-                 "data",
-                 sep = "/")
+dataDir <- "~/Data/Tremethick/EMT/ChIP-Seq/NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq/processed_data/CanFam3.1_ensembl84_ERCC/deepTools/computeMatrix/reference-point/duplicates_removed/TSS"
+baseDir <- "~/Data/Tremethick/EMT/ChIP-Seq/NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq/processed_data/CanFam3.1_ensembl84_ERCC/R_Analysis/"
 setwd(baseDir)
 list.files(dataDir)
+getwd()
 
 # plot the TSS of 100 up & 100 down-regulated randomly selected ge --------
 files <- list.files(dataDir, pattern = "Tan")
