@@ -1,0 +1,5 @@
+genes to add:
+ensGenes[grep("ENSCAFG00000009569", ensGenes$ensembl_gene_id)] (SPP1)
+ensGenes[grep("ENSCAFG00000014345", ensGenes$ensembl_gene_id)] (FN1)
+ensGenes[grep("ENSCAFG00000018115", ensGenes$ensembl_gene_id)] (N-Cadherin / CDH2)
+ensGenes[grep("H2AFV", ensGenes$external_gene_name)]

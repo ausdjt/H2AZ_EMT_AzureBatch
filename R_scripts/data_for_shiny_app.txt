@@ -1,0 +1,24 @@
+Data required for interactive visualisation:
+
+ChIP:
+coverage data (compute matrix) - for all genes, EMT genes, random genes etc.
+difference data (derived from coverage data)
+
+RNA-Seq:
+gene expression data
+differential expression data
+
+Annotation data:
+ensGenes from ensembl
+Tan et al EMT genes
+
+
+##########################
+Methods:
+
+Basic for 
+RNA-Seq
+
+ChIP-Seq
+
+

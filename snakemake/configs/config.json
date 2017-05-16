@@ -106,9 +106,16 @@
         "binSize" : ["10000"],
         "regionFiles" :
         {
-          "allGenes" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/allGenes.bed",
-          "Tan_EMT_up" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_up_genes.bed",
-          "Tan_EMT_down" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_down_genes.bed"
+          "CanFam3.1_ensembl84_ERCC" :
+          {
+            "allGenes" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/allGenes.bed",
+            "TanEMTup" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_up_genes.bed",
+            "TanEMTdown" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_down_genes.bed",
+            "qPCRGenesUp" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_up.bed",
+            "qPCRGenesDown" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_down.bed",
+            "random100up" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/random100up.bed",
+            "random100down" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/random100down.bed"
+          }
         },
         "bamCoverage" :
         {
@@ -134,8 +141,8 @@
           "normal" :
           {
             "--centerReads" : " ",
-            "--binSize" : "25",
-            "--smoothLength" : "60"
+            "--binSize" : "10",
+            "--smoothLength" : "30"
           }
         },
         "computeMatrix" :

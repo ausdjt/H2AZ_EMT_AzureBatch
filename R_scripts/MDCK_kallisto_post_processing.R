@@ -196,27 +196,29 @@ if (!file.exists("MDCK_kallisto_analysis_results.rda")){
 names(results) <- names(s2c.list)
 
 # re-formatting of list object --------------------------------------------
-resultsCompressed <- lapply(names(results), function(x){
-  results[[x]][grep("sleuth_object", names(results[[x]]), invert = T)]
-})
-names(resultsCompressed) <- names(results)
-
-resultsCompressed <- lapply(names(resultsCompressed), function(x){
-  resultsCompressed[[x]][grep("kallisto_pca", names(resultsCompressed[[x]]), invert = T)]
-})
-names(resultsCompressed) <- names(results)
-save(resultsCompressed, file = "resultsCompressed.rda")
-
-load("resultsCompressed.rda")
-resultsCompressedBU <- resultsCompressed
-
-resultsCompressed <- lapply(names(resultsCompressed), function(x) {
-  resultsCompressed[[x]]$kallisto_table_wide <- resultsCompressed[[x]]$kallisto_table_wide[, c("target_id", s2c.list[[x]]$sample)]
-  return(resultsCompressed[[x]])
-})
-
-names(resultsCompressed) <- names(s2c.list)
-
+if (file.exists("resultsCompressed.rda")){
+  load("resultsCompressed.rda")
+} else {
+  resultsCompressed <- lapply(names(results), function(x){
+    results[[x]][grep("sleuth_object", names(results[[x]]), invert = T)]
+  })
+  names(resultsCompressed) <- names(results)
+  
+  resultsCompressed <- lapply(names(resultsCompressed), function(x){
+    resultsCompressed[[x]][grep("kallisto_pca", names(resultsCompressed[[x]]), invert = T)]
+  })
+  names(resultsCompressed) <- names(results)
+  save(resultsCompressed, file = "resultsCompressed.rda")
+  
+  load("resultsCompressed.rda")
+  resultsCompressedBU <- resultsCompressed
+  
+  resultsCompressed <- lapply(names(resultsCompressed), function(x) {
+    resultsCompressed[[x]]$kallisto_table_wide <- resultsCompressed[[x]]$kallisto_table_wide[, c("target_id", s2c.list[[x]]$sample)]
+    return(resultsCompressed[[x]])
+  })
+  names(resultsCompressed) <- names(s2c.list)
+}
 # get list of EMT genes (from qPCR array) ---------------------------------
 if(!file.exists("cfam.qPCRGenesTab.rda")){
   qPCRGeneList <- readLines(lDir(pathPrefix, "Data/Tremethick/EMT/ChIP-Seq/MDCK qPCR data/genelist.txt"))
