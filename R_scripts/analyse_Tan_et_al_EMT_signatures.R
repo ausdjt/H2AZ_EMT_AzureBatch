@@ -12,43 +12,42 @@ mart <- biomaRt::useEnsembl(biomart = biomart, dataset = dataset, host = ensembl
 attribs <- biomaRt::listAttributes(mart)
 
 
-ensGenesSigEMTCells <- biomaRt::getBM(c("ensembl_gene_id", "external_gene_name"), 
+hsapEnsGenesSigEMTCells <- biomaRt::getBM(c("ensembl_gene_id", "external_gene_name"), 
                                          filters = "external_gene_name",
-                                         values = sigEMTCells$cellLine_sig,
+                                         values = c(sigEMTCells$cellLine_sig, "TGFB1", "H2AFZ"),
                                          mart = mart)
 
-ensGenesSigEMTCells <- merge(ensGenesSigEMTCells, 
-                              sigEMTCells, 
-                              by.x = "external_gene_name", 
-                              by.y = "cellLine_sig", 
-                              all.x = T)
+hsapEnsGenesSigEMTCells <- merge(hsapEnsGenesSigEMTCells, 
+                                 sigEMTCells, 
+                                 by.x = "external_gene_name", 
+                                 by.y = "cellLine_sig", 
+                                 all.x = T)
 
+  
+  
 # get the Cfam homologs
-cfamEnsGenesSigEMTCells <- biomaRt::getBM(c("ensembl_gene_id", "cfamiliaris_homolog_ensembl_gene"), 
-                                            filters = "ensembl_gene_id",
-                                            values = c(ensGenesSigEMTCells$ensembl_gene_id),
-                                            mart = mart)
-
-cfamEnsGenesSigEMTCells <- cfamEnsGenesSigEMTCells[!cfamEnsGenesSigEMTCells$cfamiliaris_homolog_ensembl_gene == "",]
+cfamEnsGenesSigEMTCells <- data.table::data.table(biomaRt::getBM(attributes = c("ensembl_gene_id", "cfamiliaris_homolog_ensembl_gene"), 
+                                                                 filters = "ensembl_gene_id",
+                                                                 values = hsapEnsGenesSigEMTCells$ensembl_gene_id,
+                                                                 mart = mart))
 cfamEnsGenesSigEMTCells <- merge(cfamEnsGenesSigEMTCells, 
-                                 ensGenesSigEMTCells, 
+                                 hsapEnsGenesSigEMTCells[,c("ensembl_gene_id", "external_gene_name", "epi_mes")], 
                                  by.x = "ensembl_gene_id",
                                  by.y = "ensembl_gene_id",
                                  all.x = T)
-
+cfamEnsGenesSigEMTCells <- cfamEnsGenesSigEMTCells[!cfamEnsGenesSigEMTCells$cfamiliaris_homolog_ensembl_gene == "",]
 cfamEnsGenesSigEMTCells <- cfamEnsGenesSigEMTCells[,-1]
-# adding H2AFZ
-cfamEnsGenesSigEMTCells <- rbind(cfamEnsGenesSigEMTCells, c("ENSCAFG00000010615", "H2AFZ", NA))
+# removing one of the dog H2AFZ genes
+cfamEnsGenesSigEMTCells <- cfamEnsGenesSigEMTCells[!cfamiliaris_homolog_ensembl_gene == "ENSCAFG00000015774",] 
 # adding TGFB1
-cfamEnsGenesSigEMTCells <- rbind(cfamEnsGenesSigEMTCells, c("ENSCAFG00000005014", "TGFB1", NA))
-# adding SPP1, FN1, N-Cadherin
-cfamEnsGenesSigEMTCells <- rbind(cfamEnsGenesSigEMTCells, ensGenes[ensembl_gene_id %in% c("ENSCAFG00000009569", "ENSCAFG00000014345", "ENSCAFG00000018115"), c("ensembl_gene_id", "external_gene_name")], fill = T)
+cfamEnsGenesSigEMTCells <- rbind(cfamEnsGenesSigEMTCells, data.table::data.table(cfamiliaris_homolog_ensembl_gene = "ENSCAFG00000005014",
+                                                                                 external_gene_name = "TGFB1",
+                                                                                 epi_mes = "TGFB"))
 
+# adding SPP1, FN1, N-Cadherin <-- this has to be done after loading annotation data!
 colnames(cfamEnsGenesSigEMTCells)[1] <- "ensembl_gene_id"
+cfamEnsGenesSigEMTCells <- rbind(cfamEnsGenesSigEMTCells, ensGenes[ensembl_gene_id %in% c("ENSCAFG00000009569", "ENSCAFG00000014345", "ENSCAFG00000018115"), c("ensembl_gene_id", "external_gene_name")], fill = T)
 save(cfamEnsGenesSigEMTCells, file = "~/Development/JCSMR-Tremethick-Lab/EMT_shiny_app/MDCK_EMT_RNA-Seq/data/cfamEnsGenesSigEMTCells.rda")
-
-
-
 
 
 # collect DE data for cell line EMT genes -----------------------------

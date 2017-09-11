@@ -229,7 +229,7 @@ qPCRdata.raw <- readCtData(files$Files,
 pData(qPCRdata.raw) <- data.frame(Sample = c("Control", "Control", "Control", "Control", "H2AZ_Knockdown", "H2AZ_Knockdown", "H2AZ_Knockdown", "H2AZ_Knockdown"), Replicate = rep(1:4,2 ))
 
 g <- featureNames(qPCRdata.raw)[1:10]
-g <- c("TGFB1", "MMP9", "CDH1")
+g <- c("TGFB1", "MMP9", "CDH1", "H2AFZ")
 plotCtOverview(qPCRdata.raw, calibrator = "Control", genes = g, conf.int = T, ylim = c(0, 2), groups = c("Control", "Control", "Control", "Control", "H2AZ_Knockdown", "H2AZ_Knockdown", "H2AZ_Knockdown", "H2AZ_Knockdown"))
 
 sr.norm <- normalizeCtData(qPCRdata.raw, norm = "scale.rank")

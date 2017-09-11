@@ -195,7 +195,7 @@ gs <- list(yAx1,
 grob2 <- arrangeGrob(grobs = gs,
                      layout_matrix = lay,
                      widths = c(1,10,10), heights = c(2.5,0.5,7.5,0.5))
-ggsave("Figure3_panel_CDE.pdf", grob2, height = 108, width = 196, units = "mm", useDingbats = F)
+ggsave("Figure3_panel_CDE.pdf", grob2, height = 164, width = 196, units = "mm", useDingbats = F)
 
 
 gridExtra::grid.arrange(grobs = gs, layout_matrix = lay, widths = c(1,10,10), heights = c(4,1,6,1))

@@ -82,14 +82,13 @@ sample_id <- dir(base_dir)
 kal_dirs <- sapply(sample_id, function(id) file.path(base_dir, id))
 condition <- unlist(lapply(strsplit(sample_id, "_"), function(x) x[1]))
 condition <- gsub("D6", "", condition)
-files <- paste(kal_dirs, "abundance.tsv", sep = "/")
+files <- paste(kal_dirs, "abundance.h5", sep = "/")
 names(files) <- sample_id
 txi <- tximport::tximport(files, 
                           type = "kallisto",
                           geneIdCol = "ens_gene",
                           txIdCol = "target_id",
-                          tx2gene = t2g,
-                          reader = read_tsv)
+                          tx2gene = t2g)
 save(txi, file = "kallisto_estimated_abundances.rda")
 
 # exploratory analysis of the abundance data ------------------------------
@@ -120,8 +119,9 @@ s2c <- dplyr::mutate(s2c, path = kal_dirs)
 s2c$sample <- as.character(s2c$sample)
 s2c.list <- list(MDCK = s2c)
 
+sleuth_results_files <- "MDCK_kallisto_analysis_results_V2.rda"
 # actual processing using sleuth------------------------------------------------
-if (!file.exists("MDCK_kallisto_analysis_results.rda")){
+if (!file.exists(sleuth_results_files)){
   results <- lapply(names(s2c.list), function(x){
     print(paste("Processing ", x, sep = ""))
     design <- model.matrix(~ condition, data = s2c.list[[x]])
@@ -162,26 +162,16 @@ if (!file.exists("MDCK_kallisto_analysis_results.rda")){
       so.gene <- sleuth::sleuth_wt(so.gene, i)  
     }
     rt.gene.list <- lapply(colnames(design)[grep("Intercept", colnames(design), invert = T)], function(x){
-      rt.gene <- sleuth::sleuth_results(so.gene, x)
-      rt.gene <- rt.gene[order(rt.gene$qval),]
+      rt.gene <- sleuth::sleuth_results(so.gene, x, show_all = F)
+      rt.gene <- data.table::data.table(rt.gene[order(rt.gene$qval),])
     })
     names(rt.gene.list) <- colnames(design)[grep("Intercept", colnames(design), invert = T)]
     # gene-level expression is summed from transcript level data (sum(TPM))
-    sfInit(parallel = T, cpus = cpus)
-    target_mapping <- so$target_mapping
-    sfExport("target_mapping")
-    sfExport("kt_wide")
-    l1 <- sfLapply(unique(target_mapping$ens_gene), function(x) {
-      s <- apply(kt_wide[target_mapping[target_mapping$ens_gene == x, "target_id"], ], 2, sum)
-    })
-    sfStop()
-    names(l1) <- unique(target_mapping$ens_gene)
-    kt_genes <- as.data.frame(do.call("rbind", l1))
-    kt_genes$ensembl_gene_id <- rownames(kt_genes)
-    kt_genes <- kt_genes[, c("ensembl_gene_id", s2c.list[[x]]$sample)]
-    kt_genes <- tibble::as_tibble(merge(kt_genes, ensGenes, by.x = "ensembl_gene_id", by.y = "ensembl_gene_id"))
-    kt_wide <- tibble::as_tibble(tidyr::spread(kt[, c("target_id", "sample", "tpm")], sample, tpm))
+    kt_genes <- data.table::data.table(sleuth::kallisto_table(so.gene))
+    kt_genes_wide <- tidyr::spread(kt_genes[, c("target_id", "sample", "tpm")], sample, tpm)
+    kt_wide <- data.table::data.table(tidyr::spread(kt[, c("target_id", "sample", "tpm")], sample, tpm))
     return(list(sleuth_object = so,
+                sleuth_object_genes = so.gene,
                 sleuth_results = rt.list,
                 kallisto_table = kt,
                 kallisto_table_wide = kt_wide,
@@ -189,9 +179,9 @@ if (!file.exists("MDCK_kallisto_analysis_results.rda")){
                 kallisto_table_genes = kt_genes))
   })
   names(results) <- names(s2c.list)
-  save(results, file = "MDCK_kallisto_analysis_results.rda")
+  save(results, file = sleuth_results_files)
 } else {
-  load("MDCK_kallisto_analysis_results.rda")
+  load(sleuth_results_files)
 }
 names(results) <- names(s2c.list)
 

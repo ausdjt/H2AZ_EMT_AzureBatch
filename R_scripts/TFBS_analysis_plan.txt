@@ -1,0 +1,7 @@
+explore regulatory regions in Dog
+
+1) get EMT genes in human - DONE
+2) get Ensembl Regulatory DB info for those genomic regions (TFBS) - DONE
+3) apply the identified TFBS PWMs etc to dog regions - DONE
+4) check which of the TFs are actually expressed in MDCK - WT/TGFb/shZ
+
