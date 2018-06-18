@@ -17,8 +17,6 @@ wrapper_dir = home + "/Development/snakemake-wrappers/bio"
 
 include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
 
-# include:
-#      include_prefix + "perform_fastqc.py"
 include:
     include_prefix + "perform_cutadapt.py"
 include:
@@ -80,12 +78,6 @@ rule all:
                trim_data = config["trim_dir"],
                unit = config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
                suffix = ["R1_001", "R2_001"]),
-        # expand("{assayID}/{runID}/{outdir}/{reports_dir}/{sample}",
-        #        assayID = "RNA-Seq",
-        #        runID = ["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
-        #        outdir = config["processed_dir"],
-        #        reports_dir = config["reports_dir"],
-        #        sample = config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
                assayID = "RNA-Seq",
                runID = ["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
