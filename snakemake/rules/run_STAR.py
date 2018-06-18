@@ -6,34 +6,6 @@ __date__ = "2016-04-22"
 
 from snakemake.exceptions import MissingInputException
 
-rule star_align_full_untrimmed_fastq:
-    version:
-        0.4
-    params:
-        runThreadN = config["program_parameters"]["STAR"]["runThreadN"],
-        tmp = temp("{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
-    input:
-        read1 = "{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
-        read2 = "{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
-        index = lambda wildcards: home + config["references"]["CanFam3.1"]["STAR"][wildcards.reference_version],
-    output:
-        bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam"
-    shell:
-        """
-            STAR --runMode alignReads \
-                 --runThreadN {params.runThreadN} \
-                 --genomeDir {input.index} \
-                 --readFilesIn {input.read1} {input.read2} \
-                 --readFilesCommand zcat \
-                 --outTmpDir {params.tmp} \
-                 --outSAMmode Full \
-                 --outSAMattributes Standard \
-                 --outSAMtype BAM SortedByCoordinate \
-                 --outStd BAM_SortedByCoordinate \
-                 --alignEndsType EndToEnd\
-                 > {output.bam}
-        """
-
 rule star_align_full:
     version:
         0.4
