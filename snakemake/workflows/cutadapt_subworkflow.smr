@@ -1,0 +1,31 @@
+__author__ = "Sebastian Kurscheid (sebastian.kurscheid@anu.edu.au)"
+__license__ = "MIT"
+__date__ = "2018-06-18"
+
+from snakemake.exceptions import MissingInputException
+import os
+
+rule:
+    version: 0.1
+
+localrules:
+    all
+
+home = os.environ['HOME']
+
+wrapper_dir = home + "/Development/snakemake-wrappers/bio"
+
+include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
+
+include:
+    include_prefix + "perform_fastqc.py"
+
+rule all:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{trim_data}/{unit}_{suffix}.QT.CA.fastq.gz",
+               assayID = "RNA-Seq",
+               runID = ["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
+               outdir = config["processed_dir"],
+               trim_data = config["trim_dir"],
+               unit = config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
+               suffix = ["R1_001", "R2_001"])
