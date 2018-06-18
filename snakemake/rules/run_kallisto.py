@@ -14,7 +14,7 @@ rule kallisto_quant:
     input:
         read1 = "{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
         read2 = "{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
-        ki = lambda wildcards: home + "/" + config["references"]["CanFam3.1"]["kallisto"][wildcards.reference_version]
+        ki = lambda wildcards: home + config["references"]["CanFam3.1"]["kallisto"][wildcards.reference_version]
     output:
         "{assayID}/{runID}/{processed_dir}/{reference_version}/kallisto/{unit}"
     shell:
@@ -24,23 +24,4 @@ rule kallisto_quant:
                            --threads=4 \
                            --bootstrap-samples={params.bootstraps} \
                            {input.read1} {input.read2}
-        """
-
-rule kallisto_quant_from_uncompressed:
-    params:
-        bootstraps = 1,
-        threads = 4
-    input:
-        read1 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.runID][wildcards.unit][0].replace(".gz", ""),
-        read2 = lambda wildcards: "./" + wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.runID][wildcards.unit][1].replace(".gz", ""),
-        ki = lambda wildcards: home + "/" + config["references"]["CanFam3.1"]["kallisto"][wildcards.reference_version]
-    output:
-        "{assayID}/{runID}/{processed_dir}/{reference_version}/uncompressed/kallisto/{unit}"
-    shell:
-        """
-            kallisto quant --index={input.ki} \
-                           --output-dir={output} \
-                           --threads=4 \
-                           --bootstrap-samples={params.bootstraps} \
-                          {input.read1} {input.read2 }
         """
