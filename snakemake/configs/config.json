@@ -77,6 +77,10 @@
     },
     "program_parameters" :
     {
+      "cutadapt" :
+      {
+        "trim_params": "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30"
+      },
       "kallisto" :
       {
         "bootstraps" : "100"
@@ -169,10 +173,6 @@
         {
             "minimum_perc" : "0.1"
         }
-      },
-      "cutadapt" :
-      {
-        "trim_params": "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30"
       },
       "macs2" :
       {
