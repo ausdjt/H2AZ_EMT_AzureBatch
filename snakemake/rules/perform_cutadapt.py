@@ -22,8 +22,8 @@ For usage, include this in your workflow.
 rule cutadapt_pe:
     params:
         trim_params = "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30",
-        raw_data = config["raw_dir"],
-        cutadapt_dir = home + config["cutadapt_dir"]
+        raw_data = "fastq",
+        cutadapt_dir = home + "miniconda3/envs/snakemake/bin"
     input:
         read1 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.runID][wildcards.sample][0],
         read2 = lambda wildcards: wildcards.assayID + "/" + wildcards.runID + "/fastq/" + config["samples"][wildcards.assayID][wildcards.runID][wildcards.sample][1]
