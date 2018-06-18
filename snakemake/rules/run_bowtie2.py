@@ -19,14 +19,18 @@ from snakemake.exceptions import MissingInputException
 # set local variables
 home = os.environ['HOME']
 
+subworkflow cutadapt:
+    workdir: "."
+    snakefile: "cutadapt_subworkflow.smr"
+
 rule bowtie2_pe:
     params:
         threads= config["program_parameters"]["bt2_params"]["threads"],
         max_in= config["program_parameters"]["bt2_params"]["max_insert"],
         bt2_index= home + config["references"]["CanFam3.1"]["genome"]
     input:
-        read1="{assayID}/{runID}/{outdir}/trimmed_data/{sample}_R1_001.QT.CA.fastq.gz",
-        read2="{assayID}/{runID}/{outdir}/trimmed_data/{sample}_R2_001.QT.CA.fastq.gz"
+        read1=cutadapt("{assayID}/{runID}/{outdir}/trimmed_data/{sample}_R1_001.QT.CA.fastq.gz"),
+        read2=cutadapt("{assayID}/{runID}/{outdir}/trimmed_data/{sample}_R2_001.QT.CA.fastq.gz")
     output:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{sample}.bam")
     shell:
