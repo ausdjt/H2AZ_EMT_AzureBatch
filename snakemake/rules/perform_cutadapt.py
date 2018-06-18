@@ -21,7 +21,7 @@ For usage, include this in your workflow.
 
 rule cutadapt_pe:
     params:
-        trim_params = config["program_parameters"]["cutadapt"]["trim_params"],
+        trim_params = "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30",
         raw_data = config["raw_dir"],
         cutadapt_dir = home + config["cutadapt_dir"]
     input:
