@@ -96,7 +96,7 @@ rule bamPEFragmentSize:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                sample = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
-               suffix = ".bam")
+               suffix = "bam")
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_duplicates_marked.png"
     shell:
@@ -123,7 +123,7 @@ rule plotFingerprint:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                sample = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
-               suffix = ".bam")
+               suffix = "bam")
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_duplicates_marked.png"
     shell:
