@@ -20,9 +20,6 @@ include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rul
 include:
     include_prefix + "run_bowtie2.py"
 
-#include:
-#    include_prefix + "bam_processing.py"
-
 # run parameters as variables
 RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
 ASSAYID = "ChIP-Seq"
