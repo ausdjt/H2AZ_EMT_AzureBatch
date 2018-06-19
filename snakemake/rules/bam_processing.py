@@ -27,7 +27,7 @@ rule bam_quality_filter:
     params:
         qual = config["alignment_quality"]
     input:
-        rules.bowtie2_pe.output
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{sample}.bam"
     output:
         temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/quality_filtered/{sample}.Q{qual}.bam")
     shell:
