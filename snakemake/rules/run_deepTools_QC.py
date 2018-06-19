@@ -31,7 +31,7 @@ rule multiBamSummary:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                sample = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
                qual = config["alignment_quality"],
-               suffix = ".bam")
+               suffix = "bam")
     output:
         npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/{duplicates}/results.npz"
     shell:
