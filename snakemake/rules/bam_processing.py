@@ -91,38 +91,3 @@ rule bam_rmdup_index:
         protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{sample}.Q{qual}.sorted.bam.bai")
     shell:
         "samtools index {input} {output}"
-
-rule bam_dedup_subsample:
-    threads:
-        8
-    params:
-        qual = config["alignment_quality"],
-        seed = 1234,
-    input:
-        rules.bam_rmdup.output
-    output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.sorted.bam")
-    shell:
-        """
-            sambamba view --format=bam\
-                          --subsample={wildcards.frac}\
-                          --subsampling-seed={params.seed}\
-                          --nthreads={threads}\
-                          {input} > {output}
-        """
-
-rule bam_dedup_subsample_index:
-    threads:
-        8
-    params:
-        qual = config["alignment_quality"],
-        seed = 1234,
-    input:
-        rules.bam_dedup_subsample.output
-    output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.sorted.bam.bai")
-    shell:
-        """
-            sambamba index --nthreads={threads}\
-                           {input} {output}
-        """
