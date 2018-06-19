@@ -25,17 +25,13 @@ RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
 ASSAYID = "ChIP-Seq"
 OUTDIR = config["processed_dir"]
 REFVERSION = config["references"]["CanFam3.1"]["version"][0]
-QUALITY = config["alignment_quality"]
 
 rule all:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{tool}/{duplicates}/{unit}.Q{qual}.sorted.{suffix}",
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{tool}/{unit}.bam",
                assayID = ASSAYID,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,
                tool = "bowtie2",
-               duplicates = ["duplicates_marked", "duplicates_removed"],
-               unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
-               qual = QUALITY,
-               suffix = ["bam", "bam.bai"])
+               unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"])
