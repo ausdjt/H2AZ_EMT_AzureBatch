@@ -12,6 +12,21 @@ import os
 Rules for running deepTools QC/QC on ChIP-Seq data
 For usage, include this in your workflow.
 """
+rule:
+    version: 0.1
+
+localrules:
+    all
+
+home = os.environ['HOME']
+
+wrapper_dir = home + "/Development/snakemake-wrappers/bio"
+
+include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
+
+include:
+    include_prefix + "run_deepTools_QC.py"
+
 # run parameters as variables
 ASSAYID = "ChIP-Seq"
 RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
