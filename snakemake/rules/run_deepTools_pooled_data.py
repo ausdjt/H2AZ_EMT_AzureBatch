@@ -19,6 +19,7 @@ def cli_parameters_computeMatrix(wildcards):
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
 
+
 rule computeMatrix_pooled_replicates:
     version:
         0.2
