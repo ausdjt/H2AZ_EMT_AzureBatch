@@ -21,8 +21,8 @@ include:
     include_prefix + "run_bowtie2.py"
 
 # run parameters as variables
-RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-ASSAYID = "ChIP-Seq"
+RUNID = config["RUNID"] #"NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
+ASSAYID = config["ASSAYID"] #"ChIP-Seq"
 OUTDIR = config["processed_dir"]
 REFVERSION = config["references"]["CanFam3.1"]["version"][0]
 
