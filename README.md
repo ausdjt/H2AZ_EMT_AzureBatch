@@ -26,11 +26,11 @@ Following variables need to be set at the command line at time of invocation of 
 * RUNID="<name of subdirectory containing sequencing data, e.g. ArrayExpress ID, relative to working dir>"
 * WORKFLOWDIR="<name of directory where snakemake files are stores, e.g. name of git repo, relative to user /home>"
 
-###Example snakemake command
+##Example snakemake command
 ```
 snakemake --snakefile merge_replicates_subworkflow.py --configfile config.json --config ASSAY=ChIP-Seq RUNID=NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq WORKFLOWDIR="/Development/JCSMR-Tremethick-Lab/" --jobs 32 -pr
 ```
-###Example of directory structure
+##Example of directory structure
 ```
 ChIP-Seq/NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq/
 ├── fastq
