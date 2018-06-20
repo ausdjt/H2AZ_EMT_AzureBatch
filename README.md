@@ -25,95 +25,95 @@ Following variables need to be set at the command line at time of invocation of 
 
 example of directory structure:
 ChIP-Seq/NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq/
-├── fastq <-- contains RAW data
-└── processed_data <-- all sub-directories created by workflow
+├── fastq
+└── processed_data
     ├── CanFam3.1_ensembl84_ERCC
-    │   ├── bowtie2
-    │   │   ├── duplicates_marked
-    │   │   ├── duplicates_removed
-    │   │   ├── quality_filtered
-    │   │   └── sorted
-    │   ├── deepTools
-    │   │   ├── bamCompare
-    │   │   │   └── normal
-    │   │   │       ├── duplicates_marked
-    │   │   │       │   ├── readCount
-    │   │   │       │   └── SES
-    │   │   │       └── duplicates_removed
-    │   │   │           ├── readCount
-    │   │   │           └── SES
-    │   │   ├── bamCoverage
-    │   │   │   ├── debugging
-    │   │   │   ├── MNase
-    │   │   │   │   ├── duplicates_marked
-    │   │   │   │   └── duplicates_removed
-    │   │   │   └── normal
-    │   │   │       ├── duplicates_marked
-    │   │   │       └── duplicates_removed
-    │   │   ├── bamPEFragmentSize
-    │   │   │   ├── duplicates_marked
-    │   │   │   └── duplicates_removed
-    │   │   ├── bigwigCompare
-    │   │   │   └── normal
-    │   │   │       ├── duplicates_marked
-    │   │   │       │   ├── readCount
-    │   │   │       │   └── SES
-    │   │   │       └── duplicates_removed
-    │   │   │           ├── readCount
-    │   │   │           └── SES
-    │   │   ├── computeMatrix
-    │   │   │   ├── reference-point
-    │   │   │   │   ├── bigwigCompare
-    │   │   │   │   │   ├── duplicates_marked
-    │   │   │   │   │   │   └── TSS
-    │   │   │   │   │   └── duplicates_removed
-    │   │   │   │   │       └── TSS
-    │   │   │   │   ├── duplicates_marked
-    │   │   │   │   │   └── TSS
-    │   │   │   │   └── duplicates_removed
-    │   │   │   │       └── TSS
-    │   │   │   └── scale-regions
-    │   │   │       ├── bigwigCompare
-    │   │   │       │   ├── duplicates_marked
-    │   │   │       │   │   └── TSS
-    │   │   │       │   └── duplicates_removed
-    │   │   │       │       └── TSS
-    │   │   │       ├── duplicates_marked
-    │   │   │       │   └── TSS
-    │   │   │       └── duplicates_removed
-    │   │   │           └── TSS
-    │   │   ├── multiBamSummary
-    │   │   │   ├── duplicates_marked
-    │   │   │   └── duplicates_removed
-    │   │   ├── plotCorrelation
-    │   │   │   ├── duplicates_marked
-    │   │   │   └── duplicates_removed
-    │   │   ├── plotFingerprint
-    │   │   │   ├── duplicates_marked
-    │   │   │   └── duplicates_removed
-    │   │   ├── plotPCA
-    │   │   │   ├── duplicates_marked
-    │   │   │   └── duplicates_removed
-    │   │   └── plotProfile
-    │   │       ├── reference-point
-    │   │       │   ├── duplicates_marked
-    │   │       │   │   └── TSS
-    │   │       │   └── duplicates_removed
-    │   │       │       └── TSS
-    │   │       └── scale-regions
-    │   │           ├── duplicates_marked
-    │   │           │   └── TSS
-    │   │           └── duplicates_removed
-    │   │               └── TSS
-    │   ├── macs2
-    │   │   ├── H2AZ_vs_Input_TGFb
-    │   │   └── H2AZ_vs_Input_WT
-    │   │       ├── pooled
-    │   │       ├── replicate1
-    │   │       └── replicate2
-    │   ├── R_Analysis
-    │   └── samtools
-    │       └── merge
-    │           ├── duplicates_marked
-    │           └── duplicates_removed
-    └── trimmed_data3.1_ensembl84_ERCC
+    │   ├── bowtie2
+    │   │   ├── duplicates_marked
+    │   │   ├── duplicates_removed
+    │   │   ├── quality_filtered
+    │   │   └── sorted
+    │   ├── deepTools
+    │   │   ├── bamCompare
+    │   │   │   └── normal
+    │   │   │       ├── duplicates_marked
+    │   │   │       │   ├── readCount
+    │   │   │       │   └── SES
+    │   │   │       └── duplicates_removed
+    │   │   │           ├── readCount
+    │   │   │           └── SES
+    │   │   ├── bamCoverage
+    │   │   │   ├── debugging
+    │   │   │   ├── MNase
+    │   │   │   │   ├── duplicates_marked
+    │   │   │   │   └── duplicates_removed
+    │   │   │   └── normal
+    │   │   │       ├── duplicates_marked
+    │   │   │       └── duplicates_removed
+    │   │   ├── bamPEFragmentSize
+    │   │   │   ├── duplicates_marked
+    │   │   │   └── duplicates_removed
+    │   │   ├── bigwigCompare
+    │   │   │   └── normal
+    │   │   │       ├── duplicates_marked
+    │   │   │       │   ├── readCount
+    │   │   │       │   └── SES
+    │   │   │       └── duplicates_removed
+    │   │   │           ├── readCount
+    │   │   │           └── SES
+    │   │   ├── computeMatrix
+    │   │   │   ├── reference-point
+    │   │   │   │   ├── bigwigCompare
+    │   │   │   │   │   ├── duplicates_marked
+    │   │   │   │   │   │   └── TSS
+    │   │   │   │   │   └── duplicates_removed
+    │   │   │   │   │       └── TSS
+    │   │   │   │   ├── duplicates_marked
+    │   │   │   │   │   └── TSS
+    │   │   │   │   └── duplicates_removed
+    │   │   │   │       └── TSS
+    │   │   │   └── scale-regions
+    │   │   │       ├── bigwigCompare
+    │   │   │       │   ├── duplicates_marked
+    │   │   │       │   │   └── TSS
+    │   │   │       │   └── duplicates_removed
+    │   │   │       │       └── TSS
+    │   │   │       ├── duplicates_marked
+    │   │   │       │   └── TSS
+    │   │   │       └── duplicates_removed
+    │   │   │           └── TSS
+    │   │   ├── multiBamSummary
+    │   │   │   ├── duplicates_marked
+    │   │   │   └── duplicates_removed
+    │   │   ├── plotCorrelation
+    │   │   │   ├── duplicates_marked
+    │   │   │   └── duplicates_removed
+    │   │   ├── plotFingerprint
+    │   │   │   ├── duplicates_marked
+    │   │   │   └── duplicates_removed
+    │   │   ├── plotPCA
+    │   │   │   ├── duplicates_marked
+    │   │   │   └── duplicates_removed
+    │   │   └── plotProfile
+    │   │       ├── reference-point
+    │   │       │   ├── duplicates_marked
+    │   │       │   │   └── TSS
+    │   │       │   └── duplicates_removed
+    │   │       │       └── TSS
+    │   │       └── scale-regions
+    │   │           ├── duplicates_marked
+    │   │           │   └── TSS
+    │   │           └── duplicates_removed
+    │   │               └── TSS
+    │   ├── macs2
+    │   │   ├── H2AZ_vs_Input_TGFb
+    │   │   └── H2AZ_vs_Input_WT
+    │   │       ├── pooled
+    │   │       ├── replicate1
+    │   │       └── replicate2
+    │   ├── R_Analysis
+    │   └── samtools
+    │       └── merge
+    │           ├── duplicates_marked
+    │           └── duplicates_removed
+    └── trimmed_data
