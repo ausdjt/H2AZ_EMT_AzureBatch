@@ -38,7 +38,7 @@ rule run_computeMatrix_pooled_replicates:
                duplicates = ["duplicates_marked", "duplicates_removed"],
                referencePoint = "TSS",
                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
-               region = ["allGenes", "Tan_EMT_up", "Tan_EMT_down"],
+               region = ["allGenes", "TanEMTdown", "TanEMTup", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
                mode = ["MNase", "normal"])
 
 rule bigwigCompare_replicates:
