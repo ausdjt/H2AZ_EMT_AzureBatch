@@ -24,6 +24,7 @@ Following variables need to be set at the command line at time of invocation of 
 * WORKFLOWDIR="<name of directory where snakemake files are stores, e.g. name of git repo, relative to user /home>"
 
 example of directory structure:
+```
 ChIP-Seq/NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq/
 ├── fastq
 └── processed_data
@@ -117,3 +118,4 @@ ChIP-Seq/NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq/
     │           ├── duplicates_marked
     │           └── duplicates_removed
     └── trimmed_data
+```
