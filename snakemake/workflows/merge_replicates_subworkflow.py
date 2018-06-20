@@ -38,7 +38,7 @@ rule all:
                command = "merge",
                duplicates = ["duplicates_marked", "duplicates_removed"],
                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
-               suffix = ["bam", "bam.bai"]),
+               suffix = ["bam.bai"]),
 
 
 rule bam_merge:
