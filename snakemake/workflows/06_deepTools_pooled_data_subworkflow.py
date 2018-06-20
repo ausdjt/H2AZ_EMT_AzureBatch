@@ -72,34 +72,19 @@ rule bigwigCompare_replicates:
                ratio = ["log2", "subtract"],
                norm = "RPKM")
 
-# currently unused targets
-# rule bamCoverage_replicates:
-#     input:
-#         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/merged_replicates/{sampleGroup}_{mode}_{norm}.bw",
-#                assayID = ASSAY,
-#                runID = RUNID,
-#                outdir = OUTDIR,
-#                reference_version = REFVERSION,
-#                application = "deepTools",
-#                tool = "bamCoverage",
-#                mode = ["normal", "MNase"],
-#                duplicates = ["duplicates_marked", "duplicates_removed"],
-#                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
-#                norm = "RPKM")
-
-# rule run_plotProfile_pooled_replicates:
-#     input:
-#         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/allSamples_{plotType}.{mode}.{region}.{suffix}",
-#                 assayID = ASSAY,
-#                 runID = RUNID,
-#                 outdir = OUTDIR,
-#                 reference_version = REFVERSION,
-#                 application = "deepTools",
-#                 tool = "plotProfile",
-#                 command = ["reference-point", "scale-regions"],
-#                 duplicates = ["duplicates_marked", "duplicates_removed"],
-#                 referencePoint = "TSS",
-#                 plotType = "se",
-#                 region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
-#                 mode = ["MNase", "normal"],
-#                 suffix = ["pdf", "bed", "data"])
+rule run_plotProfile_pooled_replicates:
+    input:
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/allSamples_{plotType}.{mode}.{region}.{suffix}",
+                assayID = ASSAY,
+                runID = RUNID,
+                outdir = OUTDIR,
+                reference_version = REFVERSION,
+                application = "deepTools",
+                tool = "plotProfile",
+                command = ["reference-point", "scale-regions"],
+                duplicates = ["duplicates_marked", "duplicates_removed"],
+                referencePoint = "TSS",
+                plotType = "se",
+                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
+                mode = ["MNase", "normal"],
+                suffix = ["pdf", "bed", "data"])
