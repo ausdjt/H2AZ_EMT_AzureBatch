@@ -11,25 +11,26 @@ rule:
 localrules:
     all
 
-home = os.environ['HOME']
-
-wrapper_dir = home + "/Development/snakemake-wrappers/bio"
-
-include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
-
-include:
-    include_prefix + "run_bowtie2.py"
-
 # run parameters as variables
-RUNID = config["RUNID"] #"NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-ASSAYID = config["ASSAYID"] #"ChIP-Seq"
+ASSAY = config["ASSAY"]
+RUNID = config["RUNID"]
 OUTDIR = config["processed_dir"]
 REFVERSION = config["references"]["CanFam3.1"]["version"][0]
+QUAL = config["alignment_quality"]
+home = os.environ['HOME']
+WORKFLOWDIR = config["WORKFLOWDIR"]
+wrapper_dir = home + WORKFLOWDIR + "snakemake-wrappers/bio"
+include_prefix= home + WORKFLOWDIR + "H2AZ_EMT/snakemake/rules/"
+configfile: home + WORKFLOWDIR + "H2AZ_EMT/snakemake/configs/config.json"
+
+# includes for the actual scripts
+include:
+    include_prefix + "run_bowtie2.py"
 
 rule all:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{tool}/{unit}.bam",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,

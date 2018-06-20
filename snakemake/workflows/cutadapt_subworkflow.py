@@ -11,26 +11,26 @@ rule:
 localrules:
     all
 
+# run parameters as variables
+ASSAY = config["ASSAY"]
+RUNID = config["RUNID"]
+OUTDIR = config["processed_dir"]
+REFVERSION = config["references"]["CanFam3.1"]["version"][0]
+QUAL = config["alignment_quality"]
 home = os.environ['HOME']
+WORKFLOWDIR = config["WORKFLOWDIR"]
+wrapper_dir = home + WORKFLOWDIR + "snakemake-wrappers/bio"
+include_prefix= home + WORKFLOWDIR + "H2AZ_EMT/snakemake/rules/"
+configfile: home + WORKFLOWDIR + "H2AZ_EMT/snakemake/configs/config.json"
 
-wrapper_dir = home + "/Development/snakemake-wrappers/bio"
-
-include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
-
-configfile: home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/configs/config.json"
-
+# includes for the actual scripts
 include:
     include_prefix + "perform_cutadapt.py"
-
-# run parameters as variables
-ASSAYID = "ChIP-Seq"
-RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-OUTDIR = "processed_data"
 
 rule all:
     input:
         expand("{assayID}/{runID}/{outdir}/{trim_data}/{unit}_{suffix}.QT.CA.fastq.gz",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                trim_data = config["trim_dir"],

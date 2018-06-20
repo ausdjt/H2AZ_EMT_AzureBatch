@@ -18,45 +18,45 @@ rule:
 localrules:
     all
 
-home = os.environ['HOME']
-
-wrapper_dir = home + "/Development/snakemake-wrappers/bio"
-
-include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
-
-include:
-    include_prefix + "run_deepTools_QC.py"
-
 # run parameters as variables
-ASSAYID = "ChIP-Seq"
-RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-OUTDIR = "processed_data"
+ASSAY = config["ASSAY"]
+RUNID = config["RUNID"]
+OUTDIR = config["processed_dir"]
 REFVERSION = config["references"]["CanFam3.1"]["version"][0]
 QUAL = config["alignment_quality"]
+home = os.environ['HOME']
+WORKFLOWDIR = config["WORKFLOWDIR"]
+wrapper_dir = home + WORKFLOWDIR + "snakemake-wrappers/bio"
+include_prefix= home + WORKFLOWDIR + "H2AZ_EMT/snakemake/rules/"
+configfile: home + WORKFLOWDIR + "H2AZ_EMT/snakemake/configs/config.json"
+
+# includes for the actual scripts
+include:
+    include_prefix + "run_deepTools_QC.py"
 
 rule all:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_duplicates_marked.png",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,
                duplicates = ["duplicates_removed", "duplicates_marked"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotCorrelation/{duplicates}/heatmap_SpearmanCorr_readCounts.{suffix}",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,
                duplicates = ["duplicates_removed", "duplicates_marked"],
                suffix = ["png", "tab"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotPCA/{duplicates}/PCA_readCounts.png",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,
                duplicates = ["duplicates_removed", "duplicates_marked"]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_duplicates_marked.png",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,

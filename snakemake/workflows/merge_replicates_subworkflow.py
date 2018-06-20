@@ -15,22 +15,22 @@ For usage, include this in your workflow.
 import os
 import fnmatch
 from snakemake.exceptions import MissingInputException
-
-# set configuration JSON file
-
-# set some local variables
-home = os.environ['HOME']
-
-RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-ASSAYID = "ChIP-Seq"
+# run parameters as variables
+ASSAY = config["ASSAY"]
+RUNID = config["RUNID"]
 OUTDIR = config["processed_dir"]
 REFVERSION = config["references"]["CanFam3.1"]["version"][0]
-QUALITY = config["alignment_quality"]
+QUAL = config["alignment_quality"]
+home = os.environ['HOME']
+WORKFLOWDIR = config["WORKFLOWDIR"]
+wrapper_dir = home + WORKFLOWDIR + "snakemake-wrappers/bio"
+include_prefix= home + WORKFLOWDIR + "H2AZ_EMT/snakemake/rules/"
+configfile: home + WORKFLOWDIR + "H2AZ_EMT/snakemake/configs/config.json"
 
 rule all:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{command}/{duplicates}/{sampleGroup}.{suffix}",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,

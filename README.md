@@ -9,6 +9,9 @@ Bash and R scripts associated with analysis of H2A.Z ChIP-Seq data from TGFb-ind
 * samtools
 * deepTools
 * R/Bioconductor [>3.4]
+* picardTools
+* htseq
+
 
 ## pipeline stages
 * cutadapt_subworkflow.py - OK

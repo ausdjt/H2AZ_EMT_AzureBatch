@@ -12,11 +12,13 @@ localrules:
     all, run_kallisto, run_STAR, run_htseq, run_cutadapt
 
 home = os.environ['HOME']
+WORKFLOWDIR = config["WORKFLOWDIR"]
+wrapper_dir = home + WORKFLOWDIR + "snakemake-wrappers/bio"
+include_prefix= home + WORKFLOWDIR + "H2AZ_EMT/snakemake/rules/"
+ASSAY = config["ASSAY"] #RNA-Seq
+RUNID = config["RUNID"] #NB501086_0082_RDomaschenz_JCSMR_mRNAseq
 
-wrapper_dir = home + "/Development/snakemake-wrappers/bio"
-
-include_prefix= home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
-
+# includes for the actual scripts
 include:
     include_prefix + "perform_cutadapt.py"
 include:
@@ -27,14 +29,14 @@ include:
 rule all:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/kallisto/{unit}",
-               assayID = "RNA-Seq",
-               runID = ["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"],
+               assayID = ASSAY,
+               runID = RUNID,
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"],
-               unit = config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"]),
+               unit = config["samples"][ASSAY][RUNID]),
         expand("{assayID}/{runID}/{outdir}/{reference_version}/HTSeq/count/{unit}.txt",
-               assayID = "RNA-Seq",
-               runID = "NB501086_0082_RDomaschenz_JCSMR_mRNAseq",
+               assayID = ASSAY,
+               runID = RUNID,
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"],
-               unit = config["samples"]["RNA-Seq"]["NB501086_0082_RDomaschenz_JCSMR_mRNAseq"])
+               unit = config["samples"][ASSAY][RUNID])
