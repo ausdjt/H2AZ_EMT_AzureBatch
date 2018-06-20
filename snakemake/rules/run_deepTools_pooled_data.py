@@ -13,29 +13,28 @@ Rules for running deepTools analysis on ChIP-Seq data
 For usage, include this in your workflow.
 """
 
-
 def cli_parameters_computeMatrix(wildcards):
-    a = config["program_parameters"][wildcards["application"]]["computeMatrix"]][wildcards["command"]]
+    a = config["program_parameters"][wildcards["application"]]["computeMatrix"][wildcards["command"]]
     if wildcards["command"] == "reference-point":
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
 
 
-# rule computeMatrix_pooled_replicates:
-#     version:
-#         0.2
-#     params:
-#         deepTools_dir = home + config["deepTools_dir"],
-#         program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
-#     threads:
-#         lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
-#     input:
-#         file = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/bamCoverage/{mode}/{duplicates}/merged_replicates/{sample_group}_{mode}_{norm}.bw",
-#         region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards.region]
-#     output:
-#         matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sample_group}_{region}_{mode}.matrix.gz"
-#     wrapper:
-#         "file://" + wrapper_dir + "/deepTools/computeMatrix/wrapper.py"
+rule computeMatrix_pooled_replicates:
+    version:
+        0.2
+    params:
+        deepTools_dir = home + config["deepTools_dir"],
+        program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
+    threads:
+        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+    input:
+        file = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/bamCoverage/{mode}/{duplicates}/merged_replicates/{sample_group}_{mode}_{norm}.bw",
+        region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards.region]
+    output:
+        matrix_gz = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sample_group}_{region}_{mode}.matrix.gz"
+    wrapper:
+        "file://" + wrapper_dir + "/deepTools/computeMatrix/wrapper.py"
 
 rule bam_coverage_pooled_replicates:
     version:
