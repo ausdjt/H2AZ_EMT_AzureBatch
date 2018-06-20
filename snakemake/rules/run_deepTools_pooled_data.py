@@ -19,6 +19,19 @@ def cli_parameters_computeMatrix(wildcards):
         a["--referencePoint"] = wildcards.referencePoint
     return(a)
 
+def cli_parameters_bamCoverage(wildcards):
+    a = config["program_parameters"][wildcards["application"]]["bamCoverage"][wildcards["mode"]]
+    b = str()
+    for (key, val) in a.items():
+        if val == " ":
+            f = key + " "
+            b = b + f
+        else:
+            f = key + "=" + val + " "
+            b = b + f
+    if wildcards["mode"] == "MNase":
+        b = b + "--MNase"
+    return(b.rstrip())
 
 rule computeMatrix_pooled_replicates:
     version:
