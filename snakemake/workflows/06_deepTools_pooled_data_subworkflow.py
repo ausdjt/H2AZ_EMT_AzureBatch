@@ -24,8 +24,8 @@ configfile: home + WORKFLOWDIR + "H2AZ_EMT/snakemake/configs/config.json"
 # includes for the actual scripts
 include:
     include_prefix + "run_deepTools_pooled_data.py"
-
-rule run_computeMatrix_pooled_replicates:
+rule all:
+#rule run_computeMatrix_pooled_replicates:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sampleGroup}_{region}_{mode}.matrix.gz",
                assayID = ASSAY,
@@ -39,10 +39,10 @@ rule run_computeMatrix_pooled_replicates:
                referencePoint = "TSS",
                sampleGroup = ["H2AZ-TGFb", "H2AZ-WT", "Input-TGFb", "Input-WT"],
                region = ["allGenes", "TanEMTdown", "TanEMTup", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
-               mode = ["MNase", "normal"])
+               mode = ["MNase", "normal"]),
 
-rule bigwigCompare_replicates:
-    input:
+#rule bigwigCompare_replicates:
+#    input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{mode}/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_{mode}_{ratio}_{norm}.bw",
                assayID = ASSAY,
                runID = RUNID,
@@ -70,10 +70,10 @@ rule bigwigCompare_replicates:
                treatment = "H2AZ-TGFb",
                control = "Input-TGFb",
                ratio = ["log2", "subtract"],
-               norm = "RPKM")
+               norm = "RPKM"),
 
-rule run_plotProfile_pooled_replicates:
-    input:
+#rule run_plotProfile_pooled_replicates:
+#    input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/allSamples_{plotType}.{mode}.{region}.{suffix}",
                 assayID = ASSAY,
                 runID = RUNID,
