@@ -33,22 +33,6 @@ rule run_computeMatrix_pooled_replicates:
                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
                mode = ["MNase", "normal"])
 
-rule run_plotProfile_pooled_replicates:
-    input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/allSamples_{plotType}.{mode}.{region}.{suffix}",
-                assayID = ASSAYID,
-                runID = RUNID,
-                outdir = OUTDIR,
-                reference_version = REFVERSION,
-                application = "deepTools",
-                tool = "plotProfile",
-                command = ["reference-point", "scale-regions"],
-                duplicates = ["duplicates_marked", "duplicates_removed"],
-                referencePoint = "TSS",
-                plotType = "se",
-                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
-                mode = ["MNase", "normal"],
-                suffix = ["pdf", "bed", "data"])
 
 rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix_WT:
     input:
