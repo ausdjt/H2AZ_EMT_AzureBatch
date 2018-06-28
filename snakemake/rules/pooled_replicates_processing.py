@@ -1,15 +1,3 @@
-from snakemake.exceptions import MissingInputException
-import os
-
-home = os.environ['HOME']
-
-# run parameters as variables
-RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-ASSAYID = "ChIP-Seq"
-OUTDIR = config["processed_dir"]
-REFVERSION = config["references"]["CanFam3.1"]["version"][0]
-QUALITY = config["alignment_quality"]
-
 def cli_parameters_computeMatrix(wildcards):
     a = config["program_parameters"][wildcards["application"]]["computeMatrix"][wildcards["command"]]
     if wildcards["command"] == "reference-point":
@@ -20,7 +8,7 @@ def cli_parameters_computeMatrix(wildcards):
 rule run_computeMatrix_pooled_replicates:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/{duplicates}/{referencePoint}/{sampleGroup}_{region}_{mode}.matrix.gz",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,
@@ -33,27 +21,11 @@ rule run_computeMatrix_pooled_replicates:
                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
                mode = ["MNase", "normal"])
 
-rule run_plotProfile_pooled_replicates:
-    input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/{tool}/{command}/{duplicates}/{referencePoint}/allSamples_{plotType}.{mode}.{region}.{suffix}",
-                assayID = ASSAYID,
-                runID = RUNID,
-                outdir = OUTDIR,
-                reference_version = REFVERSION,
-                application = "deepTools",
-                tool = "plotProfile",
-                command = ["reference-point", "scale-regions"],
-                duplicates = ["duplicates_marked", "duplicates_removed"],
-                referencePoint = "TSS",
-                plotType = "se",
-                region = ["allGenes", "TanEMTup", "TanEMTdown", "qPCRGenesUp", "qPCRGenesDown", "random100up", "random100down"],
-                mode = ["MNase", "normal"],
-                suffix = ["pdf", "bed", "data"])
 
 rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix_WT:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal.{scaleFactors}.{ratio}_{norm}_{region}_{mode}.matrix.gz",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,
@@ -72,7 +44,7 @@ rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix_WT:
 rule run_computeMatrix_pooled_replicates_bigwigCompare_single_matrix_TGFb:
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/computeMatrix/{command}/bigwigCompare/{duplicates}/{referencePoint}/{treatment}_vs_{control}_normal.{scaleFactors}.{ratio}_{norm}_{region}_{mode}.matrix.gz",
-               assayID = ASSAYID,
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,
@@ -121,11 +93,11 @@ rule computeMatrix_pooled_replicates_single_matrix:
     params:
         deepTools_dir = home + config["deepTools_dir"],
         program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
-    threads:
-        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+    #threads:
+    #    lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
         file = lambda wildcards: expand("{assayID}/{runID}/{outdir}/{reference_version}/{application}/bamCoverage/{mode}/{duplicates}/{sampleGroup}_{mode}_RPKM.bw",
-                                       assayID = ASSAYID,
+                                       assayID = ASSAY,
                                        runID = RUNID,
                                        outdir = OUTDIR,
                                        reference_version = REFVERSION,
@@ -144,7 +116,7 @@ rule computeMatrix_pooled_replicates_single_matrix:
                                                  --scoreFileName {input.file} \
                                                  --missingDataAsZero \
                                                  --skipZeros \
-                                                 --numberOfProcessors {threads} \
+                                                 --numberOfProcessors 8 \
                                                  {params.program_parameters} \
                                                  --outFileName {output.matrix_gz}
         """
@@ -155,8 +127,8 @@ rule computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
     params:
         deepTools_dir = home + config["deepTools_dir"],
         program_parameters = lambda wildcards: ' '.join("{!s}={!s}".format(key, val.strip("\\'")) for (key, val) in cli_parameters_computeMatrix(wildcards).items())
-    threads:
-        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+    #threads:
+    #    lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
     input:
         file = "{assayID}/{runID}/{outdir}/{reference_version}/{application}/bigwigCompare/normal/{duplicates}/{scaleFactors}/{treatment}_vs_{control}_normal_{ratio}_{norm}.bw",
         region = lambda wildcards: home + config["program_parameters"]["deepTools"]["regionFiles"][wildcards["reference_version"]][wildcards["region"]]
@@ -169,7 +141,7 @@ rule computeMatrix_pooled_replicates_bigwigCompare_single_matrix:
                                                  --scoreFileName {input.file} \
                                                  --missingDataAsZero \
                                                  --skipZeros \
-                                                 --numberOfProcessors {threads} \
+                                                 --numberOfProcessors 8 \
                                                  {params.program_parameters} \
                                                  --outFileName {output.matrix_gz}
         """

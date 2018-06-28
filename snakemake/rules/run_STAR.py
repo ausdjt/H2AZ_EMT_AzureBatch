@@ -4,35 +4,7 @@ __date__ = "2016-04-22"
 
 # this set of rules is meant to be imported by the master workflow document
 
-from snakemake.exceptions import MissingInputException
-
-rule star_align_full_untrimmed_fastq:
-    version:
-        0.4
-    params:
-        runThreadN = config["program_parameters"]["STAR"]["runThreadN"],
-        tmp = temp("{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
-    input:
-        read1 = "{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
-        read2 = "{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
-        index = lambda wildcards: home + "/" + config["references"]["CanFam3.1"]["STAR"][wildcards.reference_version],
-    output:
-        bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/untrimmed/STAR/full/{unit}.aligned.bam"
-    shell:
-        """
-            STAR --runMode alignReads \
-                 --runThreadN {params.runThreadN} \
-                 --genomeDir {input.index} \
-                 --readFilesIn {input.read1} {input.read2} \
-                 --readFilesCommand zcat \
-                 --outTmpDir {params.tmp} \
-                 --outSAMmode Full \
-                 --outSAMattributes Standard \
-                 --outSAMtype BAM SortedByCoordinate \
-                 --outStd BAM_SortedByCoordinate \
-                 --alignEndsType EndToEnd\
-                 > {output.bam}
-        """
+#from snakemake.exceptions import MissingInputException
 
 rule star_align_full:
     version:
@@ -40,22 +12,23 @@ rule star_align_full:
     params:
         runThreadN = config["program_parameters"]["STAR"]["runThreadN"],
         trim_dir = config["trim_dir"],
-        tmp = temp("{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}")
+        tmp = temp("{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/tmp/{unit}/"),
+        star_dir = config["star_dir"]
     input:
         read1 = "{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R1_001.QT.CA.fastq.gz",
         read2 = "{assayID}/{runID}/{processed_dir}/trimmed_data/{unit}_R2_001.QT.CA.fastq.gz",
-        index = lambda wildcards: home + "/" + config["references"]["CanFam3.1"]["STAR"][wildcards.reference_version]
+        index = lambda wildcards: config["references"]["CanFam3.1"]["STAR"][wildcards.reference_version]
     output:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam"
     shell:
         """
-            STAR --runMode alignReads \
+            {params.star_dir}/STAR --runMode alignReads \
                  --runThreadN {params.runThreadN} \
                  --genomeDir {input.index} \
                  --readFilesIn {input.read1} {input.read2}\
                  --readFilesCommand zcat \
                  --outTmpDir {params.tmp} \
-                 --outSAMmode Full \
+				 --outSAMmode Full \
                  --outSAMattributes Standard \
                  --outSAMtype BAM SortedByCoordinate \
                  --outStd BAM_SortedByCoordinate \
@@ -81,7 +54,7 @@ rule run_htseq_count:
     input:
         bam = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam",
         index = "{assayID}/{runID}/{processed_dir}/{reference_version}/STAR/full/{unit}.aligned.bam.bai",
-        gtf = lambda wildcards: home + "/" + config["references"]["CanFam3.1"]["GTF"][wildcards.reference_version]
+        gtf = lambda wildcards: config["references"]["CanFam3.1"]["GTF"][wildcards.reference_version]
     output:
         "{assayID}/{runID}/{processed_dir}/{reference_version}/HTSeq/count/{unit}.txt"
     shell:

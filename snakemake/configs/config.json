@@ -4,26 +4,26 @@
       "CanFam3.1" :
       {
         "version" : ["CanFam3.1_ensembl84_ERCC", "CanFam3.1_ensembl84"],
-        "genome" : "/Data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.dna.toplevel.fa",
+        "genome" : "/data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.dna.toplevel.fa",
         "GTF" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",
-          "CanFam3.1_ensembl84" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84.gtf"
+          "CanFam3.1_ensembl84_ERCC" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84_ERCC.gtf",
+          "CanFam3.1_ensembl84" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.84.gtf"
         },
         "kallisto" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all_ERCC.ki",
-          "CanFam3.1_ensembl84" : "/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki"
+          "CanFam3.1_ensembl84_ERCC" : "/data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all_ERCC.ki",
+          "CanFam3.1_ensembl84" : "/data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/Canis_familiaris.CanFam3.1.all.ki"
         },
         "STAR" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index_ERCC",
-          "CanFam3.1_ensembl84" : "/Data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index"
+          "CanFam3.1_ensembl84_ERCC" : "/data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index_ERCC",
+          "CanFam3.1_ensembl84" : "/data/References/Transcriptomes/Canis_familiaris/CanFam3.1_ensembl84/STAR_Index"
         },
         "bowtie2" :
         {
-          "CanFam3.1_ensembl84_ERCC" : "/Data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/CanFam3.1",
-          "CanFam3.1_ensembl84" : "/Data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/CanFam3.1"
+          "CanFam3.1_ensembl84_ERCC" : "/data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/CanFam3.1",
+          "CanFam3.1_ensembl84" : "/data/References/Genomes/Canis_familiaris/CanFam3.1_ensembl84/CanFam3.1"
         }
       }
     },
@@ -31,40 +31,31 @@
     {
       "RNA-Seq" :
       {
-        "NB501086_0067_RDomaschenz_JCSMR_RNASeq" :
-        {
-          "MDCK_wt_rep1" : ["Renae9_S9_R1_001.fastq.gz", "Renae9_S9_R2_001.fastq.gz"],
-          "MDCK_wt_rep2": ["Renae10_S10_R1_001.fastq.gz", "Renae10_S10_R2_001.fastq.gz"],
-          "MDCK_shZ_rep1" : ["Renae8_S8_R1_001.fastq.gz", "Renae8_S8_R2_001.fastq.gz"],
-          "MDCK_shZ_rep2" : ["Renae7_S7_R1_001.fastq.gz", "Renae7_S7_R2_001.fastq.gz"],
-          "MDCK_TGFb_rep1" : ["Renae11_S11_R1_001.fastq.gz", "Renae11_S11_R2_001.fastq.gz"],
-          "MDCK_TGFb_rep2" : ["Renae12_S12_R1_001.fastq.gz", "Renae12_S12_R2_001.fastq.gz"]
-        },
         "NB501086_0082_RDomaschenz_JCSMR_mRNAseq" :
         {
-          "MDCKD6_1" : ["MDCKD6_1_S1_R1_001.fastq.gz", "MDCKD6_1_S1_R2_001.fastq.gz"],
-          "MDCKD6_2" : ["MDCKD6_2_S2_R1_001.fastq.gz", "MDCKD6_2_S2_R2_001.fastq.gz"],
-          "MDCKD6_3" : ["MDCKD6_3_S3_R1_001.fastq.gz", "MDCKD6_3_S3_R2_001.fastq.gz"],
-          "MDCKshZD6_1" : ["MDCKshZD6_1_S7_R1_001.fastq.gz", "MDCKshZD6_1_S7_R2_001.fastq.gz"],
-          "MDCKshZD6_2" : ["MDCKshZD6_2_S8_R1_001.fastq.gz", "MDCKshZD6_2_S8_R2_001.fastq.gz"],
-          "MDCKshZD6_3" : ["MDCKshZD6_3_S9_R1_001.fastq.gz", "MDCKshZD6_3_S9_R2_001.fastq.gz"],
-          "MDCKTGFbD6_1" : ["MDCKTGFbD6_1_S4_R1_001.fastq.gz", "MDCKTGFbD6_1_S4_R2_001.fastq.gz"],
-          "MDCKTGFbD6_2" : ["MDCKTGFbD6_2_S5_R1_001.fastq.gz", "MDCKTGFbD6_2_S5_R2_001.fastq.gz"],
-          "MDCKTGFbD6_3" : ["MDCKTGFbD6_3_S6_R1_001.fastq.gz","MDCKTGFbD6_3_S6_R2_001.fastq.gz"]
+          "MDCKD6_1_S1" : ["MDCKD6_1_S1_R1_001.fastq.gz", "MDCKD6_1_S1_R2_001.fastq.gz"],
+          "MDCKD6_2_S2" : ["MDCKD6_2_S2_R1_001.fastq.gz", "MDCKD6_2_S2_R2_001.fastq.gz"],
+          "MDCKD6_3_S3" : ["MDCKD6_3_S3_R1_001.fastq.gz", "MDCKD6_3_S3_R2_001.fastq.gz"],
+          "MDCKshZD6_1_S7" : ["MDCKshZD6_1_S7_R1_001.fastq.gz", "MDCKshZD6_1_S7_R2_001.fastq.gz"],
+          "MDCKshZD6_2_S8" : ["MDCKshZD6_2_S8_R1_001.fastq.gz", "MDCKshZD6_2_S8_R2_001.fastq.gz"],
+          "MDCKshZD6_3_S9" : ["MDCKshZD6_3_S9_R1_001.fastq.gz", "MDCKshZD6_3_S9_R2_001.fastq.gz"],
+          "MDCKTGFbD6_1_S4" : ["MDCKTGFbD6_1_S4_R1_001.fastq.gz", "MDCKTGFbD6_1_S4_R2_001.fastq.gz"],
+          "MDCKTGFbD6_2_S5" : ["MDCKTGFbD6_2_S5_R1_001.fastq.gz", "MDCKTGFbD6_2_S5_R2_001.fastq.gz"],
+          "MDCKTGFbD6_3_S6" : ["MDCKTGFbD6_3_S6_R1_001.fastq.gz","MDCKTGFbD6_3_S6_R2_001.fastq.gz"]
         }
       },
       "ChIP-Seq" :
       {
         "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq" :
         {
-          "H2AZ-TGFb-rep1" : ["H2AZ-TGFb-rep1_S3_R1_001.fastq.gz", "H2AZ-TGFb-rep1_S3_R2_001.fastq.gz"],
-          "H2AZ-TGFb-rep2" : ["H2AZ-TGFb-rep2_S4_R1_001.fastq.gz", "H2AZ-TGFb-rep2_S4_R2_001.fastq.gz"],
-          "H2AZ-WT-rep1" : ["H2AZ-WT-rep1_S1_R1_001.fastq.gz", "H2AZ-WT-rep1_S1_R2_001.fastq.gz"],
-          "H2AZ-WT-rep2" : ["H2AZ-WT-rep2_S2_R1_001.fastq.gz", "H2AZ-WT-rep2_S2_R2_001.fastq.gz"],
-          "Input-TGFb-rep1" : ["Input-TGFb-rep1_S7_R1_001.fastq.gz", "Input-TGFb-rep1_S7_R2_001.fastq.gz"],
-          "Input-TGFb-rep2" : ["Input-TGFb-rep2_S8_R1_001.fastq.gz", "Input-TGFb-rep2_S8_R2_001.fastq.gz"],
-          "Input-WT-rep1" : ["Input-WT-rep1_S5_R1_001.fastq.gz", "Input-WT-rep1_S5_R2_001.fastq.gz"],
-          "Input-WT-rep2" : ["Input-WT-rep2_S6_R1_001.fastq.gz", "Input-WT-rep2_S6_R2_001.fastq.gz"]
+          "H2AZ-TGFb-rep1_S3" : ["H2AZ-TGFb-rep1_S3_R1_001.fastq.gz", "H2AZ-TGFb-rep1_S3_R2_001.fastq.gz"],
+          "H2AZ-TGFb-rep2_S4" : ["H2AZ-TGFb-rep2_S4_R1_001.fastq.gz", "H2AZ-TGFb-rep2_S4_R2_001.fastq.gz"],
+          "H2AZ-WT-rep1_S1" : ["H2AZ-WT-rep1_S1_R1_001.fastq.gz", "H2AZ-WT-rep1_S1_R2_001.fastq.gz"],
+          "H2AZ-WT-rep2_S2" : ["H2AZ-WT-rep2_S2_R1_001.fastq.gz", "H2AZ-WT-rep2_S2_R2_001.fastq.gz"],
+          "nput-TGFb-rep1_S7" : ["Input-TGFb-rep1_S7_R1_001.fastq.gz", "Input-TGFb-rep1_S7_R2_001.fastq.gz"],
+          "Input-TGFb-rep2_S8" : ["Input-TGFb-rep2_S8_R1_001.fastq.gz", "Input-TGFb-rep2_S8_R2_001.fastq.gz"],
+          "Input-WT-rep1_S5" : ["Input-WT-rep1_S5_R1_001.fastq.gz", "Input-WT-rep1_S5_R2_001.fastq.gz"],
+          "Input-WT-rep2_S6" : ["Input-WT-rep2_S6_R1_001.fastq.gz", "Input-WT-rep2_S6_R2_001.fastq.gz"]
         },
         "replicates" :
         {
@@ -77,9 +68,14 @@
     },
     "program_parameters" :
     {
+      "cutadapt" :
+      {
+        "trim_params": "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30"
+      },
       "kallisto" :
       {
-        "bootstraps" : "100"
+        "bootstraps" : "100",
+        "threads" : "4"
       },
       "STAR" :
       {
@@ -108,13 +104,13 @@
         {
           "CanFam3.1_ensembl84_ERCC" :
           {
-            "allGenes" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/allGenes.bed",
-            "TanEMTup" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_up_genes.bed",
-            "TanEMTdown" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_down_genes.bed",
-            "qPCRGenesUp" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_up.bed",
-            "qPCRGenesDown" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_down.bed",
-            "random100up" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/random100up.bed",
-            "random100down" : "/Data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/random100down.bed"
+            "allGenes" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/allGenes.bed",
+            "TanEMTup" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_up_genes.bed",
+            "TanEMTdown" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/Tan_et_al_EMT_down_genes.bed",
+            "qPCRGenesUp" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_up.bed",
+            "qPCRGenesDown" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/qPCR_genes_down.bed",
+            "random100up" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/random100up.bed",
+            "random100down" : "/data/References/Annotations/Canis_familiaris/CanFam3.1_ensembl84/random100down.bed"
           }
         },
         "bamCoverage" :
@@ -170,10 +166,6 @@
             "minimum_perc" : "0.1"
         }
       },
-      "cutadapt" :
-      {
-        "trim_params": "-a AGATCGGAAGAGC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT --minimum-length=30"
-      },
       "macs2" :
       {
         "gsize" : "2.0e9"
@@ -183,12 +175,14 @@
     "processed_dir" : "processed_data",
     "aligned_dir" : "aligned_data",
     "reports_dir" : "reports",
-    "temp_dir" : "/temp_data",
+    "temp_dir" : "temp_data",
     "alignment_quality" : "10",
     "raw_dir" : "fastq",
-    "deepTools_dir" : "/miniconda3/envs/py27/bin",
-    "HTSeq_dir" : "/miniconda3/envs/py27/bin",
-    "cutadapt_dir" : "/miniconda3/envs/snakemake/bin",
-    "DEXSeq_dir" : "/home/skurscheid/R/x86_64-unknown-linux-gnu-library/DEXSeq/python_scripts/",
-    "picard" : "/bin/picard.jar"
+    "deepTools_dir" : "/home/apps/deepTools/bin",
+    "HTSeq_dir" : "/usr/bin",
+    "cutadapt_dir" : "/usr/local/bin",
+    "picard" : "/home/apps/picard/picard.jar",
+    "star_dir":"/home/apps/STAR/bin/Linux_x86_64",
+    "kallisto_dir":"/home/apps/kallisto",
+    "home":"/data/"
 }

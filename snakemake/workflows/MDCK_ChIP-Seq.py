@@ -7,90 +7,69 @@ import snakemake.utils
 import os
 import pdb
 
-rule:
-    version: 0.1
-
-home = os.environ['HOME']
-
-wrapper_dir = home + "/Development/snakemake-wrappers/bio"
-
-include_prefix = home + "/Development/JCSMR-Tremethick-Lab/H2AZ_EMT/snakemake/rules/"
-
-#include:
-#    include_prefix + "perform_cutadapt.py"
-include:
-    include_prefix + "run_bowtie2.py"
-include:
-    include_prefix + "bam_processing.py"
-# include:
-#     include_prefix + "run_deepTools_QC.py"
-# include:
-#     include_prefix + "run_deepTools.py"
-include:
-    include_prefix + "pooled_replicates_processing.py"
-
-# run parameters as variables
-RUNID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"
-ASSAYID = "ChIP-Seq"
+home = config["home"]
+WORKFLOWDIR = config["WORKFLOWDIR"]
+wrapper_dir = home + WORKFLOWDIR + "/snakemake-wrappers/bio"
+include_prefix= home + WORKFLOWDIR + "/H2AZ_EMT/snakemake/rules/"
+ASSAY = config["ASSAY"] #ChIP-Seq
+RUNID = config["RUNID"] #NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq
 OUTDIR = config["processed_dir"]
 REFVERSION = config["references"]["CanFam3.1"]["version"][0]
 QUALITY = config["alignment_quality"]
 
-# rule all:
-#     input:
-#         expand("{assayID}/{runID}/{outdir}/{reference_version}/{tool}/{duplicates}/{unit}.Q{qual}.sorted.{suffix}",
-#                assayID = ASSAYID,
-#                runID = RUNID,
-#                outdir = OUTDIR,
-#                reference_version = REFVERSION,
-#                tool = "bowtie2",
-#                duplicates = ["duplicates_marked", "duplicates_removed"],
-#                unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
-#                qual = QUALITY,
-#                suffix = ["bam", "bam.bai"])
-
-rule subsample:
+rule all:
     input:
-        expand("{assayID}/{runID}/{outdir}/{reference_version}/{tool}/{duplicates}/subsampled/{frac}/{unit}.Q{qual}.sorted.{suffix}",
-               assayID = ASSAYID,
+        expand("{assayID}/{runID}/{outDIR}/trimmed_data/{sample}_{suffix}.QT.CA.fastq.gz",
+               assayID = ASSAY,
+               runID = RUNID,
+               sample = config["samples"][ASSAY][RUNID],
+               suffix = ["R1_001", "R2_001"],
+               outDIR = OUTDIR),
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{duplicates}/{sample}.Q{qual}.sorted.bam.bai",
+               assayID = ASSAY,
                runID = RUNID,
                outdir = OUTDIR,
                reference_version = REFVERSION,
-               tool = "bowtie2",
-               duplicates = ["duplicates_removed"],
-               frac = "0.1",
-               unit = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
-               qual = QUALITY,
-               suffix = ["bam", "bam.bai"])
+               duplicates = ["duplicates_removed", "duplicates_marked"],
+               qual=QUALITY,
+               sample = config["samples"][ASSAY][RUNID]),
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_duplicates_marked.png",
+               assayID = ASSAY,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               duplicates = ["duplicates_removed", "duplicates_marked"]),
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotCorrelation/{duplicates}/heatmap_SpearmanCorr_readCounts.{suffix}",
+               assayID = ASSAY,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               duplicates = ["duplicates_removed", "duplicates_marked"],
+               suffix = ["png", "tab"]),
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotPCA/{duplicates}/PCA_readCounts.png",
+               assayID = ASSAY,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               duplicates = ["duplicates_removed", "duplicates_marked"]),
+        expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_duplicates_marked.png",
+               assayID = ASSAY,
+               runID = RUNID,
+               outdir = OUTDIR,
+               reference_version = REFVERSION,
+               duplicates = ["duplicates_removed", "duplicates_marked"])
+
+include: include_prefix + "perform_cutadapt.py"
+include: include_prefix + "bam_processing.py"
+include: include_prefix + "run_bowtie2.py"
+#include: include_prefix + "run_deepTools.py"
+include: include_prefix + "run_deepTools_QC.py"
+
+#include:
+#    include_prefix + "pooled_replicates_processing.py"
 
 
-# rule deepTools_QC:
-#     input:
-#         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotCorrelation/{duplicates}/heatmap_SpearmanCorr_readCounts.{suffix}",
-#                assayID = ASSAYID,
-#                runID = RUNID,
-#                outdir = OUTDIR,
-#                reference_version = REFVERSION,
-#                duplicates = ["duplicates_marked", "duplicates_removed"],
-#                suffix = ["png", "tab"]),
-#         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotPCA/{duplicates}/PCA_readCounts.png",
-#                assayID = ASSAYID,
-#                runID = RUNID,
-#                outdir = OUTDIR,
-#                reference_version = REFVERSION,
-#                duplicates = ["duplicates_marked", "duplicates_removed"]),
-#         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_{duplicates}.png",
-#                assayID = ASSAYID,
-#                runID = RUNID,
-#                outdir = OUTDIR,
-#                reference_version = REFVERSION,
-#                duplicates = ["duplicates_marked", "duplicates_removed"]),
-#         expand("{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_{duplicates}.png",
-#                assayID = ASSAYID,
-#                runID = RUNID,
-#                outdir = OUTDIR,
-#                reference_version = REFVERSION,
-#                duplicates = ["duplicates_marked", "duplicates_removed"])
+
 
 # rule run_computeMatrix_pooled_replicates:
 #     input:

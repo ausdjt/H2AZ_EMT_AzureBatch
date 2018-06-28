@@ -12,26 +12,25 @@ For usage, include this in your workflow.
 """
 
 # import other packages
-import os
-import fnmatch
-from snakemake.exceptions import MissingInputException
+#import os
+#import fnmatch
+#from snakemake.exceptions import MissingInputException
 
 # set some local variables
-home = os.environ['HOME']
+#home = os.environ['HOME']
 
-rule:
-    version: 0.1
+#rule:    version: 0.1
 
 # rules
 rule bam_quality_filter:
     params:
         qual = config["alignment_quality"]
     input:
-        rules.bowtie2_pe.output
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{sample}.bam"
     output:
-        temp("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/quality_filtered/{sample}.Q{qual}.bam")
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/quality_filtered/{sample}.Q{qual}.bam"
     shell:
-        "samtools view -b -h -q {params.qual} {input} > {output}"
+        "/home/apps/samtools/samtools view -b -h -q {params.qual} {input} > {output}"
 
 rule bam_sort:
     params:
@@ -42,17 +41,17 @@ rule bam_sort:
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/sorted/{sample}.Q{qual}.sorted.bam"
     shell:
-        "samtools sort -@ {params.threads} {input} -T {wildcards.sample}.Q{params.qual}.sorted -o {output}"
+        "/home/apps/samtools/samtools sort -@ {params.threads} {input} -T {wildcards.sample}.Q{params.qual}.sorted -o {output}"
 
 rule bam_mark_duplicates:
     params:
         qual = config["alignment_quality"],
-        picard = home + config["picard"],
+        picard = config["picard"],
         temp = home + config["temp_dir"]
     input:
         rules.bam_sort.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{sample}.Q{qual}.sorted.bam")
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{sample}.Q{qual}.sorted.bam"
     shell:
         """
             java -Djava.io.tmpdir={params.temp} \
@@ -70,17 +69,17 @@ rule bam_index:
     input:
         rules.bam_mark_duplicates.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{sample}.Q{qual}.sorted.bam.bai")
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_marked/{sample}.Q{qual}.sorted.bam.bai"
     shell:
-        "samtools index {input} {output}"
+        "/home/apps/samtools/samtools index {input} {output}"
 
 rule bam_rmdup:
     input:
         rules.bam_mark_duplicates.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{sample}.Q{qual}.sorted.bam")
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{sample}.Q{qual}.sorted.bam"
     shell:
-        "samtools rmdup {input} {output}"
+        "cat {input}> {output}"
 
 rule bam_rmdup_index:
     params:
@@ -88,41 +87,6 @@ rule bam_rmdup_index:
     input:
         rules.bam_rmdup.output
     output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{sample}.Q{qual}.sorted.bam.bai")
+        "{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/{sample}.Q{qual}.sorted.bam.bai"
     shell:
-        "samtools index {input} {output}"
-
-rule bam_dedup_subsample:
-    threads:
-        8
-    params:
-        qual = config["alignment_quality"],
-        seed = 1234,
-    input:
-        rules.bam_rmdup.output
-    output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.sorted.bam")
-    shell:
-        """
-            sambamba view --format=bam\
-                          --subsample={wildcards.frac}\
-                          --subsampling-seed={params.seed}\
-                          --nthreads={threads}\
-                          {input} > {output}
-        """
-
-rule bam_dedup_subsample_index:
-    threads:
-        8
-    params:
-        qual = config["alignment_quality"],
-        seed = 1234,
-    input:
-        rules.bam_dedup_subsample.output
-    output:
-        protected("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/duplicates_removed/subsampled/{frac}/{sample}.Q{qual}.sorted.bam.bai")
-    shell:
-        """
-            sambamba index --nthreads={threads}\
-                           {input} {output}
-        """
+        "/home/apps/samtools/samtools index {input} {output}"

@@ -5,8 +5,8 @@ __date__ = "2017-01-11"
 # vim: syntax=python tabstop=4 expandtab
 # coding: utf-8
 
-from snakemake.exceptions import MissingInputException
-import os
+#from snakemake.exceptions import MissingInputException
+#import os
 
 """
 Rules for running deepTools QC/QC on ChIP-Seq data
@@ -17,28 +17,27 @@ rule multiBamSummary:
     version:
         0.2
     params:
-        deepTools_dir = home + config["deepTools_dir"],
+        dthreads = config["program_parameters"]["deepTools"]["threads"],
+        deepTools_dir = config["deepTools_dir"],
         binSize = config["program_parameters"]["deepTools"]["binSize"],
         labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"][wildcards.assayID][wildcards.runID].keys())
-    threads:
-        24
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{duplicates}/{sample}.Q{qual}.sorted.{suffix}",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+               assayID = ASSAY,
+               runID = RUNID,
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
                duplicates = ["duplicates_marked", "duplicates_removed"],
-               sample = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
+               sample = config["samples"][ASSAY][RUNID],
                qual = config["alignment_quality"],
-               suffix = ".bam")
+               suffix = "bam")
     output:
         npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/{duplicates}/results.npz"
     shell:
         """
             {params.deepTools_dir}/multiBamSummary bins --bamfiles {input} \
                                                         --labels {params.labels} \
-                                                        --numberOfProcessors {threads} \
+                                                        --numberOfProcessors {params.dthreads} \
                                                         --centerReads \
                                                         --binSize {params.binSize} \
                                                         --outFileName {output.npz}
@@ -46,7 +45,7 @@ rule multiBamSummary:
 
 rule plotCorrelation_heatmap:
     params:
-        deepTools_dir = home + config["deepTools_dir"],
+        deepTools_dir = config["deepTools_dir"],
         plotTitle = lambda wildcards: "Correlation heatmap - " + wildcards.duplicates
     input:
         npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/{duplicates}/results.npz"
@@ -68,7 +67,7 @@ rule plotCorrelation_heatmap:
 
 rule plotPCA:
     params:
-        deepTools_dir = home + config["deepTools_dir"],
+        deepTools_dir = config["deepTools_dir"],
         plotTitle = lambda wildcards: "PCA - " + wildcards.duplicates
     input:
         npz = "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/multiBamSummary/{duplicates}/results.npz"
@@ -83,53 +82,52 @@ rule plotPCA:
 
 rule bamPEFragmentSize:
     params:
-        deepTools_dir = home + config["deepTools_dir"],
-        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"][wildcards.assayID][wildcards.runID].keys())
-    threads:
-        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+        deepTools_dir = config["deepTools_dir"],
+        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"][wildcards.assayID][wildcards.runID].keys()),
+        dthreads = config["program_parameters"]["deepTools"]["threads"]
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{duplicates}/{sample}.Q{qual}.sorted.{suffix}",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+               assayID = ASSAY,
+               runID = RUNID,
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
                duplicates = ["duplicates_marked", "duplicates_removed"],
-               sample = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
+               sample = config["samples"][ASSAY][RUNID],
                qual = config["alignment_quality"],
-               suffix = ".bam")
+               suffix = "bam")
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/bamPEFragmentSize/{duplicates}/histogram_duplicates_marked.png"
     shell:
         """
             {params.deepTools_dir}/bamPEFragmentSize --bamfiles {input} \
                                                      --samplesLabel {params.labels} \
-                                                     --numberOfProcessors {threads} \
+                                                     --numberOfProcessors {params.dthreads} \
                                                      --histogram {output}
         """
 
 rule plotFingerprint:
     params:
-        deepTools_dir = home + config["deepTools_dir"],
+        deepTools_dir = config["deepTools_dir"],
         plotTitle = lambda wildcards: "BAM PE " + wildcards.duplicates + " fingerprint",
-        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"][wildcards.assayID][wildcards.runID].keys())
-    threads:
-        lambda wildcards: int(str(config["program_parameters"]["deepTools"]["threads"]).strip("['']"))
+        labels = lambda wildcards: ' '.join("{!s}".format(key) for (key) in config["samples"][wildcards.assayID][wildcards.runID].keys()),
+        dthreads = config["program_parameters"]["deepTools"]["threads"]
+
     input:
         expand("{assayID}/{runID}/{outdir}/{reference_version}/bowtie2/{duplicates}/{sample}.Q{qual}.sorted.{suffix}",
-               assayID = "ChIP-Seq",
-               runID = "NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq",
+               assayID = ASSAY,
+               runID = RUNID,
                outdir = config["processed_dir"],
                reference_version = config["references"]["CanFam3.1"]["version"][0],
                duplicates = ["duplicates_marked", "duplicates_removed"],
-               sample = config["samples"]["ChIP-Seq"]["NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq"],
+               sample = config["samples"][ASSAY][RUNID],
                qual = config["alignment_quality"],
-               suffix = ".bam")
+               suffix = "bam")
     output:
         "{assayID}/{runID}/{outdir}/{reference_version}/deepTools/plotFingerprint/{duplicates}/fingerprints_duplicates_marked.png"
     shell:
         """
             {params.deepTools_dir}/plotFingerprint --bamfiles {input} \
-                                                   --numberOfProcessors {threads} \
+                                                   --numberOfProcessors {params.dthreads} \
                                                    --centerReads \
                                                    --plotTitle "{params.plotTitle}" \
                                                    --labels {params.labels} \
