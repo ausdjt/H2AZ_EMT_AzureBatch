@@ -148,34 +148,6 @@ https://github.com/JCSMR-Tremethick-Lab/H2AZ_EMT/tree/azure_migration
 The tools used in the sample were added to a custom Docker image and stored in an Azure Container Registry Account. For a full description on how the Docker container was built see the [Sample Snakemake Pipeline](docs/snakemake.md) section.
 
 
-#### Snakemake Control Files ####
-
-The example Snakemake uses 3 main control files to set and run the workflow. Only minor modifications are needed to run these on Azure Batch ie. where the analysis tools are located in the Docker image and the location of the shared file system. These modifications are detailed in a following section. The 3 control files are:
-
-1. A control list of the samples to be analysed (sampleSheet.tsv)
-
-![snakemakeflow](images/snakemakesamplesheet.png)
-
-2. The configuration control script for the variables used in the workflow (tsv2yaml.sh). This script generates a 'config.yaml' file used in the Snakemake workflow.
-
-![snakemakeflow](images/snakemakeconfig.png)
-
-3. The Snakemake workflow file that contains the rules to be executed (snakefile.py)
-
-![snakemakeflow](images/snakemakeworkflow.png)
-
-The process to run the Snakemake is to update the 'config.yaml' file by running the tsv2yaml.sh script, and then to execute Snakemake with the workflow file eg:
-
-~~~~
-./tsv2yaml.sh sampleSheet.tsv
-snakemake  -s snakefile.py
-~~~~
-
-
-![snakemakeflow](images/snakemakeflow.png)
-
-
-
 ### Running the Snakemake sample on Azure Batch ###
 
 #### Batch Architecture ####
@@ -188,92 +160,25 @@ _Architecture Overview_
 
 #### Running the sample ####
 
-SSH to the Server: hpcuoasnakemakevm.australiasoutheast.cloudapp.azure.com
+SSH to the Server: hpcanuvm.australiasoutheast.cloudapp.azure.com
 
 Start the Snakemake Azure Batch Pool:
 
 ~~~~
-$SHIPYARD/shipyard pool add --configdir $FILESHARE/RNAseq_snakemake-masterAll/azurebatch/rnaseqall
+$SHIPYARD/shipyard pool add --configdir $FILESHARE/azurebatch
 ~~~~
 
 Run Snakemake Job:
 
 ~~~~
-$SHIPYARD/shipyard jobs add --configdir $FILESHARE/RNAseq_snakemake-masterAll/azurebatch/rnaseqall -v --tail stderr.txt
+$SHIPYARD/shipyard jobs add --configdir $FILESHARE/azurebatch -v --tail stderr.txt
 ~~~~
 
 Example Snakemake output streamed to the control node:
 
 ![snakemakerunning](images/snakemakerunning.png)
 
-Examining the output from the analysis steps:
-
-![overview](images/snakemakeoutput.png)
-
 For a detailed explanation of the full workflow and setup configuration open the [Sample Snakemake Pipeline](docs/snakemake.md).
-
-
-
-
-##  Sample Open Foam Project ##
-
-## Objectives ##
-
-1. To execute an example research OpenFOAM project running on Azure Batch using Batch-Shipyard to manage the pools, jobs and tasks.
-
-2. Use of a Standard OpenFOAM Docker image in a multi-machine cluster configuration.
-
-3. Usage of a shared Azure file storage system as well as a clustered fileserver to manage inputs/outputs and the OpenFOAM run.
-
-## OpenFOAM Execution ##
-
-The sample provided for the OpenFOAM component was relatively large with the data and mesh files totalling around 70+ Gb in size. The initial step in the OpenFoam sample involves running 'blockMesh' on the 'blockMeshDict' definition. This first step is a 'single processor' only step and typically takes 1-2 days (consulted with Anton Silvestri around how long this usually takes on the UoA cluster).
-
-After the initial setup several unsuccessful runs were attempted to complete this first step. The 'blockMesh' step is memory dependant and the choice of the VM size is critical (but an unknown with the blockMesh provided in the sample). The first run failed to complete with a 16G VM machine. The 2nd run was with a larger memory size (40G memory) but did not complete within the allocated time for the POC. Although running the sample was not completed for the POC we did manage to to demonstrate the initial step of the provided sample being run on Azure Batch.
-
-![openfoamtime](images/openfoamtime.png)
-
-_Monitoring the initial blockMesh_
-
-### OpenFOAM using the piztDaily Sample ###
-
-To demostrate the end-end process of running an OpenFOAM project on Azure Batch the 'piztDaily' OpenFOAM sample was setup. We wanted to show OpenFOAM running in in a clustered Azure Batch environment and the configuration required so that UoA could use the template.
-
-#### Batch Architecture ####
-
-The architecture uses 2 clustered VM's with 'inter-node' communication enabled and a shared file system containing the OpenFOAM control files. The number of nodes and size of the compute VM's can be configured based on the requirements of the analysis. For the sample 2 smaller VM types were chosen.
-
-![openfoamtime](images/overviewopenfoam.png)
-
-_OpenFOAM Architecture_
-
-The [*pitzDaily*](https://github.com/OpenFOAM/OpenFOAM-2.3.x/tree/master/tutorials/incompressible/pimpleFoam/pitzDaily) sample and was chosen to as closely as possible match the process flow in the UoA sample.
-
-### Runing the sample ###
-
-SSH to VM: hpcuoaopenfoamvm.australiasoutheast.cloudapp.azure.com
-
-Start the Azure Batch OpenFOAM pool:
-
-~~~~
-$SHIPYARD/shipyard pool add --configdir $FILESHARE/azurebatch/openfoam
-~~~~
-
-Run the OpenFOAM Job:
-
-~~~~
-$SHIPYARD/shipyard jobs add --configdir $FILESHARE/azurebatch/openfoam -v --tail stdout.txt
-~~~~
-
-The output from the OpenFOAM run is displayed to the control VM.
-
-![Architecture](images/openrun.png)
-
-ParaView was installed on the control VM to allow the viewing of results:
-
-![paraview](images/paraview.png)
-
-For a detailed explanation of the full setup configuration open the [Sample OpenFOAM sample](docs/openfoam.md).
 
 
 ## Deploy Remote Visualisation ##

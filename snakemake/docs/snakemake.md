@@ -4,13 +4,19 @@
 
 ### Overview ###
 
-The sample Snakemake is sourced from the UoA Bioinformatics Hub GitHub repository and involves several types of tool analysis of RNA sequence data. Each step outputs analysis of the specified data based on the tools used. The data used in the example was sourced from the [*EBI*](https://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-2836/samples/?full=true&s_page=5&s_pagesize=25&s_sortby=col_32&s_sortorder=ascending) archives for E-MTAB-2836: 'RNA-seq of coding RNA from tissue samples of 122 human individuals representing 32 different tissues'. 
+The sample Snakemake is sourced from the Department of Genome Science GitHub repository and involves several types of tool analysis of RNA-Seq and ChIP-Seq sequence data. Each step outputs analysis of the specified data based on the tools used. The data used in the example was sourced from the ANU research respositories:
 
-The original Snakemake project can be seen at the UoA Bioinformatics GitHub reference: 
+RNA-seq of TGF-beta and knockdown of histone variant H2A.Z induced EMT in MDCK cells.
 
-https://github.com/UofABioinformaticsHub/RNAseq_snakemake/tree/jimmy_branch
+RNA-Seq https://www.ebi.ac.uk/ena/data/view/PRJEB20155
 
-A custom Docker container was built to match the required tools used in the Snakemake workflow and stored in an Azure Container Registry. 
+Epigenomic changes associated with TGF-beta induced EMT in MDCK cells.
+
+ChIP-Seq https://www.ebi.ac.uk/ena/data/view/PRJEB20256
+
+The original Snakemake project can be found at the Department of Genome Science GitHub reference:
+
+https://github.com/JCSMR-Tremethick-Lab/H2AZ_EMT/tree/azure_migration
 
 *Docker container used*
 
@@ -21,7 +27,7 @@ FROM ubuntu:16.04
 RUN apt-get clean
 RUN apt-get update 
 
- # Install dependencies
+# Install dependancies
 RUN apt-get install -y --fix-missing --no-install-recommends \
 unzip \
 build-essential \
@@ -32,64 +38,63 @@ libncurses5-dev \
 zlib1g-dev \ 
 libbz2-dev \
 software-properties-common \
-debconf-utils
+debconf-utils \
+python-pip \
+python-numpy \
+python-matplotlib \
+python-pysam \
+python-htseq
 
- # Add Java support
+# Add Java support
 RUN add-apt-repository ppa:webupd8team/java
 RUN apt-get update 
 RUN echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections
 RUN apt-get install -y oracle-java8-set-default
 
- # Folder for tools
+# Folder for tools
 RUN mkdir /home/apps
 
- # Add adapterremoval-2.1.7 - build from source
-RUN wget --no-check-certificate -O /home/apps/adapterremoval-2.1.7.tar.gz https://github.com/MikkelSchubert/adapterremoval/archive/v2.1.7.tar.gz
-RUN cd /home/apps ; tar xvzf adapterremoval-2.1.7.tar.gz ; cd adapterremoval-2.1.7 ; make
+# Add kallisto 
+RUN wget --no-check-certificate -O /home/apps/kallisto_linux-v0.44.0.tar.gz https://github.com/pachterlab/kallisto/releases/download/v0.44.0/kallisto_linux-v0.44.0.tar.gz
+RUN cd /home/apps ; tar zxvf kallisto_linux-v0.44.0.tar.gz ; mv kallisto_linux-v0.44.0 kallisto_v0.44.0
 
- # Add subread-1.6.0 - build from source
-RUN wget --no-check-certificate -O /home/apps/subread-1.6.0-source.tar.gz https://nchc.dl.sourceforge.net/project/subread/subread-1.6.0/subread-1.6.0-source.tar.gz
-RUN cd /home/apps ; tar zxvf subread-1.6.0-source.tar.gz ; cd subread-1.6.0-source/src ; make -f Makefile.Linux
-
- # Add stringtie-1.3.3b - use binary version
-RUN wget --no-check-certificate -O /home/apps/stringtie-1.3.3b.Linux_x86_64.tar.gz http://ccb.jhu.edu/software/stringtie/dl/stringtie-1.3.3b.Linux_x86_64.tar.gz
-RUN cd /home/apps ; tar zxvf stringtie-1.3.3b.Linux_x86_64.tar.gz ; mv stringtie-1.3.3b.Linux_x86_64 stringtie-1.3.3b 
-
- # Add Salmon-0.9.1 - use binary version
-RUN wget --no-check-certificate -O /home/apps/Salmon-0.9.1_linux_x86_64.tar.gz https://github.com/COMBINE-lab/salmon/releases/download/v0.9.1/Salmon-0.9.1_linux_x86_64.tar.gz
-RUN cd /home/apps ; tar zxvf Salmon-0.9.1_linux_x86_64.tar.gz ; 
-
- # Add hisat2-2.1.0 - use binary version
-RUN wget --no-check-certificate -O /home/apps/hisat2-2.1.0-Linux_x86_64.zip ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-2.1.0-Linux_x86_64.zip
-RUN cd /home/apps ; unzip hisat2-2.1.0-Linux_x86_64.zip; 
-
- # Add sambamba_v0.6.7 - use binary version
-RUN mkdir /home/apps/sambamba_v0.6.7
-RUN wget --no-check-certificate -O /home/apps/sambamba_v0.6.7/sambamba_v0.6.7_linux.tar.bz2 https://github.com/biod/sambamba/releases/download/v0.6.7/sambamba_v0.6.7_linux.tar.bz2
-RUN cd /home/apps/sambamba_v0.6.7 ; tar xvjf sambamba_v0.6.7_linux.tar.bz2
-
- # Add sambamba_v0.6.7 - use binary version
-RUN wget --no-check-certificate -O /home/apps/kallisto_linux-v0.43.1.tar.gz https://github.com/pachterlab/kallisto/releases/download/v0.43.1/kallisto_linux-v0.43.1.tar.gz
-RUN cd /home/apps ; tar zxvf kallisto_linux-v0.43.1.tar.gz ; mv kallisto_linux-v0.43.1 kallisto_v0.43.1
-
- # Add picard 2.17.2
+# Add picard 
 RUN mkdir /home/apps/picard
-RUN wget --no-check-certificate -O /home/apps/picard/picard.jar https://github.com/broadinstitute/picard/releases/download/2.17.2/picard.jar
-
- # Add fastqc 0.11.7
-RUN wget --no-check-certificate -O /home/apps/fastqc_v0.11.7.zip https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.7.zip
-RUN cd /home/apps ; unzip fastqc_v0.11.7.zip; 
+RUN wget --no-check-certificate -O /home/apps/picard/picard.jar https://github.com/broadinstitute/picard/releases/download/2.18.7/picard.jar
 
 RUN apt-get install -y --fix-missing --no-install-recommends liblzma-dev
 
- # Add Samtools-1.3.1
-RUN wget --no-check-certificate  -O /home/apps/samtools-1.6.tar.bz2 https://github.com/samtools/samtools/releases/download/1.6/samtools-1.6.tar.bz2
-RUN cd /home/apps ; bunzip2 samtools-1.6.tar.bz2 ; tar -xvf samtools-1.6.tar ; cd samtools-1.6 ; ./configure ; make ; make install
+# Add Samtools
+RUN wget --no-check-certificate  -O /home/apps/samtools-1.8.tar.bz2 https://github.com/samtools/samtools/releases/download/1.8/samtools-1.8.tar.bz2
+RUN cd /home/apps ; bunzip2 samtools-1.8.tar.bz2 ; tar -xvf samtools-1.8.tar ; cd samtools-1.8 ; ./configure ; make ; make install
 
-RUN cd /home/apps ; rm *.tar* ; rm *.zip
+# Add Bowtie
+RUN wget --no-check-certificate  -O /home/apps/bowtie2-2.3.4.1-linux-x86_64.zip https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.3.4.1/bowtie2-2.3.4.1-linux-x86_64.zip/download
+RUN cd /home/apps ; unzip bowtie2-2.3.4.1-linux-x86_64.zip; 
 
+# upgrade pip
+RUN pip install --upgrade pip
+
+# Add cutadapt
+RUN apt-get install -y --fix-missing --no-install-recommends python-setuptools
+RUN pip install cutadapt
+
+# Add deeptools
+RUN apt-get install -y --fix-missing --no-install-recommends git
+RUN cd /home/apps ; git clone https://github.com/deeptools/deepTools ; cd /home/apps/deepTools ; python setup.py install
+
+# Add STAR
+RUN wget --no-check-certificate  -O /home/apps/2.6.0a.tar.gz https://github.com/alexdobin/STAR/archive/2.6.0a.tar.gz
+RUN cd /home/apps ; tar zxvf 2.6.0a.tar.gz ; cd STAR-2.6.0a/source ; make STAR
+
+
+# Add Snakemake
 RUN apt-get install -y --fix-missing --no-install-recommends snakemake
-RUN cd /home/apps/FastQC ; chmod +x fastqc; sed -i 's/-Xmx250m/-Xmx5G/g' /home/apps/FastQC/fastqc
+RUN cd /home/apps ; rm *.tar* ; rm *.zip
+RUN cd /home/apps ; mv STAR-2.6.0a STAR ; mv bowtie2-2.3.4.1-linux-x86_64 bowtie2; mv kallisto_v0.44.0 kallisto ; mv samtools-1.8 samtools
+RUN echo 'PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/apps"' > /etc/environment
+
+
 
 ~~~~
 
@@ -102,7 +107,7 @@ To execute the sample you will need to login to the example VM server using [PuT
 In a Windows command prompt enter:
 
 ````
-putty hpcuoasnakemakevm.australiasoutheast.cloudapp.azure.com
+putty hpcanuvm.australiasoutheast.cloudapp.azure.com
 ````
 
 ![PuttyLogin](../images/puttylogin.png)
@@ -118,7 +123,7 @@ Password: <passwordhere>
 Change to the sample folder on the VM
 
 ````
-cd $FILESHARE/RNAseq_snakemake-masterAll
+cd $FILESHARE/share
 ls -la
 ````
 
@@ -126,46 +131,27 @@ The folder structure of the example:
 
 ````
 azurebatch - contains the Azure Batch-shipyard configuration scripts
-data - input data to be processed
-jobrunall.sh - shell script used in the Azure Batch job
-.snakefile - folder managed by Snakemake (control files)
-snakefile.py - the Snakemake workflow file
-tsv2yaml.sh - configuration script to generate the config.yaml file
-config.yaml - the location of the files and tools needed
-cleanup.sh - removes the Snakemake results so a clean run can be performed
+Docker - contains the docker file setup to run on Batch
 ````
 
 Firstly we need to setup the Azure Batch pools to run the jobs on. Execute the following command to setup the Azure Batch pools that we 
 will need, and wait for the compute nodes to start up.
 
 ````
-$SHIPYARD/shipyard pool add --configdir $FILESHARE/RNAseq_snakemake-masterAll/azurebatch/rnaseqall
+$SHIPYARD/shipyard pool add --configdir $FILESHARE/azurebatch
 ````
 
 ![runexample](../images/poolready.png)
 
 The node will be ready when the pool configuration is complete. Once the pool is up and running, Azure Batch is ready to execute jobs. 
 
-The 'cleanup' script removes the Snakemake outputs so a fresh run can be performed. If Snakemake detects that the outputs already exist then it will not run the workflow:
-
-````
-./cleanup.sh
-````
-
 To run the Snakemake job on Azure Batch start the job using:
 
 ~~~~
-$SHIPYARD/shipyard jobs add --configdir $FILESHARE/RNAseq_snakemake-masterAll/azurebatch/rnaseqall -v --tail stderr.txt
+$SHIPYARD/shipyard jobs add --configdir $FILESHARE/azurebatch -v --tail stderr.txt
 ~~~~
 
 ![runexample](../images/snakemakerunning.png)
-
-
-### Viewing the Results ### 
-
-The output of the Snakemake can be view in the data folders. 
-
-![runexample](../images/snakemakeoutput.png)
 
 
 
@@ -174,9 +160,7 @@ The output of the Snakemake can be view in the data folders.
 After the job is complete remove the jobs and pools - enter 'y' when prompted. This removes the resources being used by Azure Batch.
 
 ~~~~
-$SHIPYARD/shipyard jobs del --configdir $FILESHARE/RNAseq_snakemake-masterAll/azurebatch/rnaseqall  --all-jobs
-
-$SHIPYARD/shipyard pool del --configdir $FILESHARE/RNAseq_snakemake-masterAll/azurebatch/rnaseqall
+$SHIPYARD/shipyard pool del --configdir $FILESHARE/azurebatch
 ~~~~
 
 <a name="Config"></a>
@@ -188,28 +172,12 @@ Instead of executing the commands locally the batch shipyard job runs the snakem
 
 ~~~~
 ...
-    shell:
-         echo "#!/usr/bin/env bash
-         cd $FILESHARE/RNAseq_snakemake-master
+   #!/usr/bin/env bash
+cd /data
+snakemake --latency-wait 60 --snakefile ./Development/H2AZ_EMT/snakemake/workflows/MDCK_RNA-Seq.py --configfile ./Development/H2AZ_EMT/snakemake/configs/config.json --config ASSAY=RNA-Seq RUNID=NB501086_0082_RDomaschenz_JCSMR_mRNAseq WORKFLOWDIR=Development --jobs -pr
 
 
-~~~~
-
-As the snakemake will be running in the Docker image paths to the tools used need to match the ones setup in the Docker image eg: in the tsv2yaml.sh file modify the paths to match the Docker paths.
-
-~~~~
-AdapterRemoval: '/home/apps/adapterremoval-2.1.7/build/AdapterRemoval'
-featurecounts: '/home/apps/subread-1.6.0-source/bin/featureCounts'
-stringtie: '/home/apps/stringtie-1.3.3b/stringtie'
-salmon: '/home/apps/Salmon-latest_linux_x86_64/bin/salmon'
-hisat2: '/home/apps/hisat2-2.1.0/hisat2'
-sambamba: '/home/apps/sambamba_v0.6.7/sambamba'
-picard: '/home/apps/picard/picard.jar'
-kallisto: '/home/apps/kallisto_v0.43.1/kallisto'
-fastqc: '/home/apps/FastQC/fastqc'
-~~~~
-
-### Azure Batch Cobfiguration ###
+### Azure Batch Configuration ###
 
 The Batch-Shipyard configuration files are located in the 'azurebatch' folder.
 
