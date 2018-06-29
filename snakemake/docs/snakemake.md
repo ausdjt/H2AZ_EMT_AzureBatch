@@ -175,6 +175,7 @@ Instead of executing the commands locally the batch shipyard job runs the snakem
    #!/usr/bin/env bash
 cd /data
 snakemake --latency-wait 60 --snakefile ./Development/H2AZ_EMT/snakemake/workflows/MDCK_RNA-Seq.py --configfile ./Development/H2AZ_EMT/snakemake/configs/config.json --config ASSAY=RNA-Seq RUNID=NB501086_0082_RDomaschenz_JCSMR_mRNAseq WORKFLOWDIR=Development --jobs -pr
+~~~~
 
 
 ### Azure Batch Configuration ###
@@ -201,12 +202,11 @@ global_resources:
         container_path: /data
         mount_options: []
         bind_options: rw
-
 ````
 
 *jobs.yaml*
 
-This is the definition of each job to be run. In this case it uses the Docker image we have created: hpcuoadocker.azurecr.io/rnaseq:latest
+This is the definition of each job to be run. In this case it uses the Docker image we have created: hpcuoadocker.azurecr.io/anu:latest
 
 ````
 job_specifications:
@@ -220,14 +220,14 @@ job_specifications:
     - docker_image: hpcanudocker.azurecr.io/anu:latest
       shared_data_volumes:
       - mystoragecluster
-      command: /data/jobrun.shh
+      command: /data/jobrun.sh
 ````
 
 *pools.yaml*
 
 Overall pool configuration. This defines the compute VM size that will be used when running the docker image for jobs.
 
-The VM sizing for the compute is this example is using a basic sized VM 'Standard_D1'. Different sized VM's can be specified based on the required task.
+The VM sizing for the compute is this example is using a basic sized VM 'Standard_E2'. Different sized VM's can be specified based on the required task.
 
 ````
 pool_specification:
