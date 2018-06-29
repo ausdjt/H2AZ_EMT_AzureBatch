@@ -1,0 +1,55 @@
+remote_fs:
+  resource_group: hpcanusnakemake
+  location: australiasoutheast
+  managed_disks:
+    premium: false
+    disk_size_gb: 1024
+    disk_names:
+    - E30-disk0a
+    - E30-disk1a
+    - E30-disk2a
+  storage_clusters:
+    mystoragecluster:
+      hostname_prefix: hpcanusnakemakesc
+      ssh:
+        username: shipyard
+      file_server:
+        mount_options:
+        - noatime
+        - nodiratime
+        mountpoint: /data
+        type: nfs
+        samba:
+          share_name: data
+          account:
+            username: youruser
+            password: yourpassword
+            uid: 1001
+            gid: 1001
+          read_only: false
+          create_mask: '0777'
+          directory_mask: '0777'
+      network_security:
+        ssh:
+        - '*'
+      virtual_network:
+        address_space: 10.0.0.0/16
+        existing_ok: true
+        name: hpcanusnakemakescvnet
+        subnet:
+          address_prefix: 10.0.0.0/24
+          name: hpcanusnakemakesc-server-subnet
+      public_ip:
+        enabled: true
+        static: false
+      vm_count: 1
+      vm_size: Standard_F2s
+      vm_disk_map:
+        '0':
+          disk_array:
+          - E30-disk0a
+          - E30-disk1a
+          - E30-disk2a
+          filesystem: btrfs
+          raid_level: 0
+          

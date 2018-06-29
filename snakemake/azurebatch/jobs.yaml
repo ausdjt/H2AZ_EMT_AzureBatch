@@ -1,0 +1,12 @@
+job_specifications:
+  - id: snakemake
+    auto_complete: true
+    user_identity:
+      specific_user:
+        gid: 1001
+        uid: 1001
+    tasks:
+    - docker_image: hpcanudocker.azurecr.io/anu:latest
+      shared_data_volumes:
+      - mystoragecluster
+      command: /data/jobrun.sh

@@ -1,0 +1,16 @@
+batch_shipyard:
+  storage_account_settings: mystorageaccount
+global_resources:
+  additional_registries:
+    docker:
+    - hpcanudocker.azurecr.io
+  docker_images:
+  - hpcanudocker.azurecr.io/anu:latest
+  volumes:
+    shared_data_volumes:
+      mystoragecluster:
+        volume_driver: storage_cluster
+        container_path: /data
+        mount_options: []
+        bind_options: rw
+

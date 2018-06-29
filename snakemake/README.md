@@ -31,7 +31,7 @@ Deploy a GPU machine, install VMD and install the Teradici agent to allow remote
 
 Install and configure Azure Dev-Test Labs, Azure Batch Labs, and demonstrate use of Resource Groups and Tagging. 
 
-5. [Configure Data Sharing scenario ](#configure-sharing) 
+5. [Configure Data Sharing scenario](#configure-sharing) 
 
 Set up example of ability to share Data and R/Shiny Applications 
 
@@ -80,7 +80,7 @@ The full VM list and detailed specification can be found on Azure:
 
 https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes
 
-BizData have created a [**PowerBI**](https://app.powerbi.com/view?r=eyJrIjoiZmU2MWQzZmMtMmZmMy00ZjMwLWFmYTktZWUyNDgwOGIwOGUxIiwidCI6Ijg0ODkyYTJmLTY0OWQtNGY4Yi05ZDdkLWY0NTBlNWQ5Y2FkNSIsImMiOjEwfQ%3D%3D) calculator to assist with calculating the cost and choice of pool sizing.
+BizData has created a [**PowerBI**](https://app.powerbi.com/view?r=eyJrIjoiZmU2MWQzZmMtMmZmMy00ZjMwLWFmYTktZWUyNDgwOGIwOGUxIiwidCI6Ijg0ODkyYTJmLTY0OWQtNGY4Yi05ZDdkLWY0NTBlNWQ5Y2FkNSIsImMiOjEwfQ%3D%3D) calculator to assist with calculating the cost and choice of pool sizing.
 
 ## Sample Snakemake Pipeline ##
 
@@ -121,7 +121,7 @@ Typically workflows are executed on a single machine and can utilise only the av
 
 1. To execute an example research Snakemake workflow running on Azure Batch using Batch-Shipyard to manage the pools, jobs and tasks.
 
-2. Use of a custom Docker images stored in a private Azure Container Registry. The Docker image contains the required tools to be used in the workflow.
+2. Use of a custom Docker image stored in a private Azure Container Registry. The Docker image contains the required tools to be used in the workflow.
 
 3. Usage of a shared Azure file clustered storage system to manage inputs/outputs and the Snakemake workflow control files.
 
@@ -224,7 +224,7 @@ Install and configure Azure Dev-Test Labs, Azure Batch Labs, and demonstrate use
 ### Resource Tagging ###
 
 
-Tags can be applied to Azure resources to logically organize them by categories. Each tag consists of a name and a value. For example, you can apply the name "HPC Usage" and the value "OpenFOAM" to all the resources used in the OpenFOAM sample. Without this tag there can be difficulty identifying what a resource is used for. Names and values can be defined that make the most sense for organizing your subscription.
+Tags can be applied to Azure resources to logically organize them by categories. Each tag consists of a name and a value. For example, you can apply the name "HPC Usage" and the value "Snakemake" to all the resources used in the Snakemake sample. Without this tag there can be difficulty identifying what a resource is used for. Names and values can be defined that make the most sense for organizing your subscription.
 
 After you apply tags, you can retrieve all the resources in your subscription with that tag name and value. Tags enable you to retrieve related resources that reside in different resource groups. This approach is helpful when you need to organize resources for billing or management.
 
@@ -291,9 +291,34 @@ For the POC and example runbook was built to show the stopping of vm’s on sche
 
 ![auto](images/auto.png)
 
-To view the runbook open the 'hpcuoadmin' resource group and select the automation account, then 'Run Books' and 'Stop-Start-AzureVM':
+To view the runbook open the 'hpcanudmin' resource group and select the automation account, then 'Run Books' and 'Stop-Start-AzureVM':
 
 ![auto](images/auto2.png)
+
+
+## Configure Data Sharing scenario ##
+
+Placeholder from Ben
+
+1.	Install BI Portal into your Azure subscription, following the BI Portal Installation Guide
+2.	Spin up an Azure Web App in the same subscription and publish the Genomics API app.
+3.	(Set up security with Azure AD to this app) – not done yet
+4.	(In BI Portal) 
+a.	Configure an Asset Type for Blobs uploaded via the app. Save the Asset type and subtype names.
+b.	Create a Tile Layout for the app. Add a tile and orient it how it should be displayed.
+c.	Edit the tile. Copy the HTML for the app template into the code editor for the tile.
+d.	Configure the  BlobLoader initialising block:
+i.	apiUrl: the base url to the azure web app above
+ii.	assetType: the asset type name specified above
+iii.	assetSubType: as above.
+e.	Return to View Mode and refresh the page. The App should be ready to go.
+
+Additionally:
+5.	Configure an Asset Types for Shiny Apps. (You may have multiple sub types)
+6.	Register a Shiny App from the Register-BI-Asset screen (see cog in top right hand corner)
+
+Using the app is a matter of using the uploader to select the documents and pressing “Upload”. You will need to wait until you get a “Submit Succeeded” or “Submit Failed” message before the files have been uploaded. The ‘pacer.js’ progress bar (the yellow bar that obscures the page in all our Luna themed apps) doesn’t necessarily correlate to all the calls being made, especially if there is a chunked blob being uploaded. By this I mean that the bar will disappear and return the user to the page before all uploads have been done. This will need to be prettied up in the future. 
+
 
 ## Additional References ##
 

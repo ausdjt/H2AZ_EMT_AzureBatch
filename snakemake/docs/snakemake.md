@@ -191,19 +191,17 @@ batch_shipyard:
 global_resources:
   additional_registries:
     docker:
-    - hpcuoadocker.azurecr.io
+    - hpcanudocker.azurecr.io
   docker_images:
-  - hpcuoadocker.azurecr.io/rnaseq:latest
+  - hpcanudocker.azurecr.io/anu:latest
   volumes:
     shared_data_volumes:
-      sharedfiles:
-        volume_driver: azurefile
-        storage_account_settings: mystorageaccount
-        azure_file_share_name: fileshare
-        container_path: /home/hpcadmin/fileshare
-        mount_options:
-        - file_mode=0777
-        - dir_mode=0777
+      mystoragecluster:
+        volume_driver: storage_cluster
+        container_path: /data
+        mount_options: []
+        bind_options: rw
+
 ````
 
 *jobs.yaml*
@@ -212,12 +210,17 @@ This is the definition of each job to be run. In this case it uses the Docker im
 
 ````
 job_specifications:
-  - id: rnaseqjoball
+  - id: snakemake
+    auto_complete: true
+    user_identity:
+      specific_user:
+        gid: 1001
+        uid: 1001
     tasks:
-    - docker_image: hpcuoadocker.azurecr.io/rnaseq:latest
+    - docker_image: hpcanudocker.azurecr.io/anu:latest
       shared_data_volumes:
-      - sharedfiles
-      command: /home/hpcadmin/fileshare/RNAseq_snakemake-masterAll/jobrunall.sh
+      - mystoragecluster
+      command: /data/jobrun.shh
 ````
 
 *pools.yaml*
@@ -228,16 +231,24 @@ The VM sizing for the compute is this example is using a basic sized VM 'Standar
 
 ````
 pool_specification:
-  id: rnaseqpoolall
+  id: snakemake
+  virtual_network:
+    name: hpcanusnakemakescvnet
+    resource_group: hpcanusnakemake
+    address_space: 10.0.0.0/16
+    subnet:
+      name: hpcanusnakemakesc-server-subnet
+      address_prefix: 10.0.0.0/24
   vm_configuration:
     platform_image:
       offer: UbuntuServer
       publisher: Canonical
       sku: 16.04-LTS
   vm_count:
-    dedicated: 0
-    low_priority: 1
-  vm_size: Standard_D1
+    dedicated: 1
+    low_priority: 0
+  vm_size: Standard_E2_v3
+  inter_node_communication_enabled: false
   ssh:
     username: hpcadmin
 ````
@@ -249,19 +260,99 @@ User and logins needed to connect to the Azure resources.
 ~~~~
 credentials:
   batch:
-    account_key: batchkeyendingin==
-    account_service_url: https://hpcuoasnakemakebatch.australiasoutheast.batch.azure.com/
+    aad:
+      endpoint: https://batch.core.windows.net/
+      directory_id: aaddirectoryguidfromtheportal
+      user: username@yourtennant
+      password: abcpassword
+      token_cache:
+        enabled: true
+        filename: .aad_token_cache1
+    account_service_url: https://yourbatchaccount.australiasoutheast.batch.azure.com/
+    resource_group: yourresourcegroupname
+  management:
+    aad:
+      endpoint: https://management.azure.com/
+      directory_id: aaddirectoryguidfromtheportal
+      user: username@yourtennant
+      password: abcpassword
+      token_cache:
+        enabled: true
+        filename: .aad_token_cache
+    subscription_id: yousubscriptionguidfromtheportal
   storage:
     mystorageaccount:
-      account: hpcuoasnakemake
-      account_key: accountkeyendingin==
+      account: yourstorageaccountname
+      account_key: yourstorageaccountkeyendingin==
       endpoint: core.windows.net
   docker_registry:
-    hpcuoadocker.azurecr.io:
-      username: hpcuoadocker
-      password: dockerpassword
+    youdockerregistry.azurecr.io:
+      username: dockeruser
+      password: dockerpasswordfromtheportal
+~~~~
+
+*fs.yaml*
+
+Defines the filesystem cluster to setup and attach to the Azure Batch compute.
 
 ~~~~
+remote_fs:
+  resource_group: hpcanusnakemake
+  location: australiasoutheast
+  managed_disks:
+    premium: false
+    disk_size_gb: 1024
+    disk_names:
+    - E30-disk0a
+    - E30-disk1a
+    - E30-disk2a
+  storage_clusters:
+    mystoragecluster:
+      hostname_prefix: hpcanusnakemakesc
+      ssh:
+        username: shipyard
+      file_server:
+        mount_options:
+        - noatime
+        - nodiratime
+        mountpoint: /data
+        type: nfs
+        samba:
+          share_name: data
+          account:
+            username: youruser
+            password: yourpassword
+            uid: 1001
+            gid: 1001
+          read_only: false
+          create_mask: '0777'
+          directory_mask: '0777'
+      network_security:
+        ssh:
+        - '*'
+      virtual_network:
+        address_space: 10.0.0.0/16
+        existing_ok: true
+        name: hpcanusnakemakescvnet
+        subnet:
+          address_prefix: 10.0.0.0/24
+          name: hpcanusnakemakesc-server-subnet
+      public_ip:
+        enabled: true
+        static: false
+      vm_count: 1
+      vm_size: Standard_F2s
+      vm_disk_map:
+        '0':
+          disk_array:
+          - E30-disk0a
+          - E30-disk1a
+          - E30-disk2a
+          filesystem: btrfs
+          raid_level: 0
+          
+~~~~
+
 ### Docker Configuration ###
 
 Install Docker on the control node and login:
@@ -274,14 +365,14 @@ sudo docker login hpcuoadocker.azurecr.io   (user and pass from the portal)
 Build the Docker Container and the push to the Registry:
 
 ~~~~
-sudo docker build ./ -f Dockerfile -t hpcuoadocker.azurecr.io/rnaseq
-sudo docker push hpcuoadocker.azurecr.io/rnaseq
+sudo docker build ./ -f Dockerfile -t hpcuoadocker.azurecr.io/anu
+sudo docker push hpcuoadocker.azurecr.io/anu
 ~~~~
 
 Test the container if needed:
 
 ~~~~
-sudo docker run -it hpcuoadocker.azurecr.io/rnaseq
+sudo docker run -it hpcuoadocker.azurecr.io/anu
 ~~~~
 
 <a name="Template"></a>

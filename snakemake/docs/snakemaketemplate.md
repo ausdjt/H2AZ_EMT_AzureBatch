@@ -14,7 +14,9 @@ mkdir azurebatch
 cd azurebatch
 ~~~~
 
-Batch-shipyard needs 4 configuration files to be able to create pools and run jobs. These can be copied from the ones below. Batch-shipyard also has comprehensive documentation: https://github.com/Azure/batch-shipyard/tree/master/docs. There are also examples of the full settings available: https://github.com/Azure/batch-shipyard/tree/master/config_templates
+Batch-shipyard needs 4 configuration files to be able to create pools and run jobs. These can be copied from the ones below. Batch-shipyard also has comprehensive documentation: https://github.com/Azure/batch-shipyard/tree/master/docs. There are also examples of the full settings available: https://github.com/Azure/batch-shipyard/tree/master/config_templates.
+
+These template files are also available in the GitHub repository.
 
 
 ## config.yaml ##
@@ -102,9 +104,11 @@ pool_specification:
 For the Snakemake steps use this basic template:
 
 ~~~~
-         shell:
-         echo "#!/usr/bin/env bash
-         cd $FILESHARE/RNAseq_snakemake-master
+         #!/usr/bin/env bash
+cd /data
+#snakemake --latency-wait 60 --snakefile ./Development/H2AZ_EMT/snakemake/workflows/MDCK_ChIP-Seq.py --configfile ./Development/H2AZ_EMT/snakemake/configs/config.json --config ASSAY=ChIP-Seq RUNID=NB501086_0011_MNekrasov_MDCK_JCSMR_ChIPseq WORKFLOWDIR=Development --jobs -pr
+snakemake --latency-wait 60 --snakefile ./Development/H2AZ_EMT/snakemake/workflows/MDCK_RNA-Seq.py --configfile ./Development/H2AZ_EMT/snakemake/configs/config.json --config ASSAY=RNA-Seq RUNID=NB501086_0082_RDomaschenz_JCSMR_mRNAseq WORKFLOWDIR=Development --jobs -pr
+
 ~~~~
 		 
 		 
