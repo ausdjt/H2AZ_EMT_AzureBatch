@@ -298,7 +298,7 @@ To view the runbook open the 'hpcanudmin' resource group and select the automati
 
 ## Configure Data Sharing scenario ##
 
-![auto](images/Manage Asset Type.PNG)
+![auto](images/Drafts.PNG)
 
 1.	Install BI Portal into your Azure subscription, following the BI Portal Installation Guide
 2.	Spin up an Azure Web App in the same subscription and publish the Genomics API app.
@@ -316,6 +316,8 @@ e.	Return to View Mode and refresh the page. The App should be ready to go.
 Additionally:
 5.	Configure an Asset Types for Shiny Apps. (You may have multiple sub types)
 6.	Register a Shiny App from the Register-BI-Asset screen (see cog in top right hand corner)
+
+![auto](images/tile.PNG)
 
 Using the app is a matter of using the uploader to select the documents and pressing “Upload”. You will need to wait until you get a “Submit Succeeded” or “Submit Failed” message before the files have been uploaded. The ‘pacer.js’ progress bar (the yellow bar that obscures the page in all our Luna themed apps) doesn’t necessarily correlate to all the calls being made, especially if there is a chunked blob being uploaded. By this I mean that the bar will disappear and return the user to the page before all uploads have been done. This will need to be prettied up in the future. 
 
