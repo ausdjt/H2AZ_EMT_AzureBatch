@@ -298,7 +298,7 @@ To view the runbook open the 'hpcanudmin' resource group and select the automati
 
 ## Configure Data Sharing scenario ##
 
-Placeholder from Ben
+![auto](images/Manage Asset Type.PNG)
 
 1.	Install BI Portal into your Azure subscription, following the BI Portal Installation Guide
 2.	Spin up an Azure Web App in the same subscription and publish the Genomics API app.
